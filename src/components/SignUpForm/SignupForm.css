@@ -24,9 +24,6 @@
 }
 
 .signupform-form-group {
-  /* display: flex;
-  flex-direction: column;
-  justify-content: flex-start; */
   margin-bottom: 1rem;
   position: relative;
 }
@@ -131,4 +128,49 @@
   font-size: 0.9rem;
   margin-top: 0.5rem;
   padding-left: 0.3rem;
+}
+
+.signupform-terms {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.signupform-terms-label {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* 異붽��� �ㅽ��� */
+
+/* �몄쬆 �붿껌 踰꾪듉 �쒖꽦�� �ㅽ��� */
+.signupform-duplicate-check-btn.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* 鍮꾪솢�깊솕 踰꾪듉 */
+.signupform-duplicate-check-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* �몄쬆 肄붾뱶 �낅젰 �꾨뱶 �ㅽ��� */
+.signupform-form-group input[type="text"] {
+  width: 93.5%;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  padding: 0.75rem;
+  font-size: 0.8rem;
+}
+
+/* �몄쬆 �뺤씤 踰꾪듉 �ㅽ��� */
+.signupform-duplicate-check-btn.verify {
+  background-color: #4caf50;
+  color: white;
+}
+
+.signupform-duplicate-check-btn.verify:hover {
+  background-color: #45a049;
 }

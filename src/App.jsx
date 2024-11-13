@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
-import HeaderAfterLogin from './components/Header/HeaderAfterLogin';
-import AdminHeader from './components/Header/AdminHeader';
 import Footer from './components/Footer/Footer';
 import Home from './components/Home/Home';
 import LoginForm from './components/LoginForm/LoginForm';
