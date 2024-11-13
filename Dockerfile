@@ -1,18 +1,22 @@
-# 본인 프로젝트의 Node Version을 적어주세요
-FROM node:20.18.0
-
-# 경로 설정하기
+# 1. Node.js 이미지를 사용하여 빌드
+FROM node:20.18.0 AS build
 WORKDIR /app
-COPY package.json .
 
-# 의존성 설치
+# package.json 파일을 복사하여 의존성 설치
+COPY package.json . 
 RUN npm install
 
-COPY . .
-# 현재 디렉토리의 모든 파일을 도커 컨테이너의 Working Directory에 복사합니다.
+# 나머지 파일을 복사하고 빌드 실행
+COPY src/ ./src
+RUN npm run build
 
-# 프로젝트의 포트 번호를 사용합니다
+# 2. Nginx 이미지를 사용하여 정적 파일 제공
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+
+# 빌드된 정적 파일을 Nginx 컨테이너로 복사
+COPY --from=build /app/dist .  
 EXPOSE 5173
 
-# npm start 스크립트 실행
-CMD ["npm", "run", "dev"]
+# 3. Nginx 설정 수정 (Optional: 기본 설정 유지)
+CMD ["nginx", "-g", "daemon off;"]

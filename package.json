@@ -7,7 +7,7 @@
     "dev": "vite",
     "release": "vite --host gachon-adore.duckdns.org",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --port 5713"
   },
   "dependencies": {
     "axios": "^1.7.7",

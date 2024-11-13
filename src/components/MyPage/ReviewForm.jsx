@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
-import FragranceSearchModal from '../modals/FragranceSearchModal';
-import CancelConfirmationModal from '../modals/CancelConfirmationModal';
-import AlertModal from '../modals/AlertModal';
+import FragranceSearchModal from '../Modals/FragranceSearchModal';
+import CancelConfirmationModal from '../Modals/CancelConfirmationModal';
+import AlertModal from '../Modals/AlertModal';
 import './ReviewForm.css';
 
 const ReviewForm = ({ addReview }) => {

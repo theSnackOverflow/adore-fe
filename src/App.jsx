@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
-import HeaderAfterLogin from './components/Header/HeaderAfterLogin';
-import AdminHeader from './components/Header/AdminHeader';
 import Footer from './components/Footer/Footer';
 import Home from './components/Home/Home';
 import LoginForm from './components/LoginForm/LoginForm';
@@ -39,7 +37,7 @@ import AdminSurveyList from './components/Admin/SurveyManagement/AdminSurveyList
 import AdminSurveyDetail from './components/Admin/SurveyManagement/AdminSurveyDetail';
 import AdminSurveyCreate from './components/Admin/SurveyManagement/AdminSurveyCreate';
 import axios from 'axios';
-import { removeCookie, getCookie } from './lib/CookieUtil';
+import { removeCookie, getCookie, setCookie } from './lib/CookieUtil';
 import { isLogin, extractRole } from './lib/Auth';
 
 function App() {
@@ -65,8 +63,9 @@ function App() {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await axios.post(`${gatewayURL}/auth/login`, { email, password }, { withCredentials: true });
+      const response = await axios.post('http://gachon-adore.duckdns.org:8084/api/auth/login', { email, password }, { withCredentials: true });
       if (response.status === 200) {
+        setCookie('accessToken', response.data.accessToken);
         setIsLoggedIn(true);
         setUserRole(extractRole());
         return extractRole().toString();
