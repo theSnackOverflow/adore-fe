@@ -1,19 +1,11 @@
 // src/components/modals/FragranceSearchModal.js
+
 import React, { useState, useEffect } from 'react';
 import './FragranceSearchModal.css';
 
-const dummyFragranceData = [
-  '향수 A',
-  '향수 B',
-  '향수 C',
-  '바닐라 향수',
-  '시트러스 향수',
-  '우디 향수'
-];
-
-const FragranceSearchModal = ({ onClose, onSelectFragrance }) => {
+const FragranceSearchModal = ({ onClose, onSelectFragrance, perfumeList }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState(perfumeList);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -28,9 +20,13 @@ const FragranceSearchModal = ({ onClose, onSelectFragrance }) => {
     };
   }, [onClose]);
 
+  useEffect(() => {
+    setSearchResults(perfumeList);
+  }, [perfumeList]);
+
   const handleSearch = () => {
-    const results = dummyFragranceData.filter((fragrance) =>
-      fragrance.toLowerCase().includes(searchQuery.toLowerCase())
+    const results = perfumeList.filter((perfume) =>
+      perfume.perfume_nm.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setSearchResults(results);
   };
@@ -50,13 +46,13 @@ const FragranceSearchModal = ({ onClose, onSelectFragrance }) => {
           <button onClick={handleSearch} className="fragrance-modal-search-btn">검색</button>
         </div>
         <div className="fragrance-modal-results">
-          {searchResults.map((result, index) => (
+          {searchResults.map((perfume) => (
             <div
-              key={index}
+              key={perfume.id}
               className="fragrance-modal-result-item"
-              onClick={() => onSelectFragrance(result)}
+              onClick={() => onSelectFragrance(perfume)}
             >
-              {result}
+              {perfume.perfume_nm}
             </div>
           ))}
         </div>

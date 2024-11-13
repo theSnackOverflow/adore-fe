@@ -1,4 +1,5 @@
 /* src/components/modals/FragranceSearchModal.css */
+
 .fragrance-modal-overlay {
   position: fixed;
   top: 0;
@@ -14,17 +15,21 @@
 
 .fragrance-modal-content {
   background-color: white;
-  padding: 2rem 3rem 2rem 3rem;
+  padding: 2rem 3rem;
   border-radius: 8px;
   width: 400px;
   max-height: 70vh;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .fragrance-modal-search-group {
   display: flex;
   gap: 1rem;
+  width: 100%;
 }
 
 .fragrance-modal-search-input {
@@ -47,6 +52,7 @@
 }
 
 .fragrance-modal-results {
+  width: 100%;
   margin-bottom: 2rem;
 }
 
@@ -54,6 +60,7 @@
   padding: 1rem;
   cursor: pointer;
   border-bottom: 1px solid #eee;
+  text-align: center;
 }
 
 .fragrance-modal-result-item:hover {
