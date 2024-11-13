@@ -2,49 +2,65 @@
 
 .perfume-card {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start; 
   background-color: #ffffff;
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-  height: 200px;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  cursor: pointer;
+  height: auto;
+  gap: 1rem;
+  border: 1px solid #ddd;
 }
 
 .perfume-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px); /* 살짝 더 부각되는 효과 */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* 그림자 강화 */
+  background-color: #f8f9fa; /* 배경색 연하게 변화 */
+  border: 1px solid #007bff; /* 호버 시 경계선 색상 강조 */
 }
 
 .perfume-card-content {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .perfume-card h2 {
   font-size: 1.2rem;
   font-weight: bold;
-  margin: 1rem 0 0.5rem 1rem; /* 위쪽 여백만 설정 */
+  margin: 0 0 0.5rem 0;
   color: #333;
 }
 
-.perfume-card p {
+.perfume-brand {
   font-size: 0.9rem;
-  color: #666;
-  margin-left: 1rem; /* 텍스트 바로 붙임 */
+  color: #888;
+  margin: 0.2rem 0;
 }
 
-.perfume-image-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f0f0;
-  width: 50px;
-  height: 50px;
-  border-radius: 4px;
-  font-size: 1.5rem;
-  color: #aaa;
-  border: 1px solid #ddd;
-  margin-top: 0.5rem; /* 상단 여백 추가 */
+.perfume-desc {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.2rem 0;
+  line-height: 1.2;
+}
+
+/* 평점 스타일 */
+.perfume-rating {
+  font-size: 1rem;
+  color: #f39c12; /* 별 색상 */
+  margin-top: 0.5rem;
+}
+
+/* 노트 스타일 */
+.perfume-notes {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.note {
+  margin: 0.2rem 0;
+  color: #555;
 }
