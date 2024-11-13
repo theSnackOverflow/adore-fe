@@ -1,0 +1,123 @@
+.other-review-list-container {
+  display: flex;
+  padding: 2rem;
+}
+
+.other-review-list-content {
+  flex: 1;
+  padding: 2rem 5rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.other-review-list-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  /* margin-bottom: 1rem; */
+}
+
+.other-review-list-header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.other-review-list-search-bar {
+  display: flex;
+  align-items: center;
+}
+
+.other-review-list-search-bar input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 300px
+}
+
+.other-review-list-review-details {
+  margin-bottom: 1.5rem;
+  background-color: #f9f9f9;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.other-review-list-review-details-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.other-review-list-review-details-header h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  /* margin: auto; */
+}
+.other-review-list-review-details-header span {
+  margin: 0.5rem 0 0 1rem;
+  font-size: 1.5rem;
+  color: #aaaa;
+  font-weight: bold;
+  /* margin: auto; */
+}
+
+.other-review-list-review-details p {
+  margin: 0.2rem 0;
+  font-size: 1rem;
+}
+
+.other-review-list-review-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.other-review-list-review-table th,
+.other-review-list-review-table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.other-review-list-review-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+.other-review-list-review-table th:nth-child(1)  {
+  width:20%;
+}
+.other-review-list-review-table th:nth-child(2)  {
+  width:40%;
+}
+.other-review-list-review-table th:nth-child(3)  {
+  width:20%;
+}
+.other-review-list-review-table th:nth-child(4)  {
+  width:10%;
+  text-align: center;
+}
+
+
+.other-review-list-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.other-review-list-more-button,
+.other-review-list-write-button {
+  padding: 0.5rem 1rem;
+  border: 0.2px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.other-review-list-more-button {
+  background-color: #eee;
+}
+
+.other-review-list-write-button {
+  background-color: #333;
+  color: #fff;
+}

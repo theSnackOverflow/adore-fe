@@ -1,0 +1,133 @@
+.survey-question-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.survey-question-modal {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem 2rem 1rem;
+  width: 50%;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.survey-question-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.survey-question-modal-header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.survey-question-modal-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.survey-prev-button,
+.survey-next-button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.survey-prev-button {
+  background-color: #d3d3d3;
+  color: #000;
+}
+
+.survey-prev-button:hover {
+  background-color: #787878;
+}
+
+.survey-next-button {
+  background-color: #333;
+  color: #fff;
+}
+
+.survey-next-button:hover {
+  background-color: #b4b3b3;
+}
+
+.survey-question-modal-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.survey-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+}
+
+.survey-option-button {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.survey-option-button:hover {
+  background-color: #e0e0e0;
+}
+
+.survey-option-button.selected {
+  background-color: #d1e7dd;
+  border-color: #7cb3a7;
+}
+
+.selected-notes {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.selected-note {
+  background-color: #e9f7ef;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #2f856e;
+}
+
+.survey-question-modal-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.survey-close-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #ddd;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.survey-close-button:hover {
+  background-color: #bbb;
+}

@@ -1,0 +1,112 @@
+/* src/components/Admin/PerfumeManagement/PerfumeInfoEdit.css */
+
+.perfume-info-edit-container {
+    display: flex;
+    padding: 2rem;
+}
+
+.perfume-info-edit-content {
+    flex: 1;
+    background-color: white;
+    padding: 2rem 5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.perfume-info-edit-content h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.perfume-info-edit-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+.perfume-info-edit-table th,
+.perfume-info-edit-table td {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.perfume-info-edit-table th {
+    width: 20%;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    text-align: left;
+}
+
+.perfume-info-edit-table td {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* 입력 필드와 검색 버튼 간의 간격 */
+}
+
+.full-width-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.perfume-info-edit-search-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.perfume-info-edit-search-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.perfume-note {
+    display: inline-block;
+    margin-right: 0.5rem;
+    padding: 0.3rem 0.8rem;
+    background-color: #f1f1f1;
+    border-radius: 12px;
+}
+
+.gender-options,
+.mood-options {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.mood-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.perfume-info-edit-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.perfume-info-edit-save-btn,
+.perfume-info-edit-delete-btn {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.perfume-info-edit-save-btn {
+    background-color: #333;
+    color: white;
+}
+
+.perfume-info-edit-delete-btn {
+    background-color: #ccc;
+    color: black;
+}

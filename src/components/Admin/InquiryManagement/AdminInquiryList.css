@@ -1,0 +1,82 @@
+/* src/components/Admin/InquiryManagement/AdminInquiryList.css */
+.admin-inquiry-list-container {
+    display: flex;
+    padding: 2rem;
+}
+
+.admin-inquiry-list-content {
+    flex: 1;
+    background-color: white;
+    padding: 2rem 5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-inquiry-list-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.admin-inquiry-list-header h1 {
+    /* margin-bottom: 1.5rem; */
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.admin-inquiry-search-bar {
+    margin: 0.1rem 0rem 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-inquiry-search-bar input {
+    width: 300px;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.admin-inquiry-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.admin-inquiry-table th,
+.admin-inquiry-table td {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.admin-inquiry-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.admin-inquiry-listpagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.admin-inquiry-listpagination button {
+    padding: 0.5rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.admin-inquiry-listpagination button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.admin-inquiry-listpagination button:hover:not(.active) {
+    background-color: #ddd;
+}

@@ -1,0 +1,41 @@
+/* src/components/modals/AlertModal.css */
+
+.alert-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .alert-modal {
+    padding: 3rem 4rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 350px;
+    text-align: center;
+  }
+  
+  .alert-modal p {
+    font-size: 1.3rem;
+    margin: 1.5rem 0;
+  }
+  
+  .alert-modal button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #333;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .alert-modal button:hover {
+    background-color: #0056b3;
+  }

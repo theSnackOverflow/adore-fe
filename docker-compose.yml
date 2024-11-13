@@ -1,0 +1,13 @@
+# /docker-compose.yml
+services:
+  # Eureka
+  frontend:
+    container_name: frontend
+    image: dyw1014/adore-fe:latest
+    ports:
+      - "5173:5173"
+    networks:
+      - fe-network
+networks:
+  fe-network:
+    driver: bridge

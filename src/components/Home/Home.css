@@ -1,0 +1,105 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.home-banner {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 2rem 2rem;
+  background-color: #f0f0f5;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.home-banner-container {
+  width: 40%;
+  height: 400px;
+  padding: 1rem 5rem;
+  border-radius: 8px;
+}
+
+.home-banner h1 {
+  font-size: 8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.home-banner p {
+  font-size: 1.5rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.home-find-perfume-btn {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 입체감 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-find-perfume-btn:hover {
+  background-color: #333;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); /* 호버 시 입체감 강화 */
+  transform: translateY(-2px);
+}
+
+.home-find-perfume-btn:active {
+  background-color: #222;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* 클릭 시 눌린 효과 */
+  transform: translateY(1px);
+}
+
+.home-new-perfumes {
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow-x: scroll;
+}
+
+.home-new-perfumes h2 {
+  font-size: 2rem;
+  margin: 2rem 4rem !important;
+}
+
+.home-view-more {
+  font-size: 1rem;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.home-perfume-card-container {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  padding-bottom: 5rem;
+}
+
+.home-perfume-card {
+  display: flex;
+  flex: 1;
+  max-width: 300px;
+  height: 250px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.home-perfume-card:hover {
+  transform: translateY(-5px);
+}

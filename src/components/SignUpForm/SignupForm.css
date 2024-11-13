@@ -1,0 +1,134 @@
+/* src/components/SignUpForm/SignUpForm.css */
+
+.signupform-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 3rem 0 5rem 0;
+}
+
+.signupform-form {
+  background-color: white;
+  padding: 3rem 6rem;
+  border-radius: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  width: 500px;
+}
+
+.signupform-form h2 {
+  font-size: 4rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.signupform-form-group {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: flex-start; */
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.signupform-form-group label {
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.signupform-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.signupform-form input[type="text"],
+.signupform-form input[type="email"],
+.signupform-form input[type="password"] {
+  padding: 0.75rem;
+  width: 93.5%;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.signupform-form input[type="date"],
+.signupform-form select {
+  width: 7rem;
+  height: 2rem;
+  padding-left: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  appearance: none;
+  background: white;
+  cursor: pointer;
+}
+
+.signupform--form select:focus {
+  border-color: #888888;
+}
+
+.signupform-horizontal-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+}
+
+.signupform-sub-group {
+  min-width: 25%;
+}
+
+.signupform-confirm-btn,
+.signupform-duplicate-check-btn {
+  position: absolute;
+  right: 1rem;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.3rem;
+  width: 3rem;
+  height: 1.7rem;
+  cursor: pointer;
+}
+
+.signupform-duplicate-check-btn {
+  width: 4rem;
+}
+
+.signupform-confirm-btn:hover,
+.signupform-duplicate-check-btn:hover {
+  background-color: #888888;
+}
+
+.signupform-submit-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.signupform-submit-btn:hover {
+  background-color: #333;
+}
+
+.signupform-error-message {
+  color: red;
+  font-size: 0.7rem;
+  margin-top: 0.5rem;
+  padding-left: 0.3rem;
+}
+
+.signupform-success-message {
+  color: green;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  padding-left: 0.3rem;
+}

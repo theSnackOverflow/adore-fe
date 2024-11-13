@@ -1,0 +1,45 @@
+/* src/components/Sidebars/Sidebar.css */
+.sidebar {
+    /* display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0; */
+    background-color: #f9f9f9;
+    padding: 3rem 2rem 3rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px hsla(0, 0%, 0%, 0.1);
+    border: 0.1px solid #ccc;
+    width: 200px;
+    height: fit-content;
+    margin-right: 2rem;
+  }
+  .sidebar h3 {
+    font-size: 1.2rem;
+    margin-left: 2.2rem;
+    margin-bottom: 0;
+    padding-bottom: 0rem;
+  }
+  .sidebar ul {
+    margin-left: 3rem;
+    margin-bottom: 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .sidebar li {
+    margin: 0.8rem 0;
+  }
+  
+  .sidebar li a {
+    font-size: 1rem;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .sidebar li a:hover {
+    color: #007bff;
+  }
+  a {
+    text-decoration: none;
+    color: black;
+  }

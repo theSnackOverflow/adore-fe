@@ -1,0 +1,129 @@
+/* src/components/Admin/SurveyManagement/AdminSurveyCreate.css */
+
+.admin-survey-create-container {
+    display: flex;
+    padding: 2rem;
+    background-color: white;
+  }
+  
+  .admin-survey-create-content {
+    flex: 1;
+    background-color: white;
+    padding: 2rem 5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 1rem;
+  }
+  
+  .admin-survey-create-content h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .admin-survey-create-form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .admin-survey-create-form-group label {
+    width: 120px;
+    font-weight: bold;
+  }
+  
+  .admin-survey-create-form-group input,
+  .admin-survey-create-form-group select {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .admin-survey-create-questions-section {
+    border-top: 1px solid #ddd;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .admin-survey-create-question-item {
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 0 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .admin-survey-create-question-item:last-child {
+    border-bottom: none;
+  }
+  
+  .admin-survey-create-question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .question-number {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .admin-survey-create-delete-button,
+  .admin-survey-create-add-answer-button,
+  .admin-survey-create-add-question-button,
+  .admin-survey-create-register-button,
+  .admin-survey-create-cancel-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+  
+  .admin-survey-create-delete-button {
+    background-color: #dc3545;
+  }
+  
+  .admin-survey-create-add-answer-button,
+  .admin-survey-create-add-question-button,
+  .admin-survey-create-register-button {
+    background-color: #007bff;
+  }
+  
+  .admin-survey-create-cancel-button {
+    background-color: #6c757d;
+  }
+  
+  .admin-survey-create-delete-button:hover,
+  .admin-survey-create-add-answer-button:hover,
+  .admin-survey-create-add-question-button:hover,
+  .admin-survey-create-register-button:hover,
+  .admin-survey-create-cancel-button:hover {
+    opacity: 0.9;
+  }
+  
+  .admin-survey-create-answer-item .admin-survey-create-delete-button {
+    margin-left: 0.5rem; /* 답변 삭제 버튼의 왼쪽 여백 */
+  }
+  
+  /* 답변 추가 버튼을 오른쪽 정렬 */
+  .admin-survey-create-add-answer-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+  
+  /* 질문 추가 버튼을 오른쪽 정렬 */
+  .admin-survey-create-add-question-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  
+  .admin-survey-create-form-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }

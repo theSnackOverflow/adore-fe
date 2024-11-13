@@ -1,0 +1,100 @@
+.mypage-container {
+  display: flex;
+  padding: 2rem;
+}
+
+.personal-info-edit {
+  flex: 1;
+  background-color: white;
+  padding: 2rem 5rem; 
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.personal-info-edit h1 {
+  margin-bottom: 3rem;
+  font-weight: bold;
+}
+
+.personal-info-edit ul {
+  list-style: none;
+  padding: 0;
+}
+
+.personal-info-edit li {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 1rem 1.5rem 2rem 1.5rem;
+  width: fit-content;
+  border-bottom: 1px solid #ccc;
+  gap: 3rem;
+}
+
+.personal-info-edit .label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  min-width: 100px;
+}
+
+.personal-info-edit .value {
+  font-size: 1rem;
+  color: #666;
+  width: 250px;
+}
+
+.personal-info-edit .input-value {
+  font-size: 1rem;
+  padding: 0;
+  width: 250px;
+  height: 2rem;
+  border: 0.2px solid #ccc;
+  border-radius: 4px;
+}
+
+select.input-value {
+  font-size: 1rem;
+  padding-left:  10px !important;
+  width: 100px !important;
+  height: 30px;
+  border: 0.2px solid #ccc;
+  border-radius: 4px;
+}
+
+.personal-info-edit button {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 0.5rem;
+  width: 6rem;
+  cursor: pointer;
+  border: 1px solid black;
+}
+
+.personal-info-edit button:hover {
+  background-color: #bbb;
+}
+
+.personalinfoeidt-action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.personalinfoeidt-action-buttons button {
+  padding: 0.5rem 0.5rem;
+  border: 1px solid black !important;
+  border-radius: 4px;
+  width: 4rem;
+  cursor: pointer;
+}
+
+.personalinfoeidt-action-buttons button:first-child {
+  background-color: #333;
+  color: white;
+}
+
+.personalinfoeidt-action-buttons button:last-child {
+  background-color: #ddd;
+}

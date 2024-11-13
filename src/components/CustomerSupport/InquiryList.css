@@ -1,0 +1,105 @@
+/* src/components/CustomerSupport/InquiryList.css */
+.customer-support-container {
+  display: flex;
+  padding: 2rem;
+}
+
+.inquiry-list-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.inquiry-list {
+  flex: 1;
+  background-color: white;
+  padding: 2rem 5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.inquiry-list h1 {
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.inquiry-list-search-bar {
+    margin: 0.1rem 0rem 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inquiry-list-search-bar input {
+  width: 300px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.inquiry-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  /* margin-bottom: 2rem; */
+}
+
+.inquiry-list-table th {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 1.1rem;
+  background-color: #f6f6f6;
+}
+
+.inquiry-list-table td {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.inquiry-list-table th:nth-child(1) {
+    width: 10%;
+    /* border-right: 0.1px solid black; */
+}
+/* .inquiry-list-table td:nth-child(1) {
+    border-right: 0.1px solid black;
+} */
+.inquiry-list-table th:nth-child(2) {
+    width: 50%;
+}
+.inquiry-list-table th:nth-child(3) {
+    width: 15%;
+}
+.inquiry-list-table th:nth-child(4) {
+    width: 15%;
+}
+.inquiry-list-table th:nth-child(5) {
+    width: 10%;
+}
+
+.inquiry-list-delete-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  /* margin: 0 0.2rem; */
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.inquiry-list-delete-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.inquiry-list-write-btn {
+    background-color: #333;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right; 
+    margin: 1rem 1.5rem 0 0;
+  }
+  
+.inquiry-list-write-btn:hover {
+background-color: #555;
+}

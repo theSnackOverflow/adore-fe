@@ -1,0 +1,54 @@
+.perfume-recommendation-container {
+  display: flex;
+  padding: 2rem;
+}
+
+.perfume-list {
+  flex: 1;
+  padding: 2rem 5rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.perfume-list h1 {
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.perfume-list-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.perfume-list-search-bar input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 300px
+}
+
+.sort-options {
+  display: flex;
+  gap: 1rem;
+}
+
+.sort-options button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+}
+
+.sort-options button:hover {
+  text-decoration: underline;
+}
+
+.perfume-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}

@@ -1,0 +1,48 @@
+.friend-recommendation-result-container {
+    display: flex;
+    padding: 2rem;
+  }
+  
+  .friend-recommendation-result-content {
+    flex: 1;
+    padding: 2rem 5rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .friend-recommendation-result-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 0.3px solid black;
+    padding: 1rem 0;
+  }
+  
+  .friend-recommendation-result-header p {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 0;
+  }
+  
+  .friend-recommendation-refresh-button {
+    font-size: 3rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  
+  .friend-recommendation-recommended-perfumes {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    border: 0.3px solid black;
+  }
+  
+  .friend-recommendation-recommended-perfumes h1 {
+    margin-bottom: 0;
+    font-size: 2rem;
+    font-weight: bold;
+  }

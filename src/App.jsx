@@ -1,0 +1,164 @@
+// src/App.jsx
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Header from './components/Header/Header';
+import HeaderAfterLogin from './components/Header/HeaderAfterLogin';
+import AdminHeader from './components/Header/AdminHeader';
+import Footer from './components/Footer/Footer';
+import Home from './components/Home/Home';
+import LoginForm from './components/LoginForm/LoginForm';
+import SignUpForm from './components/SignUpForm/SignUpForm';
+import PasswordChange from './components/MyPage/PasswordChange';
+import PersonalInfoEdit from './components/MyPage/PersonalInfoEdit';
+import AccountDelete from './components/MyPage/AccountDelete';
+import ReviewForm from './components/MyPage/ReviewForm';
+import ReviewList from './components/MyPage/ReviewList';
+import NoticeList from './components/CustomerSupport/NoticeList';
+import InquiryForm from './components/CustomerSupport/InquiryForm';
+import InquiryList from './components/CustomerSupport/InquiryList';
+import PerfumeList from './components/PerfumeRecommendation/PerfumeList';
+import NoteList from './components/PerfumeRecommendation/NoteList';
+import SurveyIntro from './components/PerfumeRecommendation/SurveyIntro';
+import SurveyResult from './components/PerfumeRecommendation/SurveyResult';
+import OtherReviewList from './components/PerfumeRecommendation/OtherReviewList';
+import ReviewDetail from './components/PerfumeRecommendation/ReviewDetail';
+import FriendInfoInput from './components/FriendRecommendation/FriendInfoInput';
+import FriendResult from './components/FriendRecommendation/FriendResult';
+import UserList from './components/Admin/UserManagement/UserList';
+import UserInfoEdit from './components/Admin/UserManagement/UserInfoEdit';
+import UserRegistration from './components/Admin/UserManagement/UserRegistration';
+import ReportList from './components/Admin/UserManagement/ReportList';
+import ReportDetail from './components/Admin/UserManagement/ReportDetail';
+import AdminPerfumeList from './components/Admin/PerfumeManagement/AdminPerfumeList';
+import PerfumeInfoEdit from './components/Admin/PerfumeManagement/PerfumeInfoEdit';
+import PerfumeRegistration from './components/Admin/PerfumeManagement/PerfumeRegistration';
+import AdminInquiryList from './components/Admin/InquiryManagement/AdminInquiryList';
+import AdminNoticeList from './components/Admin/NoticeManagement/AdminNoticeList';
+import AdminNoticeCreate from './components/Admin/NoticeManagement/AdminNoticeCreate';
+import AdminSurveyList from './components/Admin/SurveyManagement/AdminSurveyList';
+import AdminSurveyDetail from './components/Admin/SurveyManagement/AdminSurveyDetail';
+import AdminSurveyCreate from './components/Admin/SurveyManagement/AdminSurveyCreate';
+import axios from 'axios';
+import { removeCookie, getCookie } from './lib/CookieUtil';
+import { isLogin, extractRole } from './lib/Auth';
+
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(() => isLogin());
+  const [userRole, setUserRole] = useState(() => (isLoggedIn ? extractRole() : "GUEST"));
+
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL,
+    timeout: 1000
+  });
+
+  instance.interceptors.request.use(
+    (config) => {
+      const accessToken = getCookie('accessToken');
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  const handleLogin = async (email, password) => {
+    try {
+      const response = await axios.post(`${gatewayURL}/auth/login`, { email, password }, { withCredentials: true });
+      if (response.status === 200) {
+        setIsLoggedIn(true);
+        setUserRole(extractRole());
+        return extractRole().toString();
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    const response = await instance.get('/auth/logout', { withCredentials: true });
+    if (response.status === 200) {
+      removeCookie('accessToken');
+      setIsLoggedIn(false);
+      setUserRole("GUEST");
+    }
+  };
+
+  useEffect(() => {
+    setIsLoggedIn(isLogin());
+    setUserRole(isLogin() ? extractRole() : "GUEST");
+  }, []);
+
+  const PrivateRoute = ({ element, isLoggedIn }) => {
+    return userRole === "USER" ? element : <Navigate to="/login" replace />;
+  };
+  
+  const AdminRoute = ({ element, isAdmin }) => {
+    return userRole === "ADMIN" ? element : <Navigate to="/login" replace />;
+  };
+
+  return (
+    <Router>
+      <div className="app">
+        <Header userRole={userRole} onLogout={handleLogout} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/SignUpForm" element={<SignUpForm />} />
+        <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
+        {/* 일반 사용자 라우트 */}
+        <Route path="/" element={<Home />} />
+        <Route path="/SignUpForm" element={<SignUpForm />} />
+        <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
+
+        {/* MyPage 관련 라우트 */}
+        <Route path="/MyPage/PasswordChange" element={<PrivateRoute element={<PasswordChange />} userRole={userRole} />} />
+        <Route path="/MyPage/PersonalInfoEdit" element={<PrivateRoute element={<PersonalInfoEdit />} userRole={userRole} />} />
+        <Route path="/MyPage/AccountDelete" element={<PrivateRoute element={<AccountDelete />} userRole={userRole} />} />
+        <Route path="/MyPage/ReviewForm" element={<PrivateRoute element={<ReviewForm />} userRole={userRole} />} />
+        <Route path="/MyPage/ReviewList" element={<PrivateRoute element={<ReviewList />} userRole={userRole} />} />
+
+        {/* Customer Support 관련 라우트 */}
+        <Route path="/CustomerSupport/NoticeList" element={<PrivateRoute element={<NoticeList />} userRole={userRole} />} />
+        <Route path="/CustomerSupport/InquiryForm" element={<PrivateRoute element={<InquiryForm />} userRole={userRole} />} />
+        <Route path="/CustomerSupport/InquiryList" element={<PrivateRoute element={<InquiryList />} userRole={userRole} />} />
+
+        {/* Perfume Recommendation 관련 라우트 */}
+        <Route path="/perfumerecommendation/perfumelist" element={<PrivateRoute element={<PerfumeList />} userRole={userRole} />} />
+        <Route path="/perfumerecommendation/notelist" element={<PrivateRoute element={<NoteList />} userRole={userRole} />} />
+        <Route path="/perfumerecommendation/surveyintro" element={<PrivateRoute element={<SurveyIntro />} userRole={userRole} />} />
+        <Route path="/perfumerecommendation/surveyresult" element={<PrivateRoute element={<SurveyResult />} userRole={userRole} />} />
+        <Route path="/perfumerecommendation/otherreviewlist" element={<PrivateRoute element={<OtherReviewList />} userRole={userRole} />} />
+        <Route path="/perfumerecommendation/review/:id" element={<PrivateRoute element={<ReviewDetail />} userRole={userRole} />} />
+
+        {/* Friend Recommendation 관련 라우트 */}
+        <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendInfoInput />} userRole={userRole} />} />
+        <Route path="/friendrecommendation/friendresult" element={<PrivateRoute element={<FriendResult />} userRole={userRole} />} />
+
+        {/* Admin Routes */}
+        <Route path="/Admin/UserManagement/UserList" element={<AdminRoute element={<UserList />} userRole={userRole} />} />
+        <Route path="/Admin/UserManagement/UserInfoEdit" element={<AdminRoute element={<UserInfoEdit />} userRole={userRole} />} />
+        <Route path="/Admin/UserManagement/UserRegistration" element={<AdminRoute element={<UserRegistration />} userRole={userRole} />} />
+        <Route path="/Admin/UserManagement/ReportList" element={<AdminRoute element={<ReportList />} userRole={userRole} />} />
+        <Route path="/Admin/UserManagement/ReportDetail" element={<AdminRoute element={<ReportDetail />} userRole={userRole} />} />
+        <Route path="/Admin/PerfumeManagement/AdminPerfumeList" element={<AdminRoute element={<AdminPerfumeList />} userRole={userRole} />} />
+        <Route path="/Admin/PerfumeManagement/PerfumeInfoEdit" element={<AdminRoute element={<PerfumeInfoEdit />} userRole={userRole} />} />
+        <Route path="/Admin/PerfumeManagement/PerfumeRegistration" element={<AdminRoute element={<PerfumeRegistration />} userRole={userRole} />} />
+        <Route path="/Admin/InquiryManagement/AdminInquiryList" element={<AdminRoute element={<AdminInquiryList />} userRole={userRole} />} />
+
+        {/* Notice Management Routes */}
+        <Route path="/Admin/NoticeManagement/AdminNoticeList" element={<AdminRoute element={<AdminNoticeList />} userRole={userRole} />} />
+        <Route path="/Admin/NoticeManagement/AdminNoticeCreate" element={<AdminRoute element={<AdminNoticeCreate />} userRole={userRole} />} />
+
+        {/* Survey Management Routes */}
+        <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} userRole={userRole} />} />
+        <Route path="/Admin/SurveyManagement/AdminSurveyDetail/:id" element={<AdminRoute element={<AdminSurveyDetail />} userRole={userRole} />} />
+        <Route path="/Admin/SurveyManagement/AdminSurveyCreate" element={<AdminRoute element={<AdminSurveyCreate />} userRole={userRole} />} />
+      </Routes>
+      <Footer />
+      </div>
+    </Router>
+    );
+  }
+  
+  export default App;

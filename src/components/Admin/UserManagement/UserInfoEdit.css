@@ -1,0 +1,89 @@
+/* src/components/Admin/UserManagement/UserInfoEdit.css */
+
+.user-info-edit-container {
+    display: flex;
+    padding: 2rem;
+  }
+  
+  .user-info-edit-content {
+    flex: 1;
+    background-color: white;
+    padding: 2rem 5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-info-edit-content h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+  
+  .user-info-edit-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+  }
+  
+  .user-info-edit-table th,
+  .user-info-edit-table td {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .user-info-edit-table th {
+    width: 15%;
+    max-width: 15%;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    padding-left: 2.5rem;
+    text-align: left;
+  }
+  
+  .user-info-edit-table td input,
+  .user-info-edit-table td select {
+    width: 80%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .user-info-edit-disabled-input {
+    background-color: #f5f5f5;
+    color: #888;
+  }
+  
+  .user-info-edit-address-search-btn {
+    margin-left: 0.5rem;
+    padding: 0.4rem 1rem;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+  
+  .user-info-edit-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .user-info-edit-save-btn,
+  .user-info-edit-delete-btn {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .user-info-edit-save-btn {
+    background-color: #333;
+    color: white;
+  }
+  
+  .user-info-edit-delete-btn {
+    background-color: #ccc;
+    color: black;
+  }

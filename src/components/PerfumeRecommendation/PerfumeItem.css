@@ -1,0 +1,50 @@
+/* src/components/PerfumeRecommendation/PerfumeItem.css */
+
+.perfume-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; 
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  height: 200px;
+}
+
+.perfume-card:hover {
+  transform: translateY(-5px);
+}
+
+.perfume-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.perfume-card h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 1rem 0 0.5rem 1rem; /* 위쪽 여백만 설정 */
+  color: #333;
+}
+
+.perfume-card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-left: 1rem; /* 텍스트 바로 붙임 */
+}
+
+.perfume-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  font-size: 1.5rem;
+  color: #aaa;
+  border: 1px solid #ddd;
+  margin-top: 0.5rem; /* 상단 여백 추가 */
+}

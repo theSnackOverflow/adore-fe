@@ -1,0 +1,91 @@
+/* src/components/PerfumeRecommendation/NoteDetailModal.css */
+
+.note-detail-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .note-detail-modal {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 3rem 4rem 1rem;
+    width: 40%; 
+    max-width: 60%;
+    height: fit-content;
+    max-height: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  .note-detail-modal-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .note-detail-modal-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .note-detail-modal-info h1 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .note-detail-modal-category {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .note-detail-modal-content {
+    display: flex;
+    margin-top: 2rem;
+  }
+  
+  .note-detail-modal-description {
+    flex: 1;
+    font-size: 1.2rem;
+    color: #333;
+    padding-right: 2rem;
+  }
+  
+  .note-detail-modal-image-container {
+    width: 40%;
+    max-height: 200px;
+    background-color: #f0f0f0;
+  }
+  
+  .note-detail-modal-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+  
+  .note-detail-modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .note-detail-modal-close-btn {
+    padding: 0.5rem 1rem;
+    border: 0.2px solid black;
+    border-radius: 4px;
+    background-color: #ddd;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .note-detail-modal-close-btn:hover {
+    background-color: #bbb;
+  }

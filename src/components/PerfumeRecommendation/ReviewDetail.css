@@ -1,0 +1,196 @@
+/* src/components/PerfumeRecommendation/ReviewDetail.css */
+
+.review-detail-container {
+    display: flex;
+    padding: 2rem;
+  }
+  
+  .review-detail-content {
+    flex: 1;
+    padding: 2rem 5rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .review-detail-content h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .review-detail-card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .review-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 1rem 2rem;
+  }
+  
+  .review-detail-user-info {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    width: 50%;
+    font-size: 1.5rem;
+  }
+  
+  .review-detail-profile-pic {
+    width: 150px;
+    height: 150px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #666;
+  }
+  
+  .review-detail-image {
+    width: 150px;
+    height: 150px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .review-detail-body {
+    padding: 3rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  
+  .review-detail-body h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .review-detail-body-info {
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+    margin: 1rem 0.5rem 0rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .review-detail-body-info p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  .review-detail-body-content {
+    margin: 1rem 0.5rem 0rem;
+  }
+  
+  .review-detail-body-content p {
+    font-size: 2rem;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+  }
+  
+  .review-detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  .review-detail-like-btn,
+  .review-detail-report-btn {
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #333;
+    background-color: #333;
+    color: white;
+    font-size: 0.9rem;
+  }
+  h2 {
+    margin-bottom: 1rem;
+    margin-left: 0.5rem;
+  }
+
+  .review-detail-comments {
+    border-top: 1px solid #ddd;
+  }
+  
+  .review-detail-comment {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .review-detail-comment strong {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  
+  .review-detail-comment p {
+    flex: 1;
+    font-size: 1rem;
+    color: #555;
+    margin-left: 2rem;
+  }
+  
+  /* 삭제 버튼 스타일 - 본인의 댓글에만 표시 */
+  .review-detail-delete-comment-btn {
+    background-color: #ff6666;
+    border: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: white;
+  }
+  
+  /* 신고 버튼 스타일 - 다른 사용자의 댓글에 표시 */
+  .review-detail-report-comment-btn {
+    background-color: #ddd;
+    border: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  
+  .review-detail-new-comment {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .review-detail-new-comment input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .review-detail-new-comment button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #333;
+    background-color: #333;
+    color: white;
+  }
+  
