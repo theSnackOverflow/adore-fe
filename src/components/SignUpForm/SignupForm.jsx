@@ -29,7 +29,7 @@ const SignUpForm = () => {
     e.preventDefault();
     if (isFormValid() && isVerificationCodeValid) {
       try {
-        const response = await axios.post('http://34.22.76.114:8084/auth/sign-up', {
+        const response = await axios.post('http://gachon-adore.duckdns.org:8084/api/auth/sign-up', {
           email,
           name,
           password,
@@ -107,7 +107,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.get(`http://34.22.76.114:8084/auth/check-duplicate/email?email=${email}`);
+      const response = await axios.get(`http://gachon-adore.duckdns.org:8084/api/auth/check-duplicate/email?email=${email}`);
       setEmailCheckMessage({
         text: response.data.isDuplicate ? '이미 사용 중인 이메일입니다.' : '사용 가능한 이메일입니다!',
         styleClass: response.data.isDuplicate ? 'error-message' : 'signupform-success-message',
@@ -126,7 +126,7 @@ const SignUpForm = () => {
 
   const handleSendVerificationCode = async () => {
     try {
-      const response = await axios.post(`http://34.22.76.114:8084/auth/email-send?email=${email}`);
+      const response = await axios.post(`http://gachon-adore.duckdns.org:8084/api/auth/email-send?email=${email}`);
       if (response.status === 200) {
         setVerificationSent(true);
         setVerificationCodeMessage('인증 코드가 전송되었습니다.');
@@ -139,7 +139,7 @@ const SignUpForm = () => {
 
   const handleVerifyCode = async () => {
     try {
-      const response = await axios.post(`http://34.22.76.114:8084/auth/verify-code`, {
+      const response = await axios.post(`http://gachon-adore.duckdns.org:8084/api/auth/email-verify`, {
         email,
         code: verificationCode,
       });
@@ -168,7 +168,7 @@ const SignUpForm = () => {
   
     try {
       const encodedNickname = encodeURIComponent(nickname);
-      const response = await axios.get(`http://34.22.76.114:8084/auth/check-duplicate/nickname?nickname=${encodedNickname}`);
+      const response = await axios.get(`http://gachon-adore.duckdns.org:8084/api/auth/check-duplicate/nickname?nickname=${encodedNickname}`);
       setNicknameCheckMessage({
         text: response.data.isDuplicate ? '이미 사용 중인 닉네임입니다.' : '사용 가능한 닉네임입니다!',
         styleClass: response.data.isDuplicate ? 'error-message' : 'signupform-success-message',
