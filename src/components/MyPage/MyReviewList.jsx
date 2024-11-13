@@ -1,10 +1,15 @@
-// src/components/MyPage/ReviewList.js
+// src/components/MyPage/MyReviewList.js
 import React, { useState } from 'react';
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
-import './ReviewList.css';
+import './MyReviewList.css';
 import { useNavigate } from 'react-router-dom';
 
-const ReviewList = ({ reviews, setReviews }) => {
+const MyReviewList = () => {
+  const [reviews, setReviews] = useState([
+    { id: 1, fragrance: '향수 C', title: '제목 3', rating: 5, date: '2024-10-02' },
+    { id: 2, fragrance: '향수 B', title: '제목 2', rating: 4, date: '2024-10-02' },
+    { id: 3, fragrance: '향수 A', title: '제목 1', rating: 3, date: '2024-10-02' },
+  ]);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
@@ -17,15 +22,13 @@ const ReviewList = ({ reviews, setReviews }) => {
   };
 
   const handleEdit = (id) => {
-    // Edit functionality placeholder
     alert(`Editing review with ID: ${id}`);
-    // In a real app, you could navigate to a review edit page here
   };
 
   return (
     <div className="mypage-container">
       <MyPageSidebar />
-      <div className="review-list">
+      <div className="my-review-list">
         <h1>내 리뷰 목록</h1>
         <div className="search-bar">
           <input
@@ -57,15 +60,15 @@ const ReviewList = ({ reviews, setReviews }) => {
                   <td>{review.fragrance}</td>
                   <td>{review.title}</td>
                   <td>
-                    {'★'.repeat(Math.floor(review.rating))}
-                    {'☆'.repeat(5 - Math.floor(review.rating))}
+                    {'★'.repeat(review.rating)}
+                    {'☆'.repeat(5 - review.rating)}
                   </td>
                   <td>{review.date}</td>
                   <td>
-                    {/* <button className="rl-edit-btn" onClick={() => handleEdit(review.id)}>
+                    <button className="edit-btn" onClick={() => handleEdit(review.id)}>
                       수정
-                    </button> */}
-                    <button className="rl-delete-btn" onClick={() => handleDelete(review.id)}>
+                    </button>
+                    <button className="delete-btn" onClick={() => handleDelete(review.id)}>
                       삭제
                     </button>
                   </td>
@@ -73,7 +76,7 @@ const ReviewList = ({ reviews, setReviews }) => {
               ))}
           </tbody>
         </table>
-        <button className="rl-write-btn" onClick={() => navigate('/mypage/reviewform')}>
+        <button className="write-btn" onClick={() => navigate('/mypage/reviewform')}>
           글쓰기
         </button>
       </div>
@@ -81,4 +84,4 @@ const ReviewList = ({ reviews, setReviews }) => {
   );
 };
 
-export default ReviewList;
+export default MyReviewList;

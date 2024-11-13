@@ -10,7 +10,7 @@ import PasswordChange from './components/MyPage/PasswordChange';
 import PersonalInfoEdit from './components/MyPage/PersonalInfoEdit';
 import AccountDelete from './components/MyPage/AccountDelete';
 import ReviewForm from './components/MyPage/ReviewForm';
-import ReviewList from './components/MyPage/ReviewList';
+import MyReviewList from './components/MyPage/MyReviewList';
 import NoticeList from './components/CustomerSupport/NoticeList';
 import InquiryForm from './components/CustomerSupport/InquiryForm';
 import InquiryList from './components/CustomerSupport/InquiryList';
@@ -115,7 +115,7 @@ function App() {
         <Route path="/MyPage/PersonalInfoEdit" element={<PrivateRoute element={<PersonalInfoEdit />} userRole={userRole} />} />
         <Route path="/MyPage/AccountDelete" element={<PrivateRoute element={<AccountDelete />} userRole={userRole} />} />
         <Route path="/MyPage/ReviewForm" element={<PrivateRoute element={<ReviewForm />} userRole={userRole} />} />
-        <Route path="/MyPage/ReviewList" element={<PrivateRoute element={<ReviewList />} userRole={userRole} />} />
+        <Route path="/MyPage/MyReviewList" element={<PrivateRoute element={<MyReviewList />} userRole={userRole} />} />
 
         {/* Customer Support 관련 라우트 */}
         <Route path="/CustomerSupport/NoticeList" element={<PrivateRoute element={<NoticeList />} userRole={userRole} />} />
@@ -157,7 +157,7 @@ function App() {
       <Footer />
       </div>
     </Router>
-    );
-  }
-  
-  export default App;
+  );
+}
+
+export default App;

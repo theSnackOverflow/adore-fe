@@ -1,20 +1,40 @@
 // src/components/PerfumeRecommendation/ReviewDetail.jsx
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
 import AlertModal from '../Modals/AlertModal';
 import './ReviewDetail.css';
 
 const ReviewDetail = () => {
-  const [comments, setComments] = useState([
-    { id: 1, user: '회원 A', content: '댓글 내용 1' },
-    { id: 2, user: '회원 A', content: '댓글 내용 2' },
-    { id: 3, user: '내 닉네임', content: '내 댓글 내용' },
-  ]);
+  const { reviewId } = useParams(); // 리뷰 ID를 URL 파라미터에서 가져옴
+  const [reviewData, setReviewData] = useState(null); // 리뷰 데이터를 저장할 상태
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [likes, setLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false); // 추천 여부
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState(''); // AlertModal에 표시할 메시지
+
+  useEffect(() => {
+    // 리뷰 데이터를 서버에서 가져오는 함수
+    const fetchReviewData = async () => {
+      try {
+        const response = await axios.get(`http://gachon-adore.duckdns.org:8081/user/review`, {
+          params: { id: reviewId },
+        });
+        console.log("API Response Data:", response.data); // API 응답 출력
+        setReviewData(response.data);
+        setLikes(response.data.likeCnt || 0);
+        setComments(response.data.CommentList || []);
+      } catch (error) {
+        console.error('리뷰 데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchReviewData();
+  }, [reviewId]);
 
   const handleLike = () => {
     if (hasLiked) {
@@ -51,27 +71,31 @@ const ReviewDetail = () => {
 
   const closeAlertModal = () => setIsAlertModalOpen(false);
 
+  if (!reviewData) {
+    return <div>로딩 중...</div>;
+  }
+
   return (
     <div className="review-detail-container">
       <PerfumeSidebar />
       <div className="review-detail-content">
-        <h1>향수 이름</h1>
+        <h1>{reviewData.perfumeName}</h1>
         <div className="review-detail-card">
           <div className="review-detail-header">
             <div className="review-detail-user-info">
               <div className="review-detail-profile-pic"></div>
-              <h1>닉네임</h1>
+              <h1>{reviewData.writer.nickname}</h1>
             </div>
             <div className="review-detail-image">사진</div>
           </div>
           <div className="review-detail-body">
-            <h2>리뷰 제목</h2>
+            <h2>{reviewData.title}</h2>
             <div className="review-detail-body-info">
-              <p>별점 : </p>
-              <p>작성시간 : </p>
+              <p>별점 : {reviewData.rating}</p>
+              <p>작성시간 : {new Date(reviewData.createdAt).toLocaleDateString()}</p>
             </div>
             <div className="review-detail-body-content">
-              <p>리뷰 내용</p>
+              <p>{reviewData.content}</p>
             </div>
           </div>
           <div className="review-detail-actions">

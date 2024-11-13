@@ -81,30 +81,6 @@ const InquiryForm = ({ addInquiry }) => {
                 />
               </td>
             </tr>
-            <tr>
-              <th>사진</th>
-              <td>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
-                {imagePreviewUrl && (
-                  <div
-                    className="inquiry-form-image-preview-container"
-                    onMouseEnter={() => setShowHoverPreview(true)}
-                    onMouseLeave={() => setShowHoverPreview(false)}
-                  >
-                    <img
-                      src={imagePreviewUrl}
-                      alt="이미지 미리보기"
-                      className="inquiry-form-image-preview"
-                    />
-                    {showHoverPreview && (
-                      <div className="inquiry-form-hover-preview">
-                        <img src={imagePreviewUrl} alt="확대 이미지 미리보기" />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </td>
-            </tr>
           </tbody>
         </table>
         <div className="inquiry-form-action-buttons">

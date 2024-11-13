@@ -15,7 +15,7 @@ const MyPageSidebar = () => {
       
       <h3>내 리뷰 관리</h3>
       <ul>
-        <li><Link to="/MyPage/ReviewList">내 리뷰 목록</Link></li>
+        <li><Link to="/mypage/myreviewlist">내 리뷰 목록</Link></li>
         <li><Link to="/MyPage/ReviewForm">리뷰 등록</Link></li>
       </ul>
     </div>
