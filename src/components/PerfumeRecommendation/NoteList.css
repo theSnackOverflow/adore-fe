@@ -35,7 +35,7 @@
   .note-list-category-info {
     background-color: #f9f9f9;
     border-radius: 8px;
-    padding: 1rem;
+    padding: 1rem 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
@@ -48,13 +48,14 @@
     margin-bottom: 0.5rem;
   }
   
-  .note-list-category-description {
+  /* .note-list-category-description {
     font-size: 1rem;
     color: #666;
     margin-left: 0.5rem;
-  }
+  } */
   
   .note-list-category-info p {
+    padding: 0 1rem;
     font-size: 1rem;
     color: #333;
   }
