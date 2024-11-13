@@ -18,7 +18,7 @@ const Header = ({ userRole, onLogout }) => {
     } else if (userRole === "ADMIN") {
       return (
         <>
-          <li><Link to="/admin/statistics">통계 관리</Link></li>
+          <li><Link to="/admin/statisticsmanagement/adminstatistics">통계 관리</Link></li>
           <li><Link to="/Admin/PerfumeManagement/AdminPerfumeList">향수 관리</Link></li>
           <li><Link to="/Admin/UserManagement/UserList">회원 관리</Link></li>
           <li><Link to="/Admin/InquiryManagement/AdminInquiryList">문의사항 관리</Link></li>

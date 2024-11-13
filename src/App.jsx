@@ -36,6 +36,7 @@ import AdminNoticeCreate from './components/Admin/NoticeManagement/AdminNoticeCr
 import AdminSurveyList from './components/Admin/SurveyManagement/AdminSurveyList';
 import AdminSurveyDetail from './components/Admin/SurveyManagement/AdminSurveyDetail';
 import AdminSurveyCreate from './components/Admin/SurveyManagement/AdminSurveyCreate';
+import AdminStatistics from './components/Admin/StatisticsManagement/AdminStatistics'; // 관리자 통계 페이지 추가
 import axios from 'axios';
 import { removeCookie, getCookie, setCookie } from './lib/CookieUtil';
 import { isLogin, extractRole } from './lib/Auth';
@@ -149,10 +150,13 @@ function App() {
         <Route path="/Admin/NoticeManagement/AdminNoticeList" element={<AdminRoute element={<AdminNoticeList />} userRole={userRole} />} />
         <Route path="/Admin/NoticeManagement/AdminNoticeCreate" element={<AdminRoute element={<AdminNoticeCreate />} userRole={userRole} />} />
 
-        {/* Survey Management Routes */}
-        <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} userRole={userRole} />} />
+               {/* Survey Management Routes */}
+               <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} userRole={userRole} />} />
         <Route path="/Admin/SurveyManagement/AdminSurveyDetail/:id" element={<AdminRoute element={<AdminSurveyDetail />} userRole={userRole} />} />
         <Route path="/Admin/SurveyManagement/AdminSurveyCreate" element={<AdminRoute element={<AdminSurveyCreate />} userRole={userRole} />} />
+
+        {/* Statistics Management Route */}
+        <Route path="/Admin/StatisticsManagement/AdminStatistics" element={<AdminRoute element={<AdminStatistics />} userRole={userRole} />} />
       </Routes>
       <Footer />
       </div>
