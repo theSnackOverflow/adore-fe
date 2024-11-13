@@ -38,8 +38,13 @@ const SignUpForm = () => {
           agreeTerms,
           inflow: referral,
           gender,
+          nicknameDuplicate: true, // 닉네임 중복 체크 상태
+          emailDuplicate: isEmailDuplicateChecked, // 이메일 중복 체크 상태
+          emailVerify: isVerificationCodeValid, // 이메일 인증 상태
         });
-
+  
+        console.log('회원가입 응답:', response); // 서버 응답 확인
+  
         if (response.status === 200) {
           setIsModalOpen(true);
         }
@@ -143,7 +148,8 @@ const SignUpForm = () => {
         email,
         code: verificationCode,
       });
-      if (response.data === 'VERIFICATION_SUCCESS') {
+      console.log('Email verification response:', response.data); // 서버 응답 확인
+      if (response.data === 'EMAIL_AUTHORIZATION_SUCCESS') {  // 서버 응답 값 수정
         setIsVerificationCodeValid(true);
         setVerificationCodeMessage('인증이 성공적으로 완료되었습니다.');
       } else {
