@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "release": "vite --host gachon-adore.duckdns.org",
     "build": "vite build",
     "preview": "vite preview"
   },
