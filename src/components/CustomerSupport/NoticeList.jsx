@@ -36,6 +36,11 @@ const NoticeList = () => {
     fetchNotices(currentPage, searchQuery);
   }, [currentPage, searchQuery]);
 
+  // 페이지가 변경되면 스크롤을 아래로 내리는 useEffect
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, [currentPage, notices]); // currentPage나 notices가 변경될 때마다 실행
+
   const handleSearch = () => {
     setCurrentPage(1); // 검색 시 첫 페이지로 초기화
     fetchNotices(1, searchQuery);

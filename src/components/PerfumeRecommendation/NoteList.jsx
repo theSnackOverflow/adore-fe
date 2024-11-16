@@ -6,58 +6,108 @@ import NoteDetailModal from './NoteDetailModal';
 import './NoteList.css';
 
 const NoteList = () => {
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedNote, setSelectedNote] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [notes, setNotes] = useState([]);
-  const [mainCategories, setMainCategories] = useState([]);
-  const [categoryDescription, setCategoryDescription] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(''); // 선택된 대분류 이름
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null); // 선택된 대분류 ID
+  const [selectedNote, setSelectedNote] = useState(null); // 선택된 노트 데이터
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+  const [notes, setNotes] = useState([]); // 하위 노트 데이터
+  const [mainCategories, setMainCategories] = useState([]); // 대분류 데이터
+  const [categoryDescription, setCategoryDescription] = useState(''); // 대분류 설명
+  const [categoryImg, setCategoryImg] = useState(''); // 대분류
+  const [page, setPage] = useState(1); // 페이지 번호
+  const [loading, setLoading] = useState(false); // 로딩 상태
 
-  // 서버에서 노트 리스트 불러오기
+  // 대분류 목록 가져오기
   useEffect(() => {
-    const fetchNotes = async () => {
+    const fetchMainCategories = async () => {
       try {
-        const response = await axios.get('http://gachon-adore.duckdns.org:8081/user/perfume/note/list');
-        console.log("API Response:", response.data); // 응답 데이터 확인
+        const response = await axios.get(`https://gachon-adore.duckdns.org/api/user/perfume/note/parent`);
         if (response.data && response.data.length > 0) {
-          setNotes(response.data);
+          setMainCategories(response.data);
 
-          // parent_note_id가 -1인 노트만 필터링하여 대분류로 저장
-          const mainNotes = response.data.filter(note => note.parentNoteId === -1);
-          setMainCategories(mainNotes);
+          // 첫 번째 대분류를 기본 선택값으로 설정
+          const firstCategory = response.data[0];
+          setSelectedCategory(firstCategory.noteNm);
+          setSelectedCategoryId(firstCategory.id);
+          setCategoryDescription(firstCategory.noteNm);
+          setCategoryImg(firstCategory.noteImg);
 
-          // 첫 번째 대분류 노트를 기본 선택값으로 설정
-          if (mainNotes.length > 0) {
-            setSelectedCategory(mainNotes[0].noteNm);
-            setCategoryDescription(mainNotes[0].noteContent);
-          }
+          // 첫 번째 대분류의 하위 노트 로드
+          fetchNotes(firstCategory.id);
         }
       } catch (error) {
-        console.error('노트 데이터를 불러오는 중 오류 발생:', error);
+        console.error('대분류 데이터를 불러오는 중 오류 발생:', error);
       }
     };
 
-    fetchNotes();
+    fetchMainCategories();
   }, []);
 
-  const handleCategoryChange = (e) => {
-    const selected = e.target.value;
-    setSelectedCategory(selected);
-
-    // 선택한 대분류 노트의 설명을 업데이트
-    const category = mainCategories.find(category => category.noteNm === selected);
-    setCategoryDescription(category ? category.noteContent : '설명이 없습니다.');
+  // 선택된 대분류의 하위 노트 가져오기
+  const fetchNotes = async (categoryId) => {
+    if (loading) return; // 로딩 중일 경우 중복 요청 방지
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://gachon-adore.duckdns.org/api/user/perfume/note/lists/${page}`,
+        { params: { parent: categoryId } }
+      );
+      if (response.data && response.data.noteList) {
+        setNotes((prevNotes) => [...prevNotes, ...response.data.noteList]); // 이전 노트에 새로 받은 노트 추가
+      } else {
+        setNotes([]);
+      }
+    } catch (error) {
+      console.error('하위 노트를 불러오는 중 오류 발생:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // 대분류 변경 핸들러
+  const handleCategoryChange = (e) => {
+    const selected = mainCategories.find(category => category.noteNm === e.target.value);
+    if (selected) {
+      setSelectedCategory(selected.noteNm);
+      setSelectedCategoryId(selected.id);
+      setCategoryDescription(selected.noteNm);
+      setNotes([]); // 기존 노트 초기화
+      setPage(1); // 페이지 초기화
+      fetchNotes(selected.id); // 선택된 대분류의 하위 노트 로드
+    }
+  };
+
+  // 모달 열기
   const openModal = (note) => {
     setSelectedNote(note);
     setIsModalOpen(true);
   };
 
+  // 모달 닫기
   const closeModal = () => {
     setSelectedNote(null);
     setIsModalOpen(false);
   };
+
+  // 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    const bottom = window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight;
+    if (bottom) {
+      setPage((prevPage) => {
+        const nextPage = prevPage + 1;
+        fetchNotes(selectedCategoryId, nextPage);
+        return nextPage;
+      });
+    }
+  };
+
+  // 스크롤 이벤트 리스너 추가 및 정리
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [selectedCategoryId, page]);
 
   return (
     <div className="note-recommendation-container">
@@ -82,34 +132,33 @@ const NoteList = () => {
             {selectedCategory} <span className="note-list-category-description"></span>
           </h2>
           <p>
-            {categoryDescription} {/* 선택된 대분류 노트의 설명 */}
+            {categoryDescription} {/* 선택된 대분류 설명 */}
+            <img src={categoryImg} alt="category.noteNm" />
           </p>
         </div>
         <div className="note-list-grid">
-          {notes
-            .filter((note) => note.parentNoteId === mainCategories.find(category => category.noteNm === selectedCategory)?.noteId)
-            .map((note) => (
-            <NoteItem 
-              key={note.noteId} 
+          {notes.map((note, index) => (
+            <NoteItem
+              key={`${note.id}-${index}`} // Combine id and index to ensure a unique key
               note={{
-                id: note.noteId,
+                id: note.id,
                 name: note.noteNm,
                 description: note.noteContent,
                 imageUrl: note.noteImg
-              }} 
-              onClick={() => openModal(note)} 
+              }}
+              onClick={() => openModal(note)}
             />
           ))}
         </div>
         {isModalOpen && selectedNote && (
-          <NoteDetailModal 
+          <NoteDetailModal
             note={{
-              id: selectedNote.noteId,
+              id: selectedNote.id,
               name: selectedNote.noteNm,
               description: selectedNote.noteContent,
               imageUrl: selectedNote.noteImg
-            }} 
-            onClose={closeModal} 
+            }}
+            onClose={closeModal}
           />
         )}
       </div>

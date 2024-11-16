@@ -1,67 +1,75 @@
-/* src/components/PerfumeRecommendation/NoteList.css */
+/* Add this to apply shadow to individual note items */
+.note-item {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow effect */
+  cursor: pointer; /* Optional: makes it clear the item is clickable */
+  transition: box-shadow 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.note-item:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+}
+
+.note-list-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 1행에 3개씩 배치 */
+  gap: 1.5rem;
+}
+
+/* Adjusting existing styles */
 .note-recommendation-container {
-    display: flex;
-    padding: 2rem;
-  }
-  
-  .note-list {
-    flex: 1;
-    padding: 2rem 5rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .note-list-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .note-list-header h1 {
-    font-weight: bold;
-  }
-  
-  .note-list-category-select {
-    margin-left: 1rem;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 10rem;
-  }
-  
-  .note-list-category-info {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 1rem 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .note-list-category-info h2 {
-    display: flex;
-    align-items: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  /* .note-list-category-description {
-    font-size: 1rem;
-    color: #666;
-    margin-left: 0.5rem;
-  } */
-  
-  .note-list-category-info p {
-    padding: 0 1rem;
-    font-size: 1rem;
-    color: #333;
-  }
-  
-  .note-list-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 1행에 3개씩 배치 */
-    gap: 1.5rem;
+  display: flex;
+  padding: 2rem;
+}
+
+.note-list {
+  flex: 1;
+  padding: 2rem 5rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.note-list-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.note-list-header h1 {
+  font-weight: bold;
+}
+
+.note-list-category-select {
+  margin-left: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 10rem;
+}
+
+.note-list-category-info {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.note-list-category-info h2 {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.note-list-category-info p {
+  padding: 0 1rem;
+  font-size: 1rem;
+  color: #333;
 }
