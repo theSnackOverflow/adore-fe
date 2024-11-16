@@ -48,7 +48,7 @@ function App() {
   const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
   const instance = axios.create({
     baseURL: gatewayURL,
-    timeout: 1000
+    timeout: 5000
   });
 
   instance.interceptors.request.use(
@@ -64,7 +64,8 @@ function App() {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await axios.post('http://gachon-adore.duckdns.org:8084/api/auth/login', { email, password }, { withCredentials: true });
+      const response = await instance.post('/api/auth/login', { email, password }, { withCredentials: true });
+
       if (response.status === 200) {
         setCookie('accessToken', response.data.accessToken);
         setIsLoggedIn(true);
@@ -75,10 +76,11 @@ function App() {
       console.error("Login error:", error);
     }
   };
-
+  
   const handleLogout = async () => {
-    const response = await instance.get('/auth/logout', { withCredentials: true });
+    const response = await instance.get('/api/auth/logout', { withCredentials: true });
     if (response.status === 200) {
+      console.log("Logout success:", response.data);
       removeCookie('accessToken');
       setIsLoggedIn(false);
       setUserRole("GUEST");

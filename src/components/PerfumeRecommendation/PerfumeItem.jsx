@@ -15,23 +15,19 @@ const PerfumeItem = ({ perfume, onClick }) => {
   return (
     <div className="perfume-card" onClick={onClick}>
       <div className="perfume-card-content">
-        <h2>{perfume.perfume_nm}</h2>
+        <h2>{perfume.name}</h2>
         <p className="perfume-brand">{perfume.brand}</p>
-        <p className="perfume-desc">{perfume.perfume_desc}</p>
-
-        {/* 평점 표시 */}
-        <div className="perfume-rating">평점: {renderStars(perfume.rating_value)} ({perfume.rating_value})</div>
-
+        <p className="perfume-desc">{perfume.detail.perfumeDesc}</p>  
         {/* 향수 노트 추가 */}
         <div className="perfume-notes">
           <div className="note">
-            <strong>Top:</strong> {perfume.top}
+            <strong>Top:</strong> {perfume.detail.top}
           </div>
           <div className="note">
-            <strong>Middle:</strong> {perfume.middle}
+            <strong>Middle:</strong> {perfume.detail.middle}
           </div>
           <div className="note">
-            <strong>Base:</strong> {perfume.base}
+            <strong>Base:</strong> {perfume.detail.base}
           </div>
         </div>
       </div>

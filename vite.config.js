@@ -1,18 +1,18 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   server: {
     port: 5173,
-    host: "0.0.0.0",
+    host: '0.0.0.0',
     proxy: {
-      '/user': {
-        target: 'http://gachon-adore.duckdns.org:8081',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+      '/api': {
+        target: 'https://gachon-adore.duckdns.org', // API server URL
+        changeOrigin: true, // Modify the Origin header to match the target
+        secure: true, // If using HTTPS
+        rewrite: (path) => path.replace(/^\/api/, '') // Remove `/api` from the start of the path
+      }
+    }
   },
   plugins: [react()],
-})
+});
