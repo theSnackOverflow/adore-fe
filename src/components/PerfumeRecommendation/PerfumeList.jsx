@@ -108,22 +108,22 @@ const PerfumeList = () => {
       <div className="perfume-list">
         <div className="perfume-list-header">
           <h1>향수 검색</h1>
-          <div className="perfume-list-search-bar">
-            <select
-              value={searchType}
-              onChange={(e) => setSearchType(e.target.value)}
-            >
-              <option value="NAME">이름</option>
-              <option value="BRAND">브랜드</option>
-            </select>
-            <input
-              type="text"
-              placeholder="검색어 입력"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button onClick={handleSearch}>검색</button>
-          </div>
+        </div>
+      <div className="perfume-list-search-bar">
+          <select
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+          >
+            <option value="NAME">이름</option>
+            <option value="BRAND">브랜드</option>
+          </select>
+          <input
+            type="text"
+            placeholder="검색어 입력"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button onClick={handleSearch}>검색</button>
         </div>
         <div className="perfume-grid">
           {perfumes.map((perfume) => (
