@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom'; // 전달된 state를 받기 위해 사용
 import axios from 'axios';
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSidebar';
 import AlertModal from '../../Modals/AlertModal';
 import './UserInfoEdit.css';
 
 const UserInfoEdit = () => {
-  const [userId, setUserId] = useState(''); // 검색할 회원 번호
+  const location = useLocation(); // useLocation을 사용해 전달된 state를 가져옴
+  const userIdFromState = location.state?.userId || ''; // 전달된 userId
+  const [userId, setUserId] = useState(userIdFromState); // 검색할 회원 번호
   const [userData, setUserData] = useState({
     id: '',
     name: '',
@@ -23,14 +26,11 @@ const UserInfoEdit = () => {
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
-  const handleUserIdChange = (e) => {
-    setUserId(e.target.value);
-  };
-
-  const handleSearch = async () => {
+  // 회원 데이터를 불러오는 함수
+  const fetchUserData = async (id) => {
     try {
       const response = await axios.get(
-        `http://gachon-adore.duckdns.org:8111/api/admin/user/?id=${userId}`
+        `http://gachon-adore.duckdns.org:8111/api/admin/user/?id=${id}`
       );
       if (response.status === 200) {
         const data = response.data;
@@ -47,13 +47,29 @@ const UserInfoEdit = () => {
           createdAt: data.createdAt || '',
           updatedAt: data.updatedAt || '',
         });
-        setAlertMessage(`회원 번호 ${userId}의 정보를 불러왔습니다.`);
+        setAlertMessage(`회원 번호 ${id}의 정보를 불러왔습니다.`);
         setIsAlertModalOpen(true);
       }
     } catch (error) {
       console.error(error);
       setAlertMessage('회원 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.');
       setIsAlertModalOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    if (userIdFromState) {
+      fetchUserData(userIdFromState); // 전달된 userId가 있을 경우 바로 데이터 호출
+    }
+  }, [userIdFromState]);
+
+  const handleUserIdChange = (e) => {
+    setUserId(e.target.value);
+  };
+
+  const handleSearch = () => {
+    if (userId) {
+      fetchUserData(userId);
     }
   };
 
@@ -129,7 +145,7 @@ const UserInfoEdit = () => {
       }
       setIsAlertModalOpen(true);
     }
-};
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

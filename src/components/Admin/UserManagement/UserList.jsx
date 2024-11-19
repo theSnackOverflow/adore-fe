@@ -1,4 +1,3 @@
-// UserList.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위해 사용
 import axios from 'axios';
@@ -55,7 +54,8 @@ const UserList = () => {
   };
 
   const handleEditClick = (userId) => {
-    navigate(`/admin/user/edit/${userId}`); // 회원 정보 수정 페이지로 이동
+    // "회원 정보 수정" 페이지로 이동하며 userId를 state로 전달
+    navigate('/Admin/UserManagement/UserInfoEdit', { state: { userId } });
   };
 
   return (
