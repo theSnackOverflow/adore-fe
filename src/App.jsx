@@ -5,7 +5,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import Home from './components/Home/Home';
 import LoginForm from './components/LoginForm/LoginForm';
-import SignUpForm from './components/SignUpForm/SignUpForm';
+import SignUpForm from './components/SignUpForm/SignupForm';
 import PasswordChange from './components/MyPage/PasswordChange';
 import PersonalInfoEdit from './components/MyPage/PersonalInfoEdit';
 import AccountDelete from './components/MyPage/AccountDelete';
@@ -64,7 +64,7 @@ function App() {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await instance.post('/api/auth/login', { email, password }, { withCredentials: true });
+      const response = await instance.post('auth/login', { email, password }, { withCredentials: true });
 
       if (response.status === 200) {
         setCookie('accessToken', response.data.accessToken);
@@ -78,7 +78,7 @@ function App() {
   };
   
   const handleLogout = async () => {
-    const response = await instance.get('/api/auth/logout', { withCredentials: true });
+    const response = await instance.get('auth/logout', { withCredentials: true });
     if (response.status === 200) {
       console.log("Logout success:", response.data);
       removeCookie('accessToken');

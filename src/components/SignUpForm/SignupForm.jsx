@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import './SignUpForm.css';
-import SignupCompleteModal from '../Modals/SignUpCompleteModal';
+import './SignupForm.css';
+import SignupCompleteModal from '../Modals/SignupCompleteModal';
 
 const SignUpForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
