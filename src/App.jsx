@@ -152,8 +152,8 @@ function App() {
         <Route path="/Admin/NoticeManagement/AdminNoticeList" element={<AdminRoute element={<AdminNoticeList />} userRole={userRole} />} />
         <Route path="/Admin/NoticeManagement/AdminNoticeCreate" element={<AdminRoute element={<AdminNoticeCreate />} userRole={userRole} />} />
 
-               {/* Survey Management Routes */}
-               <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} userRole={userRole} />} />
+        {/* Survey Management Routes */}
+        <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} userRole={userRole} />} />
         <Route path="/Admin/SurveyManagement/AdminSurveyDetail/:id" element={<AdminRoute element={<AdminSurveyDetail />} userRole={userRole} />} />
         <Route path="/Admin/SurveyManagement/AdminSurveyCreate" element={<AdminRoute element={<AdminSurveyCreate />} userRole={userRole} />} />
 

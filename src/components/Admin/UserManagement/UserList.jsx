@@ -1,62 +1,61 @@
+// UserList.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위해 사용
 import axios from 'axios';
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSidebar';
 import './UserList.css';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // 페이지 이동을 위한 navigate
 
-  // 날짜 포맷 함수
-  const formatDate = (dateString) => {
-    return dateString.split('T')[0]; // "2024-11-19T12:34:56" -> "2024-11-19"
-  };
+  const formatDate = (dateString) => dateString.split('T')[0];
 
-  // API 호출 함수
   const fetchUsers = async (page = 1) => {
     try {
       const response = await axios.get(`/api/admin/user/lists/${page}`, {
         params: {
-          type: 'NAME', // 검색 기준 (이름)
-          keyword: searchQuery, // 검색어
+          type: 'NAME',
+          keyword: searchQuery,
         },
       });
 
-      const { memberList = [], totalPages } = response.data; // 응답 데이터에서 회원 목록과 전체 페이지 수 가져오기
-      console.log('API 응답 데이터:', memberList); // 디버깅용 데이터 출력
-
-      // 가입 날짜 포맷팅
+      const { memberList = [], totalPages } = response.data;
       const formattedUsers = memberList.map((user) => ({
         ...user,
         createdAt: formatDate(user.createdAt),
       }));
 
-      setUsers(formattedUsers); // 상태 업데이트
-      setTotalPages(totalPages); // 전체 페이지 수 업데이트
-      setError(null); // 오류 초기화
+      setUsers(formattedUsers);
+      setTotalPages(totalPages);
+      setError(null);
     } catch (error) {
-      console.error('API 호출 중 오류 발생:', error);
+      console.error('API 호출 중 오류:', error);
       setError('데이터를 불러오는 중 오류가 발생했습니다.');
     }
   };
 
-  // 검색어 변경 시와 현재 페이지 변경 시 데이터 호출
   useEffect(() => {
     fetchUsers(currentPage);
   }, [currentPage, searchQuery]);
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // 검색어 상태 업데이트
-    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage); // 페이지 이동
+      setCurrentPage(newPage);
     }
+  };
+
+  const handleEditClick = (userId) => {
+    navigate(`/admin/user/edit/${userId}`); // 회원 정보 수정 페이지로 이동
   };
 
   return (
@@ -93,13 +92,17 @@ const UserList = () => {
                 <td>{user.email}</td>
                 <td>{user.createdAt}</td>
                 <td>
-                  <button className="user-list-edit-button">수정</button>
+                  <button
+                    className="user-list-edit-button"
+                    onClick={() => handleEditClick(user.id)}
+                  >
+                    수정
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {/* 페이지네이션 */}
         <div className="pagination">
           {currentPage > 1 && (
             <button

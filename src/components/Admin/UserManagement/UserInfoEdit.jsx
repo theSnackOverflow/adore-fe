@@ -1,22 +1,25 @@
-// src/components/Admin/UserManagement/UserInfoEdit.jsx
 import React, { useState } from 'react';
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSidebar';
-import AlertModal from '../../Modals/AlertModal'; // AlertModal 임포트
+import AlertModal from '../../Modals/AlertModal';
 import './UserInfoEdit.css';
 
 const UserInfoEdit = () => {
   const [userData, setUserData] = useState({
-    id: '1003',
-    name: '홍길동',
-    email: 'hong@domain.com',
-    phone: '010-0000-0000',
-    birthdate: '2000-10-09',
-    gender: '남성',
-    address: '',
+    id: '', // 회원 번호
+    name: '', // 이름
+    email: '', // 이메일
+    nickname: '', // 닉네임
+    gender: '', // 성별
+    inflow: '', // 유입경로
+    birthDate: '', // 생년월일
+    state: '', // 회원 상태
+    role: '', // 역할 (USER, ADMIN 등)
+    createdAt: '', // 가입일
+    updatedAt: '', // 수정일
   });
-  
+
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(''); // 모달 메시지 상태 추가
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,13 +27,13 @@ const UserInfoEdit = () => {
   };
 
   const handleSave = () => {
-    setAlertMessage("해당 회원 정보가 저장되었습니다!");
-    setIsAlertModalOpen(true); // 저장 모달 열기
+    setAlertMessage('회원 정보가 성공적으로 저장되었습니다!');
+    setIsAlertModalOpen(true);
   };
 
   const handleDelete = () => {
-    setAlertMessage("해당 회원 정보가 삭제되었습니다.");
-    setIsAlertModalOpen(true); // 삭제 모달 열기
+    setAlertMessage('회원 정보가 삭제되었습니다.');
+    setIsAlertModalOpen(true);
   };
 
   const closeAlertModal = () => {
@@ -50,8 +53,8 @@ const UserInfoEdit = () => {
                 <td>
                   <input
                     type="text"
-                    value={userData.id}
                     name="id"
+                    value={userData.id}
                     disabled
                     className="user-info-edit-disabled-input"
                   />
@@ -59,30 +62,33 @@ const UserInfoEdit = () => {
               </tr>
               <tr>
                 <th>이름</th>
-                <td>{userData.name}</td>
-              </tr>
-              <tr>
-                <th>이메일</th>
-                <td>{userData.email}</td>
-              </tr>
-              <tr>
-                <th>전화번호</th>
                 <td>
                   <input
                     type="text"
-                    name="phone"
-                    value={userData.phone}
+                    name="name"
+                    value={userData.name}
                     onChange={handleInputChange}
                   />
                 </td>
               </tr>
               <tr>
-                <th>생년월일</th>
+                <th>닉네임</th>
                 <td>
                   <input
-                    type="date"
-                    name="birthdate"
-                    value={userData.birthdate}
+                    type="text"
+                    name="nickname"
+                    value={userData.nickname}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>이메일</th>
+                <td>
+                  <input
+                    type="text"
+                    name="email"
+                    value={userData.email}
                     onChange={handleInputChange}
                   />
                 </td>
@@ -101,30 +107,93 @@ const UserInfoEdit = () => {
                 </td>
               </tr>
               <tr>
-                <th>주소</th>
+                <th>유입 경로</th>
                 <td>
                   <input
                     type="text"
-                    name="address"
-                    value={userData.address}
+                    name="inflow"
+                    value={userData.inflow}
                     onChange={handleInputChange}
                   />
-                  <button className="user-info-edit-address-search-btn">검색</button>
+                </td>
+              </tr>
+              <tr>
+                <th>생년월일</th>
+                <td>
+                  <input
+                    type="date"
+                    name="birthDate"
+                    value={userData.birthDate}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>회원 상태</th>
+                <td>
+                  <select
+                    name="state"
+                    value={userData.state}
+                    onChange={handleInputChange}
+                  >
+                    <option value="ACTIVE">활성</option>
+                    <option value="INACTIVE">비활성</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th>회원 역할</th>
+                <td>
+                  <select
+                    name="role"
+                    value={userData.role}
+                    onChange={handleInputChange}
+                  >
+                    <option value="USER">사용자</option>
+                    <option value="ADMIN">관리자</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th>가입일</th>
+                <td>
+                  <input
+                    type="text"
+                    name="createdAt"
+                    value={userData.createdAt}
+                    disabled
+                    className="user-info-edit-disabled-input"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>수정일</th>
+                <td>
+                  <input
+                    type="text"
+                    name="updatedAt"
+                    value={userData.updatedAt}
+                    disabled
+                    className="user-info-edit-disabled-input"
+                  />
                 </td>
               </tr>
             </tbody>
           </table>
           <div className="user-info-edit-buttons">
-            <button onClick={handleSave} className="user-info-edit-save-btn">저장</button>
-            <button onClick={handleDelete} className="user-info-edit-delete-btn">삭제</button>
+            <button onClick={handleSave} className="user-info-edit-save-btn">
+              저장
+            </button>
+            <button onClick={handleDelete} className="user-info-edit-delete-btn">
+              삭제
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 저장 및 삭제 알림 모달 */}
       {isAlertModalOpen && (
         <AlertModal
-          message={alertMessage} // 동적으로 설정된 메시지 표시
+          message={alertMessage}
           onClose={closeAlertModal}
         />
       )}
