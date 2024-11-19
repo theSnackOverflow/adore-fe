@@ -45,7 +45,7 @@ const LoginForm = ({ onLogin }) => {
 
       if (loginResult === "ADMIN") {
         setIsSuccessModalOpen(true);
-        navigate('/admin/statistics');  // 관리자 페이지로 이동
+        navigate('/admin/statisticsmanagement/adminstatistics');  // 관리자 페이지로 이동
       } else if (loginResult === "USER") {
         console.log("로그인 성공!");
         navigate('/');  // 홈 페이지로 이동
