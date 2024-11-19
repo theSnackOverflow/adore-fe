@@ -1,39 +1,139 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSidebar';
 import AlertModal from '../../Modals/AlertModal';
 import './UserInfoEdit.css';
 
 const UserInfoEdit = () => {
+  const [userId, setUserId] = useState(''); // 검색할 회원 번호
   const [userData, setUserData] = useState({
-    id: '', // 회원 번호
-    name: '', // 이름
-    email: '', // 이메일
-    nickname: '', // 닉네임
-    gender: '', // 성별
-    inflow: '', // 유입경로
-    birthDate: '', // 생년월일
-    state: '', // 회원 상태
-    role: '', // 역할 (USER, ADMIN 등)
-    createdAt: '', // 가입일
-    updatedAt: '', // 수정일
+    id: '',
+    name: '',
+    email: '',
+    nickname: '',
+    gender: '',
+    inflow: '',
+    birthDate: '',
+    state: '',
+    role: '',
+    createdAt: '',
+    updatedAt: '',
   });
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
+  const handleUserIdChange = (e) => {
+    setUserId(e.target.value);
+  };
+
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(
+        `http://gachon-adore.duckdns.org:8111/api/admin/user/?id=${userId}`
+      );
+      if (response.status === 200) {
+        const data = response.data;
+        setUserData({
+          id: data.id || '',
+          name: data.name || '',
+          email: data.email || '',
+          nickname: data.nickname || '',
+          gender: data.gender || '',
+          inflow: data.inflow || '',
+          birthDate: data.birthDate || '',
+          state: data.state || '',
+          role: data.role || '',
+          createdAt: data.createdAt || '',
+          updatedAt: data.updatedAt || '',
+        });
+        setAlertMessage(`회원 번호 ${userId}의 정보를 불러왔습니다.`);
+        setIsAlertModalOpen(true);
+      }
+    } catch (error) {
+      console.error(error);
+      setAlertMessage('회원 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.');
+      setIsAlertModalOpen(true);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.patch(
+        `http://gachon-adore.duckdns.org:8111/api/admin/user/update?id=${userData.id}`,
+        {
+          name: userData.name,
+          email: userData.email,
+          nickname: userData.nickname,
+          gender: userData.gender,
+          inflow: userData.inflow,
+          birthDate: userData.birthDate,
+          state: userData.state,
+          role: userData.role,
+        }
+      );
+      if (response.status === 200) {
+        setAlertMessage('회원 정보가 성공적으로 수정되었습니다.');
+        setIsAlertModalOpen(true);
+      }
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.data.message) {
+        setAlertMessage(`수정 실패: ${error.response.data.message}`);
+      } else {
+        setAlertMessage('회원 정보를 수정하는 데 실패했습니다. 다시 시도해주세요.');
+      }
+      setIsAlertModalOpen(true);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!userData.id) {
+      setAlertMessage('삭제할 사용자를 먼저 조회해주세요.');
+      setIsAlertModalOpen(true);
+      return;
+    }
+
+    const confirmDelete = window.confirm(`회원 번호 ${userData.id}를 삭제하시겠습니까?`);
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `http://gachon-adore.duckdns.org:8111/api/admin/user/delete?id=${userData.id}`
+      );
+      if (response.status === 200) {
+        setAlertMessage('회원 정보가 성공적으로 삭제되었습니다.');
+        setUserData({
+          id: '',
+          name: '',
+          email: '',
+          nickname: '',
+          gender: '',
+          inflow: '',
+          birthDate: '',
+          state: '',
+          role: '',
+          createdAt: '',
+          updatedAt: '',
+        });
+        setIsAlertModalOpen(true);
+      }
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.data.message) {
+        setAlertMessage(`삭제 실패: ${error.response.data.message}`);
+      } else {
+        setAlertMessage('회원 정보를 삭제하는 데 실패했습니다. 다시 시도해주세요.');
+      }
+      setIsAlertModalOpen(true);
+    }
+};
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
-  };
-
-  const handleSave = () => {
-    setAlertMessage('회원 정보가 성공적으로 저장되었습니다!');
-    setIsAlertModalOpen(true);
-  };
-
-  const handleDelete = () => {
-    setAlertMessage('회원 정보가 삭제되었습니다.');
-    setIsAlertModalOpen(true);
   };
 
   const closeAlertModal = () => {
@@ -51,13 +151,17 @@ const UserInfoEdit = () => {
               <tr>
                 <th>회원 번호</th>
                 <td>
-                  <input
-                    type="text"
-                    name="id"
-                    value={userData.id}
-                    disabled
-                    className="user-info-edit-disabled-input"
-                  />
+                  <div className="user-info-search-bar">
+                    <input
+                      type="text"
+                      placeholder="회원 번호 입력"
+                      value={userId}
+                      onChange={handleUserIdChange}
+                    />
+                    <button onClick={handleSearch} className="user-info-search-btn">
+                      조회
+                    </button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -182,7 +286,7 @@ const UserInfoEdit = () => {
           </table>
           <div className="user-info-edit-buttons">
             <button onClick={handleSave} className="user-info-edit-save-btn">
-              저장
+              수정
             </button>
             <button onClick={handleDelete} className="user-info-edit-delete-btn">
               삭제

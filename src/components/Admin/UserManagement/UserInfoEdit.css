@@ -43,17 +43,38 @@
   
   .user-info-edit-table td input,
   .user-info-edit-table td select {
-    width: 80%;
+    width: 60%;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
   
-  .user-info-edit-disabled-input {
-    background-color: #f5f5f5;
-    color: #888;
+  .user-info-search-bar {
+    display: flex;
+    gap: 0.5rem;
   }
   
+  .user-info-search-bar input {
+    width: 53% !important;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .user-info-search-btn {
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .user-info-search-btn:hover {
+    background-color: #555;
+  }
+  
+
   .user-info-edit-address-search-btn {
     margin-left: 0.5rem;
     padding: 0.4rem 1rem;

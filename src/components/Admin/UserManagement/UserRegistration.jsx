@@ -10,7 +10,7 @@ const UserRegistration = () => {
     email: '',
     password: '', // Swagger 명세에 따라 추가
     birthdate: '',
-    gender: '남성',
+    gender: '',
     inflow: '', // 유입경로 추가
     nickname: '', // 닉네임 추가
     state: 'ACTIVE', // 상태 추가 (기본값 설정)
