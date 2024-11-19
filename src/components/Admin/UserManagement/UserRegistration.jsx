@@ -8,17 +8,17 @@ const UserRegistration = () => {
   const [userData, setUserData] = useState({
     name: '',
     email: '',
-    password: '', // Swagger 명세에 따라 추가
-    birthdate: '',
+    password: '',
+    birthDate: '',
     gender: '',
-    inflow: '', // 유입경로 추가
-    nickname: '', // 닉네임 추가
-    state: 'ACTIVE', // 상태 추가 (기본값 설정)
-    role: 'USER', // 역할 추가 (기본값 설정)
+    inflow: '',
+    nickname: '',
+    state: 'ACTIVE',
+    role: 'USER',
   });
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(''); // Alert 메시지 상태 추가
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,17 +26,40 @@ const UserRegistration = () => {
   };
 
   const handleRegister = async () => {
-    // 필수 항목 검사
     if (!userData.name || !userData.email || !userData.password || !userData.birthdate || !userData.nickname) {
-      setAlertMessage("필수 항목을 모두 입력해주세요");
+      setAlertMessage('필수 항목을 모두 입력해주세요.');
       setIsAlertModalOpen(true);
       return;
     }
 
     try {
-      const response = await axios.post('/api/admin/user/create', userData);
-      setAlertMessage('회원이 성공적으로 등록되었습니다!');
-      setIsAlertModalOpen(true);
+      const response = await axios.post('http://gachon-adore.duckdns.org:8111/api/admin/user/create', {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        birthDate: userData.birthdate,
+        gender: userData.gender,
+        inflow: userData.inflow,
+        nickname: userData.nickname,
+        state: userData.state,
+        role: userData.role,
+      });
+
+      if (response.status === 200) {
+        setAlertMessage('회원이 성공적으로 등록되었습니다!');
+        setIsAlertModalOpen(true);
+        setUserData({
+          name: '',
+          email: '',
+          password: '',
+          birthDate: '',
+          gender: '',
+          inflow: '',
+          nickname: '',
+          state: 'ACTIVE',
+          role: 'USER',
+        });
+      }
     } catch (error) {
       console.error('회원 등록 오류:', error);
       const errorMessage = error.response?.data?.message || '회원 등록 중 오류가 발생했습니다.';
@@ -46,7 +69,18 @@ const UserRegistration = () => {
   };
 
   const handleCancel = () => {
-    setAlertMessage("회원 등록을 취소했습니다");
+    setUserData({
+      name: '',
+      email: '',
+      password: '',
+      birthDate: '',
+      gender: '',
+      inflow: '',
+      nickname: '',
+      state: 'ACTIVE',
+      role: 'USER',
+    });
+    setAlertMessage('회원 등록을 취소했습니다.');
     setIsAlertModalOpen(true);
   };
 
@@ -144,8 +178,12 @@ const UserRegistration = () => {
             </tbody>
           </table>
           <div className="user-registration-buttons">
-            <button onClick={handleRegister} className="user-registration-register-btn">등록</button>
-            <button onClick={handleCancel} className="user-registration-cancel-btn">취소</button>
+            <button onClick={handleRegister} className="user-registration-register-btn">
+              등록
+            </button>
+            <button onClick={handleCancel} className="user-registration-cancel-btn">
+              취소
+            </button>
           </div>
         </div>
       </div>
