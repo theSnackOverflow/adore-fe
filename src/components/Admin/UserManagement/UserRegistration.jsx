@@ -1,5 +1,5 @@
-// src/components/Admin/UserManagement/UserRegistration.jsx
 import React, { useState } from 'react';
+import axios from 'axios';
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSidebar';
 import AlertModal from '../../Modals/AlertModal'; // AlertModal 임포트
 import './UserRegistration.css';
@@ -8,10 +8,13 @@ const UserRegistration = () => {
   const [userData, setUserData] = useState({
     name: '',
     email: '',
-    phone: '',
+    password: '', // Swagger 명세에 따라 추가
     birthdate: '',
     gender: '남성',
-    address: '',
+    inflow: '', // 유입경로 추가
+    nickname: '', // 닉네임 추가
+    state: 'ACTIVE', // 상태 추가 (기본값 설정)
+    role: 'USER', // 역할 추가 (기본값 설정)
   });
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
@@ -22,15 +25,23 @@ const UserRegistration = () => {
     setUserData({ ...userData, [name]: value });
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     // 필수 항목 검사
-    if (!userData.name || !userData.email || !userData.phone || !userData.birthdate || !userData.address) {
+    if (!userData.name || !userData.email || !userData.password || !userData.birthdate || !userData.nickname) {
       setAlertMessage("필수 항목을 모두 입력해주세요");
       setIsAlertModalOpen(true);
-    } else {
-      setAlertMessage("회원이 성공적으로 등록되었습니다!");
+      return;
+    }
+
+    try {
+      const response = await axios.post('/api/admin/user/create', userData);
+      setAlertMessage('회원이 성공적으로 등록되었습니다!');
       setIsAlertModalOpen(true);
-      // 등록 로직 추가 가능
+    } catch (error) {
+      console.error('회원 등록 오류:', error);
+      const errorMessage = error.response?.data?.message || '회원 등록 중 오류가 발생했습니다.';
+      setAlertMessage(errorMessage);
+      setIsAlertModalOpen(true);
     }
   };
 
@@ -74,12 +85,12 @@ const UserRegistration = () => {
                 </td>
               </tr>
               <tr>
-                <th>전화번호</th>
+                <th>비밀번호</th>
                 <td>
                   <input
-                    type="text"
-                    name="phone"
-                    value={userData.phone}
+                    type="password"
+                    name="password"
+                    value={userData.password}
                     onChange={handleInputChange}
                   />
                 </td>
@@ -109,15 +120,25 @@ const UserRegistration = () => {
                 </td>
               </tr>
               <tr>
-                <th>주소</th>
+                <th>닉네임</th>
                 <td>
                   <input
                     type="text"
-                    name="address"
-                    value={userData.address}
+                    name="nickname"
+                    value={userData.nickname}
                     onChange={handleInputChange}
                   />
-                  <button className="user-registration-address-search-btn">검색</button>
+                </td>
+              </tr>
+              <tr>
+                <th>유입 경로</th>
+                <td>
+                  <input
+                    type="text"
+                    name="inflow"
+                    value={userData.inflow}
+                    onChange={handleInputChange}
+                  />
                 </td>
               </tr>
             </tbody>
