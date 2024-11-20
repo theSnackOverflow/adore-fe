@@ -6,10 +6,9 @@ const AdminNoticeManagementSidebar = () => {
     <div className="sidebar">
       <h3><Link to="/Admin/NoticeManagement/AdminNoticeList">공지사항 목록 조회</Link></h3>
       <ul>
-        <li><Link to="/Admin/NoticeManagement/AdminNoticeList?status=활성화">활성화</Link></li>
-        <li><Link to="/Admin/NoticeManagement/AdminNoticeList?status=비활성화">비활성화</Link></li>
+        <li><Link to="/Admin/NoticeManagement/AdminNoticeCreate">공지사항 수정</Link></li>
+        <li><Link to="/Admin/NoticeManagement/AdminNoticeCreate">공지사항 등록</Link></li>
       </ul>
-      <h3><Link to="/Admin/NoticeManagement/AdminNoticeCreate">공지사항 등록</Link></h3>
     </div>
   );
 };
