@@ -1,70 +1,71 @@
-// src/components/Admin/InquiryManagement/AdminInquiryList.jsx
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import AdminInquiryManagementSidebar from '../../Sidebars/AdminSidebars/AdminInquiryManagementSidebar';
 import './AdminInquiryList.css';
 
-// 랜덤 이름, 제목, 상태, 날짜 생성
-const names = ['홍길동', '김영희', '이철수', '박민수', '최수정', '윤지영', '박상우', '김다은', '정준호', '이지은'];
-const titles = [
-  '로그인 문제', '회원가입 오류', '결제 관련 문의', '배송 지연', '환불 요청',
-  '상품 정보 수정 요청', '리뷰 작성 관련', '배송 상태 문의', '비밀번호 변경 요청', '계정 삭제 문의'
-];
-const statuses = ['답변 대기', '답변 중', '답변 완료'];
-const getRandomDate = () => {
-  const start = new Date(2024, 0, 1);
-  const end = new Date();
-  const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-};
-
-// 더미 데이터 생성
-const inquiries = Array.from({ length: 200 }, (_, index) => ({
-  id: 200 - index,
-  writer: names[Math.floor(Math.random() * names.length)],
-  title: titles[Math.floor(Math.random() * titles.length)],
-  date: getRandomDate(),
-  status: statuses[Math.floor(Math.random() * statuses.length)],
-}));
-
 const AdminInquiryList = () => {
   const location = useLocation();
+  const [inquiries, setInquiries] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
   const pagesPerGroup = 10;
 
-  // 쿼리 파라미터에서 status 값을 추출
+  // 쿼리 파라미터에서 상태 필터 값 추출
   const queryParams = new URLSearchParams(location.search);
-  const statusFilter = queryParams.get('status');
+  const statusFilter = queryParams.get('status') || 'WAIT';
+
+  // 데이터 가져오기
+  const fetchInquiries = async (page = 1) => {
+    try {
+      const response = await axios.get(
+        `http://gachon-adore.duckdns.org:8111/api/admin/question/lists/${page}`,
+        {
+          params: {
+            type: 'TITLE', // 제목 검색
+            filter: statusFilter, // 상태 필터
+            category: 'COMMENT', // 카테고리
+            keyword: searchQuery, // 검색어
+          },
+        }
+      );
+
+      const { questionList, totalPages } = response.data;
+
+      setInquiries(questionList || []);
+      setTotalPages(totalPages || 1);
+    } catch (error) {
+      console.error('데이터를 가져오는 중 오류가 발생했습니다.', error);
+      setInquiries([]); // 오류 발생 시 목록 비우기
+    }
+  };
+
+  // 페이지가 로드되거나 검색어/페이지 변경 시 데이터 로드
+  useEffect(() => {
+    fetchInquiries(currentPage);
+  }, [currentPage, searchQuery]);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
   };
 
-  // 검색 및 상태 필터링
-  const filteredInquiries = inquiries
-    .filter((inquiry) =>
-      (!statusFilter || inquiry.status === statusFilter) &&
-      (inquiry.writer.includes(searchQuery) || inquiry.title.includes(searchQuery))
-    )
-    .sort((a, b) => b.id - a.id);
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentInquiries = filteredInquiries.slice(indexOfFirstItem, indexOfLastItem);
-
-  const totalPages = Math.ceil(filteredInquiries.length / itemsPerPage);
   const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
   const startPage = currentGroup * pagesPerGroup + 1;
   const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
 
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
   const goToPreviousGroup = () => {
     if (startPage > 1) setCurrentPage(startPage - 1);
   };
+
   const goToNextGroup = () => {
     if (endPage < totalPages) setCurrentPage(endPage + 1);
   };
@@ -78,7 +79,7 @@ const AdminInquiryList = () => {
           <div className="admin-inquiry-search-bar">
             <input
               type="text"
-              placeholder="사용자 이름, 제목 등"
+              placeholder="제목 검색"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -95,21 +96,28 @@ const AdminInquiryList = () => {
             </tr>
           </thead>
           <tbody>
-            {currentInquiries.map((inquiry) => (
-              <tr key={inquiry.id}>
-                <td>{inquiry.id}</td>
-                <td>{inquiry.writer}</td>
-                <td>{inquiry.title}</td>
-                <td>{inquiry.date}</td>
-                <td>{inquiry.status}</td>
+            {inquiries.length > 0 ? (
+              inquiries.map((inquiry) => (
+                <tr key={inquiry.id}>
+                  <td>{inquiry.id}</td>
+                  <td>{inquiry.nickname}</td>
+                  <td>{inquiry.title}</td>
+                  <td>{inquiry.createdAt.split('T')[0]}</td>
+                  <td>{inquiry.state}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5">조회된 문의사항이 없습니다.</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
-        
         <div className="admin-inquiry-listpagination">
           {startPage > 1 && (
-            <button onClick={goToPreviousGroup} className="admin-inquiry-listpagination-nav">이전</button>
+            <button onClick={goToPreviousGroup} className="admin-inquiry-listpagination-nav">
+              이전
+            </button>
           )}
           {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
             <button
@@ -121,7 +129,9 @@ const AdminInquiryList = () => {
             </button>
           ))}
           {endPage < totalPages && (
-            <button onClick={goToNextGroup} className="admin-inquiry-listpagination-nav">다음</button>
+            <button onClick={goToNextGroup} className="admin-inquiry-listpagination-nav">
+              다음
+            </button>
           )}
         </div>
       </div>
