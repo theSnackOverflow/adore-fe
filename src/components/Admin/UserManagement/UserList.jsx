@@ -5,7 +5,7 @@ import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSi
 import './UserList.css';
 
 const UserList = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]); // 여기가 `users`로 선언됨
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,7 +29,7 @@ const UserList = () => {
         createdAt: formatDate(user.createdAt),
       }));
 
-      setUsers(formattedUsers);
+      setUsers(formattedUsers); // 여기도 `users` 상태를 설정
       setTotalPages(totalPages);
       setError(null);
     } catch (error) {
@@ -54,9 +54,14 @@ const UserList = () => {
   };
 
   const handleEditClick = (userId) => {
-    // "회원 정보 수정" 페이지로 이동하며 userId를 state로 전달
     navigate('/Admin/UserManagement/UserInfoEdit', { state: { userId } });
   };
+
+  // 페이지네이션 그룹 계산
+  const pagesPerGroup = 10; // 한 번에 표시할 페이지 버튼 수
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup); // 현재 그룹 계산
+  const startPage = (currentGroup - 1) * pagesPerGroup + 1; // 그룹의 첫 페이지
+  const endPage = Math.min(currentGroup * pagesPerGroup, totalPages); // 그룹의 마지막 페이지
 
   return (
     <div className="user-list-container">
@@ -85,7 +90,7 @@ const UserList = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {users.map((user) => ( // `users`로 변경
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.name}</td>
@@ -104,28 +109,28 @@ const UserList = () => {
           </tbody>
         </table>
         <div className="pagination">
-          {currentPage > 1 && (
+          {startPage > 1 && (
             <button
-              onClick={() => handlePageChange(currentPage - 1)}
+              onClick={() => handlePageChange(startPage - 1)}
               className="pagination-button"
             >
               이전
             </button>
           )}
-          {Array.from({ length: totalPages }, (_, i) => (
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => (
             <button
-              key={i + 1}
-              onClick={() => handlePageChange(i + 1)}
+              key={startPage + i}
+              onClick={() => handlePageChange(startPage + i)}
               className={`pagination-button ${
-                currentPage === i + 1 ? 'active' : ''
+                currentPage === startPage + i ? 'active' : ''
               }`}
             >
-              {i + 1}
+              {startPage + i}
             </button>
           ))}
-          {currentPage < totalPages && (
+          {endPage < totalPages && (
             <button
-              onClick={() => handlePageChange(currentPage + 1)}
+              onClick={() => handlePageChange(endPage + 1)}
               className="pagination-button"
             >
               다음
