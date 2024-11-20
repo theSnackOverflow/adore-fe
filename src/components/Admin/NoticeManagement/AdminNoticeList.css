@@ -57,6 +57,17 @@
     font-weight: bold;
 }
 
+.admin-notice-list-edit-button {
+    padding: 0.4rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+  .admin-notice-list-edit-button:hover {
+    background-color: #e0e0e0;
+  }
+
 .admin-notice-pagination {
     display: flex;
     justify-content: center;

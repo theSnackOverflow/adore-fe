@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import AdminNoticeManagementSidebar from '../../Sidebars/AdminSidebars/AdminNoticeManagementSidebar';
 import './AdminNoticeList.css';
 
@@ -12,6 +13,8 @@ const AdminNoticeList = () => {
   const [error, setError] = useState(null);
   const itemsPerPage = 10;
   const pagesPerGroup = 10;
+
+  const navigate = useNavigate();
 
   // 공지사항 API 호출 함수
   const fetchNotices = async (page = 1) => {
@@ -53,6 +56,11 @@ const AdminNoticeList = () => {
   };
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handleEdit = (id) => {
+    // 수정 페이지로 이동
+    navigate(`/admin/notification/edit/${id}`);
+  };
 
   const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
   const startPage = currentGroup * pagesPerGroup + 1;
@@ -99,6 +107,7 @@ const AdminNoticeList = () => {
               <th>작성자 이메일</th>
               <th>상태</th>
               <th>작성 시간</th>
+              <th>수정</th> {/* 수정 열 추가 */}
             </tr>
           </thead>
           <tbody>
@@ -111,11 +120,19 @@ const AdminNoticeList = () => {
                   <td>{notice.email}</td>
                   <td>{notice.state}</td>
                   <td>{new Date(notice.createdAt).toLocaleString()}</td>
+                  <td>
+                    <button
+                      onClick={() => handleEdit(notice.id)}
+                      className="admin-notice-list-edit-button"
+                    >
+                      수정
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6">데이터가 없습니다.</td>
+                <td colSpan="7">데이터가 없습니다.</td>
               </tr>
             )}
           </tbody>
