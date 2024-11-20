@@ -8,15 +8,14 @@ const AdminNoticeList = () => {
   const [notices, setNotices] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('1'); // 디폴트 값 설정
-  const [searchType, setSearchType] = useState('NAME'); // 디폴트 값 설정
+  const [searchQuery, setSearchQuery] = useState('.');
+  const [searchType, setSearchType] = useState('TITLE');
   const [error, setError] = useState(null);
   const itemsPerPage = 10;
   const pagesPerGroup = 10;
 
   const navigate = useNavigate();
 
-  // 공지사항 API 호출 함수
   const fetchNotices = async (page = 1) => {
     try {
       const params = {
@@ -25,7 +24,7 @@ const AdminNoticeList = () => {
       };
 
       const response = await axios.get(
-        `http://gachon-adore.duckdns.org:8111/api/admin/notification/lists/${page}`,
+        `https://gachon-adore.duckdns.org/api/admin/notification/lists/${page}`,
         { params }
       );
 
@@ -40,7 +39,6 @@ const AdminNoticeList = () => {
     }
   };
 
-  // 컴포넌트 로드 시 기본값으로 API 호출
   useEffect(() => {
     fetchNotices(currentPage);
   }, [currentPage, searchQuery, searchType]);
@@ -58,8 +56,7 @@ const AdminNoticeList = () => {
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleEdit = (id) => {
-    // 수정 페이지로 이동
-    navigate(`/admin/notification/edit/${id}`);
+    navigate('/Admin/NoticeManagement/AdminNoticeEdit', { state: { id } });
   };
 
   const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
@@ -83,8 +80,8 @@ const AdminNoticeList = () => {
           <div className="admin-notice-search-bar">
             <select value={searchType} onChange={handleSearchTypeChange}>
               <option value="TITLE">제목</option>
-              <option value="NICKNAME">작성자 닉네임</option>
-              <option value="EMAIL">작성자 이메일</option>
+              <option value="NICKNAME">작성자</option>
+              <option value="EMAIL">이메일</option>
               <option value="STATE">상태</option>
               <option value="BRAND">브랜드</option>
               <option value="NAME">이름</option>
@@ -103,11 +100,11 @@ const AdminNoticeList = () => {
             <tr>
               <th>번호</th>
               <th>제목</th>
-              <th>작성자 닉네임</th>
-              <th>작성자 이메일</th>
+              <th>작성자</th>
+              <th>이메일</th>
               <th>상태</th>
               <th>작성 시간</th>
-              <th>수정</th> {/* 수정 열 추가 */}
+              <th>수정</th>
             </tr>
           </thead>
           <tbody>
