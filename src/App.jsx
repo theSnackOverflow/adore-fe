@@ -33,6 +33,7 @@ import PerfumeRegistration from './components/Admin/PerfumeManagement/PerfumeReg
 import AdminInquiryList from './components/Admin/InquiryManagement/AdminInquiryList';
 import AdminNoticeList from './components/Admin/NoticeManagement/AdminNoticeList';
 import AdminNoticeCreate from './components/Admin/NoticeManagement/AdminNoticeCreate';
+import AdminNoticeEdit from './components/Admin/NoticeManagement/AdminNoticeEdit';
 import AdminSurveyList from './components/Admin/SurveyManagement/AdminSurveyList';
 import AdminSurveyDetail from './components/Admin/SurveyManagement/AdminSurveyDetail';
 import AdminSurveyCreate from './components/Admin/SurveyManagement/AdminSurveyCreate';
@@ -151,6 +152,8 @@ function App() {
         {/* Notice Management Routes */}
         <Route path="/Admin/NoticeManagement/AdminNoticeList" element={<AdminRoute element={<AdminNoticeList />} userRole={userRole} />} />
         <Route path="/Admin/NoticeManagement/AdminNoticeCreate" element={<AdminRoute element={<AdminNoticeCreate />} userRole={userRole} />} />
+        <Route path="/Admin/NoticeManagement/AdminNoticeEdit" element={<AdminRoute element={<AdminNoticeEdit />} />} /> {/* 추가 */}
+
 
         {/* Survey Management Routes */}
         <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} userRole={userRole} />} />
