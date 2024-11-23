@@ -16,7 +16,7 @@ const UserList = () => {
 
   const fetchUsers = async (page = 1) => {
     try {
-      const response = await axios.get(`http://gachon-adore.duckdns.org:8111/api/admin/user/lists/${page}`, {
+      const response = await axios.get(`https://gachon-adore.duckdns.org/api/admin/user/lists/${page}`, {
         params: {
           type: 'NAME',
           keyword: searchQuery,
