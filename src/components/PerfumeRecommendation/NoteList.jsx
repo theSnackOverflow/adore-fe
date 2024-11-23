@@ -17,11 +17,12 @@ const NoteList = () => {
   const [page, setPage] = useState(1); // 페이지 번호
   const [loading, setLoading] = useState(false); // 로딩 상태
 
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
   // 대분류 목록 가져오기
   useEffect(() => {
     const fetchMainCategories = async () => {
       try {
-        const response = await axios.get(`https://gachon-adore.duckdns.org/api/user/perfume/note/parent`);
+        const response = await axios.get(`${gatewayURL}/api/user/perfume/note/parent`);
         if (response.data && response.data.length > 0) {
           setMainCategories(response.data);
 
@@ -49,7 +50,7 @@ const NoteList = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://gachon-adore.duckdns.org/api/user/perfume/note/lists/${page}`,
+        `${gatewayURL}/api/user/perfume/note/lists/${page}`,
         { params: { parent: categoryId } }
       );
       if (response.data && response.data.noteList) {

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { getCookie } from './CookieUtil'; // utils 디렉토리 안에 CookieUtil.js가 있는 경우
 
+const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+
 const axiosInstance = axios.create({
-  baseURL: 'https://gachon-adore.duckdns.org:8111',
+  baseURL: `${gatewayURL}`,
   timeout: 5000,
 });
 

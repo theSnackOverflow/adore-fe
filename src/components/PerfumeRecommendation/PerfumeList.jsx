@@ -14,11 +14,13 @@ const PerfumeList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNext, setHasNext] = useState(true); // 다음 페이지 여부
 
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+
   const fetchPerfumeList = async (page = 1, append = false) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://gachon-adore.duckdns.org/api/user/perfume/lists/${page}`,
+        `${gatewayURL}/api/user/perfume/lists/${page}`,
         {
           params: { type: searchType, keyword: searchQuery },
         }
@@ -32,7 +34,7 @@ const PerfumeList = () => {
           perfumeList.map(async (perfume) => {
             try {
               const detailResponse = await axios.get(
-                `https://gachon-adore.duckdns.org/api/user/perfume/`,
+                `${gatewayURL}/api/user/perfume/`,
                 { params: { id: perfume.id } }
               );
               return { ...perfume, detail: detailResponse.data };
