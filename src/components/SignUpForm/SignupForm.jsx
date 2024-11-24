@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import axiosInstance from '../../lib/axiosInstance';
 import './SignupForm.css';
 import SignupCompleteModal from '../Modals/SignupCompleteModal';
 
@@ -25,38 +26,46 @@ const SignUpForm = () => {
   const [verificationCodeMessage, setVerificationCodeMessage] = useState('');
   const [isVerificationCodeValid, setIsVerificationCodeValid] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isFormValid() && isVerificationCodeValid) {
-      try {
-        const response = await axios.post('http://gachon-adore.duckdns.org:8084/api/auth/sign-up', {
-          email,
-          name,
-          password,
-          birthDate: birthdate,
-          nickname,
-          agreeTerms,
-          inflow: referral,
-          gender,
-          nicknameDuplicate: true, // 닉네임 중복 체크 상태
-          emailDuplicate: isEmailDuplicateChecked, // 이메일 중복 체크 상태
-          emailVerify: isVerificationCodeValid, // 이메일 인증 상태
-        });
-  
-        console.log('회원가입 응답:', response); // 서버 응답 확인
-  
-        if (response.status === 200) {
-          setIsModalOpen(true);
-        }
-      } catch (error) {
-        console.error('회원가입 중 오류 발생:', error);
-        const errorMessage = error.response?.data?.message || '회원가입에 실패했습니다. 다시 시도해주세요.';
-        setErrors({ ...errors, submit: errorMessage });
-      }
-    } else {
-      setErrors(getErrors());
+// 회원가입 요청
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // 폼 유효성 검사
+  if (!isFormValid() || !isVerificationCodeValid) {
+    setErrors(getErrors());
+    return;
+  }
+
+  try {
+    // API 요청 페이로드
+    const payload = {
+      email,
+      name,
+      password,
+      birthDate: birthdate,
+      nickname,
+      agreeTerms,
+      inflow: referral,
+      gender,
+      nicknameDuplicate: true,
+      emailDuplicate: isEmailDuplicateChecked,
+      emailVerify: isVerificationCodeValid,
+    };
+
+    // API 호출
+    const response = await axiosInstance.post('/api/auth/sign-up', payload);
+
+    if (response.status === 200) {
+      setIsModalOpen(true); // 성공 시 모달 열기
     }
-  };
+  } catch (error) {
+    console.error('회원가입 중 오류 발생:', error);
+    setErrors({
+      ...errors,
+      submit: error.response?.data?.message || '회원가입에 실패했습니다. 다시 시도해주세요.',
+    });
+  }
+};
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -112,7 +121,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.get(`http://gachon-adore.duckdns.org:8084/api/auth/check-duplicate/email?email=${email}`);
+      const response = await axiosInstance.get(`/api/auth/check-duplicate/email?email=${email}`);
       setEmailCheckMessage({
         text: response.data.isDuplicate ? '이미 사용 중인 이메일입니다.' : '사용 가능한 이메일입니다!',
         styleClass: response.data.isDuplicate ? 'error-message' : 'signupform-success-message',
@@ -131,7 +140,7 @@ const SignUpForm = () => {
 
   const handleSendVerificationCode = async () => {
     try {
-      const response = await axios.post(`http://gachon-adore.duckdns.org:8084/api/auth/email-send?email=${email}`);
+      const response = await axiosInstance.post(`/api/auth/email-send?email=${email}`);
       if (response.status === 200) {
         setVerificationSent(true);
         setVerificationCodeMessage('인증 코드가 전송되었습니다.');
@@ -144,7 +153,7 @@ const SignUpForm = () => {
 
   const handleVerifyCode = async () => {
     try {
-      const response = await axios.post(`http://gachon-adore.duckdns.org:8084/api/auth/email-verify`, {
+      const response = await axiosInstance.post(`/api/auth/email-verify`, {
         email,
         code: verificationCode,
       });
@@ -174,7 +183,7 @@ const SignUpForm = () => {
   
     try {
       const encodedNickname = encodeURIComponent(nickname);
-      const response = await axios.get(`http://gachon-adore.duckdns.org:8084/api/auth/check-duplicate/nickname?nickname=${encodedNickname}`);
+      const response = await axiosInstance.get(`/api/auth/check-duplicate/nickname?nickname=${encodedNickname}`);
       setNicknameCheckMessage({
         text: response.data.isDuplicate ? '이미 사용 중인 닉네임입니다.' : '사용 가능한 닉네임입니다!',
         styleClass: response.data.isDuplicate ? 'error-message' : 'signupform-success-message',
