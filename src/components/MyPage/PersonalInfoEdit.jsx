@@ -1,82 +1,96 @@
-// src/components/MyPage/PersonalInfoEdit.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../lib/axiosInstance';
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
 import './PersonalInfoEdit.css';
 
+// 쿠키에서 특정 이름의 값을 가져오는 함수
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
+
 const PersonalInfoEdit = () => {
-  const [email, setEmail] = useState('1234@gmail.com');
-  const [name, setName] = useState('홍길동');
-  const [nickname, setNickname] = useState('길동이'); // 닉네임 추가
-  const [phone, setPhone] = useState('010-1234-5678');
-  const [birthdate, setBirthdate] = useState('1990-01-01');
-  const [gender, setGender] = useState('남성');
-  const [emailAlert, setEmailAlert] = useState(true);
-  const [smsAlert, setSmsAlert] = useState(true);
+  const [userId, setUserId] = useState(null); // 사용자 ID
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [birthdate, setBirthdate] = useState('');
+  const [gender, setGender] = useState('');
 
   const [editMode, setEditMode] = useState({
     email: false,
     name: false,
-    nickname: false, // 닉네임 편집 모드 추가
-    phone: false,
+    nickname: false,
     birthdate: false,
-    emailVerification: false,
-    phoneVerification: false,
   });
 
-  const [verificationCode, setVerificationCode] = useState('');
-  const [inputCode, setInputCode] = useState('');
-  const [newPhone, setNewPhone] = useState('');
+  // 사용자 ID와 초기 정보 로드
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = getCookie('accessToken');
+        if (!token) throw new Error('로그인 토큰이 없습니다.');
+  
+        // JWT 토큰 요청
+        const tokenResponse = await axiosInstance.get('/api/auth/token', { params: { token } });
+        console.log('Token Response:', tokenResponse.data);
+  
+        const fetchedUserId = tokenResponse.data.memberId;
+        setUserId(fetchedUserId);
+  
+        // 사용자 정보 API 호출
+        const userResponse = await axiosInstance.get(`/api/user/my/${fetchedUserId}`);
+        console.log('User Response:', userResponse.data);
+  
+        setEmail(userResponse.data.email || '');
+        setName(userResponse.data.memberName || '');
+        setNickname(userResponse.data.nickname || '');
+        setBirthdate(userResponse.data.birthdate || '');
+        setGender(userResponse.data.gender || '남성');
+      } catch (error) {
+        console.error('사용자 정보 로드 실패:', error.response || error);
+        alert('사용자 정보를 불러오는데 실패했습니다.');
+      }
+    };
+  
+    fetchUserInfo();
+  }, []);
 
   const toggleEditMode = (field) => {
-    if (field === 'email') {
-      setEditMode((prev) => ({ ...prev, email: !prev.email, phoneVerification: false }));
-    } else if (field === 'phone') {
-      setEditMode((prev) => ({ ...prev, phone: !prev.phone, emailVerification: false }));
-    } else {
-      setEditMode((prev) => ({ ...prev, [field]: !prev[field] }));
-    }
+    setEditMode((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleSendVerificationCode = (type) => {
-    const generatedCode = '123456';
-    setVerificationCode(generatedCode);
-    alert(`인증 코드가 발송되었습니다: ${generatedCode}`);
-    if (type === 'email') {
-      setEditMode((prev) => ({ ...prev, emailVerification: true, phoneVerification: false }));
-      setInputCode('');
-    } else if (type === 'phone') {
-      setEditMode((prev) => ({ ...prev, phoneVerification: true, emailVerification: false }));
-      setInputCode('');
-    }
-  };
+  const handleSaveChanges = async () => {
+    try {
+      if (!userId) throw new Error('사용자 ID가 없습니다.');
 
-  const handleVerifyCode = () => {
-    if (inputCode === verificationCode) {
-      alert('인증이 완료되었습니다.');
-      setEditMode({
-        ...editMode,
-        email: false,
-        emailVerification: false,
-        phone: false,
-        phoneVerification: false,
-      });
-      setInputCode('');
-    } else {
-      alert('인증 코드가 올바르지 않습니다.');
-    }
-  };
+      const updatedUserData = {
+        name,
+        nickname,
+        email,
+        birthdate,
+        gender,
+      };
 
-  const handleSaveChanges = () => {
-    alert('변경 사항이 저장되었습니다.');
-    setEditMode({
-      email: false,
-      name: false,
-      nickname: false, // 닉네임 편집 모드 초기화
-      phone: false,
-      birthdate: false,
-      emailVerification: false,
-      phoneVerification: false,
-    });
+      const response = await axiosInstance.patch(`/api/user/my/${userId}`, updatedUserData);
+
+      if (response.status === 200) {
+        alert('변경 사항이 저장되었습니다.');
+        setEditMode({
+          email: false,
+          name: false,
+          nickname: false,
+          birthdate: false,
+        });
+      } else {
+        throw new Error('저장에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('변경 사항 저장 실패:', error);
+      alert(error.response?.data?.message || '변경 사항을 저장하지 못했습니다.');
+    }
   };
 
   const handleCancel = () => {
@@ -84,13 +98,8 @@ const PersonalInfoEdit = () => {
       email: false,
       name: false,
       nickname: false,
-      phone: false,
       birthdate: false,
-      emailVerification: false,
-      phoneVerification: false,
     });
-    setNewPhone('');
-    setInputCode('');
   };
 
   return (
@@ -99,21 +108,31 @@ const PersonalInfoEdit = () => {
       <div className="personal-info-edit">
         <h1>개인정보 변경</h1>
         <ul>
-          {/* 이름 */}
           <li>
             <span className="label">이름</span>
-            <span className="value">{name}</span>
+            {editMode.name ? (
+              <input
+                type="text"
+                className="input-value"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            ) : (
+              <span className="value">{name}</span>
+            )}
+            <button onClick={() => toggleEditMode('name')}>
+              {editMode.name ? '확인' : '이름 변경'}
+            </button>
           </li>
 
-          {/* 닉네임 */}
           <li>
             <span className="label">닉네임</span>
             {editMode.nickname ? (
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className="input-value"
-                value={nickname} 
-                onChange={(e) => setNickname(e.target.value)} 
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
               />
             ) : (
               <span className="value">{nickname}</span>
@@ -123,102 +142,44 @@ const PersonalInfoEdit = () => {
             </button>
           </li>
 
-          {/* 이메일 변경 */}
           <li>
             <span className="label">아이디 (이메일)</span>
             {editMode.email ? (
-              <>
-                <input 
-                  type="text" 
-                  className="input-value"
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                />
-                <button onClick={() => handleSendVerificationCode('email')}>
-                  인증 코드 발송
-                </button>
-              </>
+              <input
+                type="text"
+                className="input-value"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             ) : (
               <span className="value">{email}</span>
             )}
-            {!editMode.email && (
-              <button onClick={() => toggleEditMode('email')}>
-                이메일 변경
-              </button>
-            )}
+            <button onClick={() => toggleEditMode('email')}>
+              {editMode.email ? '확인' : '이메일 변경'}
+            </button>
           </li>
-          {editMode.emailVerification && (
-            <li>
-              <span className="label">이메일 인증코드</span>
-              <input 
-                type="text" 
-                className="input-value"
-                value={inputCode} 
-                onChange={(e) => setInputCode(e.target.value)} 
-              />
-              <button onClick={handleVerifyCode}>확인</button>
-            </li>
-          )}
 
-          {/* 전화번호 변경 */}
-          <li>
-            <span className="label">전화번호</span>
-            {editMode.phone ? (
-              <>
-                <input 
-                  type="text" 
-                  className="input-value"
-                  value={newPhone} 
-                  placeholder="새 전화번호 입력"
-                  onChange={(e) => setNewPhone(e.target.value)} 
-                />
-                <button onClick={() => handleSendVerificationCode('phone')}>
-                  인증번호 발송
-                </button>
-              </>
-            ) : (
-              <span className="value">{phone}</span>
-            )}
-            {!editMode.phone && (
-              <button onClick={() => toggleEditMode('phone')}>
-                전화번호 변경
-              </button>
-            )}
-          </li>
-          {editMode.phoneVerification && (
-            <li>
-              <span className="label">인증번호</span>
-              <input 
-                type="text" 
-                className="input-value"
-                value={inputCode} 
-                onChange={(e) => setInputCode(e.target.value)} 
-              />
-              <button onClick={handleVerifyCode}>확인</button>
-            </li>
-          )}
-          
-          {/* 생년월일 */}
           <li>
             <span className="label">생년월일</span>
             {editMode.birthdate ? (
-              <input 
-                type="date" 
+              <input
+                type="date"
                 className="input-value"
-                value={birthdate} 
-                onChange={(e) => setBirthdate(e.target.value)} 
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
               />
             ) : (
               <span className="value">{birthdate}</span>
             )}
-            <button onClick={() => toggleEditMode('birthdate')}>{editMode.birthdate ? '확인' : '생년월일 변경'}</button>
+            <button onClick={() => toggleEditMode('birthdate')}>
+              {editMode.birthdate ? '확인' : '생년월일 변경'}
+            </button>
           </li>
 
-          {/* 성별 */}
           <li>
             <span className="label">성별</span>
-            <select 
-              className="input-value gender-select"
+            <select
+              className="input-value"
               value={gender}
               onChange={(e) => setGender(e.target.value)}
             >
@@ -229,53 +190,13 @@ const PersonalInfoEdit = () => {
           </li>
         </ul>
 
-        {/* 알림 설정 */}
-        <h1>알림 설정</h1>
-        <ul>
-          <li>
-            <span className="label">이메일 알림</span>
-            <label>
-              <input
-                type="radio"
-                checked={emailAlert}
-                onChange={() => setEmailAlert(true)}
-              /> on
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={!emailAlert}
-                onChange={() => setEmailAlert(false)}
-              /> off
-            </label>
-          </li>
-          <li>
-            <span className="label">SMS 알림</span>
-            <label>
-              <input
-                type="radio"
-                checked={smsAlert}
-                onChange={() => setSmsAlert(true)}
-              /> on
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={!smsAlert}
-                onChange={() => setSmsAlert(false)}
-              /> off
-            </label>
-          </li>
-        </ul>
-        
-        {/* 저장 및 닫기 버튼 */}
         <div className="personalinfoeidt-action-buttons">
-          <button onClick={handleSaveChanges}>변경</button>
-          <button onClick={handleCancel}>닫기</button>
+          <button onClick={handleSaveChanges}>저장</button>
+          <button onClick={handleCancel}>취소</button>
         </div>
-       </div>
-       </div>
-     );
-   };
-   
-   export default PersonalInfoEdit;
+      </div>
+    </div>
+  );
+};
+
+export default PersonalInfoEdit;

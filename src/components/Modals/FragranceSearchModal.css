@@ -80,3 +80,10 @@
   cursor: pointer;
   width: 3rem;
 }
+
+.fragrance-modal-no-results {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  margin-top: 20px;
+}

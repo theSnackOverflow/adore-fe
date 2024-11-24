@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getCookie } from './CookieUtil'; // utils 디렉토리 안에 CookieUtil.js가 있는 경우
+import { getCookie } from './CookieUtil'; // lib 디렉토리 안에 CookieUtil.js가 있는 경우
 
 const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
 

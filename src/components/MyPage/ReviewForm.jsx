@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axiosInstance'; // Axios 인스턴스 가져오기
+import { getCookie } from '../../lib/CookieUtil'; // Access Token 가져오기 유틸
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
 import FragranceSearchModal from '../Modals/FragranceSearchModal';
 import CancelConfirmationModal from '../Modals/CancelConfirmationModal';
@@ -8,9 +9,9 @@ import AlertModal from '../Modals/AlertModal';
 import './ReviewForm.css';
 
 const ReviewForm = () => {
-  const [selectedFragrance, setSelectedFragrance] = useState('');
+  const [selectedFragrance, setSelectedFragrance] = useState(null); // 향수 객체로 변경
   const [title, setTitle] = useState('');
-  const [rating, setRating] = useState(5); // 별점 기본값을 5로 설정
+  const [rating, setRating] = useState(5); // 별점 기본값
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
@@ -18,38 +19,36 @@ const ReviewForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
-  const [perfumeList, setPerfumeList] = useState([]); // 향수 리스트 추가
+  const [perfumeList, setPerfumeList] = useState([]);
   const navigate = useNavigate();
 
+  // 향수 리스트 불러오기
   useEffect(() => {
-    // 향수 리스트를 불러오는 함수
     const fetchPerfumeList = async () => {
       try {
-        const response = await axios.get('http://gachon-adore.duckdns.org:8081/user/perfume/perfume/list');
+        const response = await axiosInstance.get('/api/user/perfume/perfume/list');
         if (response.data && response.data.length > 0) {
           setPerfumeList(response.data);
-        } else {
-          console.warn('서버에서 빈 향수 리스트를 반환했습니다.');
         }
       } catch (error) {
-        console.error('향수 리스트를 가져오는 중 오류 발생:', error);
+        console.error('향수 리스트 불러오기 오류:', error);
       }
     };
-
     fetchPerfumeList();
   }, []);
 
+  // 이미지 업로드 핸들러
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
-      const previewUrl = URL.createObjectURL(file);
       setImage(file);
-      setImagePreviewUrl(previewUrl);
+      setImagePreviewUrl(URL.createObjectURL(file));
     } else {
-      alert("이미지 파일만 업로드할 수 있습니다.");
+      alert('이미지 파일만 업로드할 수 있습니다.');
     }
   };
 
+  // 모달 핸들러
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const openCancelModal = () => setIsCancelModalOpen(true);
@@ -65,30 +64,41 @@ const ReviewForm = () => {
     setRating(value);
   };
 
+  // 리뷰 제출 핸들러
   const handleSubmit = async () => {
     if (!selectedFragrance || !title || rating <= 0 || !content) {
-      setShowAlertModal(true); // 필수 항목이 채워지지 않은 경우 AlertModal 표시
+      setShowAlertModal(true);
       return;
     }
 
-    const reviewData = {
-      title,
-      content,
-      photo: image ? image.name : '', // 이미지 파일 이름
-      perfumeId: selectedFragrance.id, // 선택한 향수의 ID
-      memberId: 0, // 실제 사용자의 ID로 교체 필요
-    };
+    const accessToken = getCookie('accessToken');
+    if (!accessToken) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('perfumeId', selectedFragrance.id); // 향수 ID
+    formData.append('photo', image || ''); // 이미지 파일
 
     try {
-      const response = await axios.post('http://gachon-adore.duckdns.org:8081/user/review/create', reviewData, {
+      const response = await axiosInstance.post('/api/user/review/create', formData, {
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`, // Access Token 추가
+          'Content-Type': 'multipart/form-data', // FormData 전송
         },
       });
-      console.log('리뷰 생성 성공:', response.data);
-      navigate('/mypage/reviewlist'); // 리뷰 목록 페이지로 이동
+
+      if (response.status === 201) {
+        alert('리뷰 작성이 완료되었습니다.');
+        navigate('/mypage/myreviewlist'); // 리뷰 목록 페이지로 이동
+      }
     } catch (error) {
-      console.error('리뷰 생성 중 오류 발생:', error);
+      console.error('리뷰 작성 오류:', error);
+      alert('리뷰 작성 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -105,7 +115,7 @@ const ReviewForm = () => {
                 type="text"
                 placeholder="Select fragrance"
                 className="review-form-fragrance-input"
-                value={selectedFragrance.perfume_nm || ''}
+                value={selectedFragrance ? `${selectedFragrance.id} - ${selectedFragrance.name}` : ''}
                 readOnly
               />
               <button className="review-form-search-btn" onClick={openModal}>🔍</button>
@@ -127,7 +137,7 @@ const ReviewForm = () => {
                 <span
                   key={star}
                   className={`review-form-star ${rating >= star ? 'review-form-filled' : ''}`}
-                  onClick={() => handleRating(star)} // 1점 단위로 클릭
+                  onClick={() => handleRating(star)}
                 >
                   ★
                 </span>
@@ -165,12 +175,7 @@ const ReviewForm = () => {
           </div>
         </div>
         <div className="review-form-action-buttons">
-          <button
-            onClick={handleSubmit}
-            className="review-form-submit-btn"
-          >
-            리뷰 작성
-          </button>
+          <button onClick={handleSubmit} className="review-form-submit-btn">리뷰 작성</button>
           <button onClick={openCancelModal} className="review-form-cancel-btn">취소</button>
         </div>
 
@@ -178,11 +183,13 @@ const ReviewForm = () => {
           <FragranceSearchModal
             onClose={closeModal}
             onSelectFragrance={handleSelectFragrance}
-            perfumeList={perfumeList} // 향수 리스트 전달
           />
         )}
         {isCancelModalOpen && (
-          <CancelConfirmationModal onClose={closeCancelModal} onConfirm={() => navigate('/mypage/reviewlist')} />
+          <CancelConfirmationModal
+            onClose={closeCancelModal}
+            onConfirm={() => navigate('/mypage/reviewlist')}
+          />
         )}
         {showAlertModal && (
           <AlertModal
