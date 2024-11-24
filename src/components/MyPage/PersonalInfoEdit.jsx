@@ -29,7 +29,6 @@ const PersonalInfoEdit = () => {
   // 초기 사용자 정보를 가져오는 함수
   const fetchUserInfo = async () => {
     try {
-      // 쿠키에서 JWT 토큰 가져오기
       const token = getCookie('accessToken');
       console.log('Access Token:', token); // 확인용
       if (!token) {
@@ -37,23 +36,49 @@ const PersonalInfoEdit = () => {
         window.location.href = '/login'; // 로그인 페이지로 리디렉션
         return;
       }
-  
-      // 사용자 정보 API 호출
+
+      // 첫 번째 API 호출: JWT 토큰으로 사용자 기본 정보 조회
       const response = await axiosInstance.get('/api/auth/token', {
         params: { token },
       });
-  
-      // 사용자 데이터 설정
       console.log('User Info Response:', response.data);
-      setUserId(response.data.memberId || null);
-      setEmail(response.data.email || '');
-      setName(response.data.name || '');
-      setNickname(response.data.nickname || '');
-      setBirthdate(response.data.birthDate || '');
-      setGender(response.data.gender || '남성');
+
+      const memberId = response.data.memberId; // memberId 추출
+      setUserId(memberId || null);
+
+      // 두 번째 API 호출: 마이페이지 추가 데이터 조회
+      fetchAdditionalUserInfo(memberId); // memberId를 기반으로 추가 API 호출
     } catch (error) {
       console.error('사용자 정보 로드 실패:', error.response || error);
       alert('사용자 정보를 불러오는데 실패했습니다.');
+    }
+  };
+
+  // 추가 API에서 사용자 데이터 조회
+  const fetchAdditionalUserInfo = async (id) => {
+    try {
+      const token = getCookie('accessToken');
+      if (!token) {
+        throw new Error('로그인 토큰이 없습니다.');
+      }
+
+      const additionalResponse = await axiosInstance.get(`/api/user/my/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Additional User Info:', additionalResponse.data);
+
+      // 추가 데이터로 필드 값 설정
+      setName(additionalResponse.data.name || '');
+      setNickname(additionalResponse.data.nickname || '');
+      setEmail(additionalResponse.data.email || '');
+      setBirthdate(additionalResponse.data.birthDate || '');
+      setGender(additionalResponse.data.gender || '남성');
+    } catch (error) {
+      console.error('추가 사용자 정보 로드 실패:', error.response || error);
+      alert('추가 사용자 정보를 불러오는데 실패했습니다.');
     }
   };
 
@@ -75,7 +100,6 @@ const PersonalInfoEdit = () => {
       const token = getCookie('accessToken');
       if (!token) throw new Error('로그인 토큰이 없습니다.');
 
-      // 업데이트할 사용자 데이터
       const updatedUserData = {
         name,
         nickname,
@@ -86,7 +110,7 @@ const PersonalInfoEdit = () => {
 
       const response = await axiosInstance.patch(`/api/user/my/${userId}`, updatedUserData, {
         headers: {
-          Authorization: `Bearer ${token}`, // JWT 토큰 추가
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -107,7 +131,6 @@ const PersonalInfoEdit = () => {
     }
   };
 
-  // 수정 취소 처리
   const handleCancel = () => {
     setEditMode({
       email: false,
