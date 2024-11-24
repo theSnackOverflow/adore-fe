@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../lib/axiosInstance';
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
+import AlertModal from '../Modals/AlertModal'; // AlertModal 가져오기
 import './PersonalInfoEdit.css';
 
 // 쿠키에서 특정 이름의 값을 가져오는 함수
@@ -18,7 +19,6 @@ const PersonalInfoEdit = () => {
   const [nickname, setNickname] = useState('');
   const [birthdate, setBirthdate] = useState('');
   const [gender, setGender] = useState('');
-
   const [editMode, setEditMode] = useState({
     email: false,
     name: false,
@@ -26,13 +26,19 @@ const PersonalInfoEdit = () => {
     birthdate: false,
   });
 
+  const [modalMessage, setModalMessage] = useState(''); // 모달에 표시할 메시지
+  const [isModalVisible, setIsModalVisible] = useState(false); // 모달 표시 여부
+
+  // 모달 닫기 핸들러
+  const closeModal = () => setIsModalVisible(false);
+
   // 초기 사용자 정보를 가져오는 함수
   const fetchUserInfo = async () => {
     try {
       const token = getCookie('accessToken');
-      console.log('Access Token:', token);
       if (!token) {
-        alert('로그인 정보가 유효하지 않습니다. 다시 로그인해주세요.');
+        setModalMessage('로그인 정보가 유효하지 않습니다. 다시 로그인해주세요.');
+        setIsModalVisible(true);
         window.location.href = '/login'; // 로그인 페이지로 리디렉션
         return;
       }
@@ -41,7 +47,6 @@ const PersonalInfoEdit = () => {
       const response = await axiosInstance.get('/api/auth/token', {
         params: { token },
       });
-      console.log('User Info Response:', response.data);
 
       const memberId = response.data.memberId;
       setUserId(memberId || null);
@@ -49,8 +54,8 @@ const PersonalInfoEdit = () => {
       // 두 번째 API 호출: 마이페이지 추가 데이터 조회
       fetchAdditionalUserInfo(memberId);
     } catch (error) {
-      console.error('사용자 정보 로드 실패:', error.response || error);
-      alert('사용자 정보를 불러오는데 실패했습니다.');
+      setModalMessage('사용자 정보를 불러오는데 실패했습니다.');
+      setIsModalVisible(true);
     }
   };
 
@@ -68,8 +73,6 @@ const PersonalInfoEdit = () => {
         },
       });
 
-      console.log('Additional User Info:', additionalResponse.data);
-
       // 필드 값 설정
       setName(additionalResponse.data.name || '');
       setNickname(additionalResponse.data.nickname || '');
@@ -77,8 +80,8 @@ const PersonalInfoEdit = () => {
       setBirthdate(additionalResponse.data.birthDate || '');
       setGender(additionalResponse.data.gender || '남성');
     } catch (error) {
-      console.error('추가 사용자 정보 로드 실패:', error.response || error);
-      alert('추가 사용자 정보를 불러오는데 실패했습니다.');
+      setModalMessage('추가 사용자 정보를 불러오는데 실패했습니다.');
+      setIsModalVisible(true);
     }
   };
 
@@ -115,7 +118,8 @@ const PersonalInfoEdit = () => {
       });
 
       if (response.status === 200) {
-        alert('변경 사항이 저장되었습니다.');
+        setModalMessage('변경 사항이 저장되었습니다.');
+        setIsModalVisible(true);
         setEditMode({
           email: false,
           name: false,
@@ -127,8 +131,8 @@ const PersonalInfoEdit = () => {
         throw new Error('변경 사항 저장 실패');
       }
     } catch (error) {
-      console.error('변경 사항 저장 실패:', error.response || error);
-      alert(error.response?.data?.message || '변경 사항을 저장하지 못했습니다.');
+      setModalMessage(error.response?.data?.message || '변경 사항을 저장하지 못했습니다.');
+      setIsModalVisible(true);
     }
   };
 
@@ -234,6 +238,14 @@ const PersonalInfoEdit = () => {
           <button onClick={handleCancel}>취소</button>
         </div>
       </div>
+
+      {/* AlertModal 컴포넌트 */}
+      {isModalVisible && (
+        <AlertModal
+          message={modalMessage}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };
