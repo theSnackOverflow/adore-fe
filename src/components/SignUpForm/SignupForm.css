@@ -142,21 +142,16 @@
   color: #333;
 }
 
-/* 異붽��� �ㅽ��� */
-
-/* �몄쬆 �붿껌 踰꾪듉 �쒖꽦�� �ㅽ��� */
 .signupform-duplicate-check-btn.active {
   background-color: #007bff;
   color: white;
 }
 
-/* 鍮꾪솢�깊솕 踰꾪듉 */
 .signupform-duplicate-check-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-/* �몄쬆 肄붾뱶 �낅젰 �꾨뱶 �ㅽ��� */
 .signupform-form-group input[type="text"] {
   width: 93.5%;
   border: 1px solid #ccc;
@@ -165,7 +160,6 @@
   font-size: 0.8rem;
 }
 
-/* �몄쬆 �뺤씤 踰꾪듉 �ㅽ��� */
 .signupform-duplicate-check-btn.verify {
   background-color: #4caf50;
   color: white;

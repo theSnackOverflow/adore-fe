@@ -1,76 +1,128 @@
-// src/components/MyPage/PasswordChange.js
 import React, { useState } from 'react';
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
+import axiosInstance from '../../lib/axiosInstance'; // Axios 인스턴스
 import './PasswordChange.css';
 
 const PasswordChange = () => {
-  const [dummyPassword, setDummyPassword] = useState('1234'); // 실제 비밀번호처럼 관리되는 더미 비밀번호
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isValidCurrentPassword, setIsValidCurrentPassword] = useState(true); // 현재 비밀번호 검증 상태
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationMessage, setVerificationMessage] = useState('');
+  const [emailCheckMessage, setEmailCheckMessage] = useState({ text: '', styleClass: '' });
+  const [emailVerificationSent, setEmailVerificationSent] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
-    currentPassword: '',
+    email: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
-  const validateCurrentPassword = () => {
-    if (currentPassword !== dummyPassword) {
-      setIsValidCurrentPassword(false);
-      setErrorMessage((prev) => ({
-        ...prev,
-        currentPassword: '현재 비밀번호가 일치하지 않습니다.'
-      }));
-    } else {
-      setIsValidCurrentPassword(true);
-      setErrorMessage((prev) => ({ ...prev, currentPassword: '' }));
+  // 이메일 전송 API 호출
+  const handleSendVerificationCode = async () => {
+    if (!email) {
+      setErrorMessage((prev) => ({ ...prev, email: '이메일을 입력하세요.' }));
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post('/api/auth/email-send', null, {
+        params: { email },
+      });
+
+      if (response.status === 200) {
+        setEmailVerificationSent(true);
+        setEmailCheckMessage({
+          text: '인증 코드가 전송되었습니다.',
+          styleClass: 'success-message',
+        });
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || '인증 코드 전송 실패. 다시 시도해주세요.';
+      setEmailCheckMessage({
+        text: errorMsg,
+        styleClass: 'error-message',
+      });
     }
   };
 
-  const validateNewPassword = () => {
-    if (newPassword === currentPassword) {
-      setErrorMessage((prev) => ({
-        ...prev,
-        newPassword: "비밀번호를 다르게 설정해주세요!"
-      }));
-    } else {
-      setErrorMessage((prev) => ({ ...prev, newPassword: '' }));
+  // 인증 확인 API 호출
+  const handleVerifyCode = async () => {
+    if (!verificationCode) {
+      setVerificationMessage('인증 코드를 입력해주세요.');
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post('/api/auth/email-verify', {
+        email,
+        code: verificationCode,
+      });
+
+      if (response.data === 'EMAIL_AUTHORIZATION_SUCCESS') {
+        setIsVerified(true);
+        setVerificationMessage('인증이 성공적으로 완료되었습니다!');
+      } else {
+        setVerificationMessage('인증 코드가 유효하지 않습니다.');
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || '인증 확인 중 오류가 발생했습니다.';
+      setVerificationMessage(errorMsg);
     }
   };
 
-  const handleSubmit = (e) => {
+  // 비밀번호 재설정 API 호출
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 각 필드의 유효성 검사
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setErrorMessage((prev) => ({
-        currentPassword: !currentPassword ? '현재 비밀번호를 입력하세요.' : '',
+    if (!email || !newPassword || !confirmPassword) {
+      setErrorMessage({
+        email: !email ? '이메일을 입력하세요.' : '',
         newPassword: !newPassword ? '새 비밀번호를 입력하세요.' : '',
-        confirmPassword: !confirmPassword ? '새 비밀번호 확인을 입력하세요.' : ''
+        confirmPassword: !confirmPassword ? '새 비밀번호 확인을 입력하세요.' : '',
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setErrorMessage((prev) => ({
+        ...prev,
+        confirmPassword: '비밀번호가 일치하지 않습니다.',
       }));
       return;
     }
 
-    validateCurrentPassword();
-    validateNewPassword();
-
-    if (isValidCurrentPassword && newPassword !== currentPassword && newPassword === confirmPassword) {
-      setDummyPassword(newPassword); // 새로운 비밀번호로 업데이트
-      alert("비밀번호가 성공적으로 변경되었습니다.");
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } else if (newPassword !== confirmPassword) {
-      setErrorMessage((prev) => ({
-        ...prev,
-        confirmPassword: "새 비밀번호가 일치하지 않습니다."
-      }));
+    if (!isVerified) {
+      setVerificationMessage('이메일 인증을 완료해주세요.');
+      return;
     }
-  };
 
-  const handleCancel = () => {
-    window.location.reload(); // 페이지 새로고침
+    try {
+      const response = await axiosInstance.post('/api/auth/reset-password', {
+        email,
+        newPassword,
+        newPasswordConfirm: confirmPassword,
+        emailVerify: true,
+      });
+
+      if (response.status === 200) {
+        alert('비밀번호가 성공적으로 변경되었습니다.');
+        setEmail('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setVerificationCode('');
+        setEmailCheckMessage({ text: '', styleClass: '' });
+        setVerificationMessage('');
+        setIsVerified(false);
+      }
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다. 다시 시도해주세요.';
+      setEmailCheckMessage({
+        text: errorMsg,
+        styleClass: 'error-message',
+      });
+    }
   };
 
   return (
@@ -79,43 +131,104 @@ const PasswordChange = () => {
       <div className="password-change">
         <h1>비밀번호 변경</h1>
         <form onSubmit={handleSubmit}>
-          <label>
-            현재 비밀번호
-            <input 
-              type="password" 
-              value={currentPassword} 
-              onChange={(e) => setCurrentPassword(e.target.value)} 
-              onBlur={validateCurrentPassword} 
-              required 
-            />
-            {errorMessage.currentPassword && <p className="error-message">{errorMessage.currentPassword}</p>}
-          </label>
-          <label>
-            새 비밀번호
-            <input 
-              type="password" 
-              value={newPassword} 
+          {/* 이메일 입력 */}
+          <div className="password-change-input-group">
+            <label>이메일</label>
+            <div className="password-change-input-group">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrorMessage((prev) => ({ ...prev, email: '' }));
+                  setEmailCheckMessage({ text: '', styleClass: '' });
+                  setVerificationMessage('');
+                }}
+                placeholder="이메일을 입력하세요"
+                required
+              />
+              <button
+                type="button"
+                className="password-change-btn"
+                onClick={handleSendVerificationCode}
+              >
+                인증 요청
+              </button>
+            </div>
+            {emailCheckMessage.text && (
+              <p className={emailCheckMessage.styleClass}>{emailCheckMessage.text}</p>
+            )}
+            {errorMessage.email && <p className="error-message">{errorMessage.email}</p>}
+          </div>
+
+          {/* 인증 코드 입력 */}
+          {emailVerificationSent && (
+            <div className="password-change-input-group">
+              <label>인증 코드</label>
+              <div className="password-change-input-group">
+                <input
+                  type="text"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  placeholder="인증 코드를 입력하세요"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-change-btn"
+                  onClick={handleVerifyCode}
+                  disabled={isVerified}
+                >
+                  인증 확인
+                </button>
+              </div>
+              {verificationMessage && (
+                <p className={isVerified ? 'success-message' : 'error-message'}>
+                  {verificationMessage}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* 비밀번호 입력 */}
+          <div className="password-change-input-group">
+            <label>새 비밀번호</label>
+            <input
+              type="password"
+              value={newPassword}
               onChange={(e) => {
                 setNewPassword(e.target.value);
-                validateNewPassword();
+                setErrorMessage((prev) => ({ ...prev, newPassword: '' }));
               }}
-              required 
+              placeholder="새 비밀번호를 입력하세요"
+              required
             />
             {errorMessage.newPassword && <p className="error-message">{errorMessage.newPassword}</p>}
-          </label>
-          <label>
-            새 비밀번호 확인
-            <input 
-              type="password" 
-              value={confirmPassword} 
-              onChange={(e) => setConfirmPassword(e.target.value)} 
-              required 
+          </div>
+
+          <div className="password-change-input-group">
+            <label>새 비밀번호 확인</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setErrorMessage((prev) => ({ ...prev, confirmPassword: '' }));
+              }}
+              placeholder="새 비밀번호를 다시 입력하세요"
+              required
             />
-            {errorMessage.confirmPassword && <p className="error-message">{errorMessage.confirmPassword}</p>}
-          </label>
+            {errorMessage.confirmPassword && (
+              <p className="error-message">{errorMessage.confirmPassword}</p>
+            )}
+          </div>
+
+          {/* 버튼 */}
           <div className="password-change-actions">
-            <button type="submit" disabled={!isValidCurrentPassword || !newPassword || !confirmPassword}>변경</button>
-            <button type="button" onClick={handleCancel}>취소</button>
+            <button type="submit">변경</button>
+            <button type="button" onClick={() => window.location.reload()}>
+              취소
+            </button>
           </div>
         </form>
       </div>
