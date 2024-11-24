@@ -26,46 +26,56 @@ const PersonalInfoEdit = () => {
     birthdate: false,
   });
 
-  // 사용자 ID와 초기 정보 로드
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const token = getCookie('accessToken');
-        if (!token) throw new Error('로그인 토큰이 없습니다.');
-  
-        // JWT 토큰 요청
-        const tokenResponse = await axiosInstance.get('/api/auth/token', { params: { token } });
-        console.log('Token Response:', tokenResponse.data);
-  
-        const fetchedUserId = tokenResponse.data.memberId;
-        setUserId(fetchedUserId);
-  
-        // 사용자 정보 API 호출
-        const userResponse = await axiosInstance.get(`/api/user/my/${fetchedUserId}`);
-        console.log('User Response:', userResponse.data);
-  
-        setEmail(userResponse.data.email || '');
-        setName(userResponse.data.memberName || '');
-        setNickname(userResponse.data.nickname || '');
-        setBirthdate(userResponse.data.birthdate || '');
-        setGender(userResponse.data.gender || '남성');
-      } catch (error) {
-        console.error('사용자 정보 로드 실패:', error.response || error);
-        alert('사용자 정보를 불러오는데 실패했습니다.');
+  // 초기 사용자 정보를 가져오는 함수
+  const fetchUserInfo = async () => {
+    try {
+      // 쿠키에서 JWT 토큰 가져오기
+      const token = getCookie('accessToken');
+      console.log('Access Token:', token); // 확인용
+      if (!token) {
+        alert('로그인 정보가 유효하지 않습니다. 다시 로그인해주세요.');
+        window.location.href = '/login'; // 로그인 페이지로 리디렉션
+        return;
       }
-    };
   
+      // 사용자 정보 API 호출
+      const response = await axiosInstance.get('/api/auth/token', {
+        params: { token },
+      });
+  
+      // 사용자 데이터 설정
+      console.log('User Info Response:', response.data);
+      setUserId(response.data.memberId || null);
+      setEmail(response.data.email || '');
+      setName(response.data.name || '');
+      setNickname(response.data.nickname || '');
+      setBirthdate(response.data.birthDate || '');
+      setGender(response.data.gender || '남성');
+    } catch (error) {
+      console.error('사용자 정보 로드 실패:', error.response || error);
+      alert('사용자 정보를 불러오는데 실패했습니다.');
+    }
+  };
+
+  // 컴포넌트가 처음 렌더링될 때 사용자 정보 가져오기
+  useEffect(() => {
     fetchUserInfo();
   }, []);
 
+  // 필드별 수정 모드 토글
   const toggleEditMode = (field) => {
     setEditMode((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
+  // 수정된 사용자 정보를 저장하는 함수
   const handleSaveChanges = async () => {
     try {
       if (!userId) throw new Error('사용자 ID가 없습니다.');
 
+      const token = getCookie('accessToken');
+      if (!token) throw new Error('로그인 토큰이 없습니다.');
+
+      // 업데이트할 사용자 데이터
       const updatedUserData = {
         name,
         nickname,
@@ -74,7 +84,11 @@ const PersonalInfoEdit = () => {
         gender,
       };
 
-      const response = await axiosInstance.patch(`/api/user/my/${userId}`, updatedUserData);
+      const response = await axiosInstance.patch(`/api/user/my/${userId}`, updatedUserData, {
+        headers: {
+          Authorization: `Bearer ${token}`, // JWT 토큰 추가
+        },
+      });
 
       if (response.status === 200) {
         alert('변경 사항이 저장되었습니다.');
@@ -85,14 +99,15 @@ const PersonalInfoEdit = () => {
           birthdate: false,
         });
       } else {
-        throw new Error('저장에 실패했습니다.');
+        throw new Error('변경 사항 저장 실패');
       }
     } catch (error) {
-      console.error('변경 사항 저장 실패:', error);
+      console.error('변경 사항 저장 실패:', error.response || error);
       alert(error.response?.data?.message || '변경 사항을 저장하지 못했습니다.');
     }
   };
 
+  // 수정 취소 처리
   const handleCancel = () => {
     setEditMode({
       email: false,
