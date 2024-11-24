@@ -30,7 +30,7 @@ const PersonalInfoEdit = () => {
   const fetchUserInfo = async () => {
     try {
       const token = getCookie('accessToken');
-      console.log('Access Token:', token); // 확인용
+      console.log('Access Token:', token);
       if (!token) {
         alert('로그인 정보가 유효하지 않습니다. 다시 로그인해주세요.');
         window.location.href = '/login'; // 로그인 페이지로 리디렉션
@@ -43,11 +43,11 @@ const PersonalInfoEdit = () => {
       });
       console.log('User Info Response:', response.data);
 
-      const memberId = response.data.memberId; // memberId 추출
+      const memberId = response.data.memberId;
       setUserId(memberId || null);
 
       // 두 번째 API 호출: 마이페이지 추가 데이터 조회
-      fetchAdditionalUserInfo(memberId); // memberId를 기반으로 추가 API 호출
+      fetchAdditionalUserInfo(memberId);
     } catch (error) {
       console.error('사용자 정보 로드 실패:', error.response || error);
       alert('사용자 정보를 불러오는데 실패했습니다.');
@@ -70,7 +70,7 @@ const PersonalInfoEdit = () => {
 
       console.log('Additional User Info:', additionalResponse.data);
 
-      // 추가 데이터로 필드 값 설정
+      // 필드 값 설정
       setName(additionalResponse.data.name || '');
       setNickname(additionalResponse.data.nickname || '');
       setEmail(additionalResponse.data.email || '');
@@ -104,7 +104,7 @@ const PersonalInfoEdit = () => {
         name,
         nickname,
         email,
-        birthdate,
+        birthDate: birthdate, // API 요구사항에 따라 birthDate로 전송
         gender,
       };
 
@@ -122,6 +122,7 @@ const PersonalInfoEdit = () => {
           nickname: false,
           birthdate: false,
         });
+        fetchUserInfo(); // 변경 사항 후 최신 데이터 다시 로드
       } else {
         throw new Error('변경 사항 저장 실패');
       }
