@@ -24,9 +24,13 @@ const MyReviewList = () => {
           return;
         }
 
+        console.log('Fetching user name with token:', accessToken); // 디버깅 로그
+
         const response = await axiosInstance.get('/api/auth/token', {
           params: { token: accessToken },
         });
+
+        console.log('User name fetch response:', response.data); // 디버깅 로그
 
         setMemberName(response.data.memberName); // 사용자 이름 저장
       } catch (error) {
@@ -41,9 +45,12 @@ const MyReviewList = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
+        console.log(`Fetching reviews for page ${currentPage} and query "${searchQuery}"`); // 디버깅 로그
         const response = await axiosInstance.get(`/api/user/review/lists/${currentPage}`, {
           params: { type: 'NAME', keyword: searchQuery },
         });
+
+        console.log('Review fetch response:', response.data); // 디버깅 로그
 
         // 사용자의 이름과 일치하는 리뷰만 필터링
         const filteredReviews = response.data.reviewList.filter(
@@ -74,7 +81,9 @@ const MyReviewList = () => {
         navigate('/login'); // 로그인 페이지로 이동
         return;
       }
-  
+
+      console.log('Attempting to delete review with ID:', id); // 디버깅 로그
+
       // 리뷰 삭제 API 호출
       const response = await axiosInstance.delete(`/api/user/review/delete`, {
         headers: {
@@ -82,7 +91,9 @@ const MyReviewList = () => {
         },
         params: { id }, // 리뷰 ID 전달
       });
-  
+
+      console.log('Delete review response:', response.data); // 디버깅 로그
+
       if (response.data === 'REVIEW_DELETE_SUCCESS') {
         // 삭제 성공 시 리뷰 목록 갱신
         setReviews(reviews.filter((review) => review.id !== id));
@@ -96,12 +107,45 @@ const MyReviewList = () => {
     }
   };
 
-  const handleEdit = (id) => {
-    navigate(`/mypage/reviewform/edit/${id}`); // 수정 페이지로 이동
+  const handleEdit = async (id) => {
+    try {
+      const accessToken = getCookie('accessToken');
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+  
+      // 리뷰 조회 API 호출
+      const response = await axiosInstance.get(`/api/user/review/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: { id },
+      });
+  
+      if (response.data) {
+        console.log('Edit review fetch response:', response.data); // 디버깅 로그
+  
+        // 리뷰 데이터와 함께 수정 페이지로 이동
+        navigate('/MyPage/ReviewForm', { 
+          state: { 
+            reviewId: id, // 수정할 리뷰의 ID 추가
+            reviewData: response.data, 
+          },
+        });
+      } else {
+        alert('리뷰 정보를 가져오는 데 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('리뷰 조회 중 오류가 발생했습니다:', error);
+      alert('리뷰 정보를 가져오는 도중 문제가 발생했습니다.');
+    }
   };
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
+      console.log(`Navigating to page ${page}`); // 디버깅 로그
       setCurrentPage(page);
     }
   };
@@ -173,7 +217,7 @@ const MyReviewList = () => {
           </div>
           <button
             className="write-btn"
-            onClick={() => navigate('/mypage/reviewform')}
+            onClick={() => navigate('/MyPage/ReviewForm')}
           >
             리뷰 작성
           </button>
