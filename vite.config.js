@@ -10,7 +10,6 @@ export default defineConfig({
         target: 'https://gachon-adore.duckdns.org', // 백엔드 API 서버 URL
         changeOrigin: true, // Origin 헤더 변경
         secure: true, // HTTPS 인증서 검증 무시 (테스트 환경에서만 사용)
-        rewrite: (path) => path.replace(/^\/api/, ''), // `/api` 제거하여 백엔드에 전달
       }
     }
   },

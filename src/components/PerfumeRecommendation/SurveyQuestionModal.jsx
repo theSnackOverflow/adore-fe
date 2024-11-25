@@ -1,43 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SurveyQuestionModal.css';
 import AlertModal from '../Modals/AlertModal';
+import axios from 'axios';
+import { getCookie } from '../../lib/CookieUtil';
 
-const SurveyQuestionModal = ({ onClose }) => {
+const SurveyQuestionModal = ({ onClose, data, surveyId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMainNotes, setSelectedMainNotes] = useState([]);
-  const [selectedSubNotes, setSelectedSubNotes] = useState({});
   const [selectedPrice, setSelectedPrice] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [selectedNotesNxtQstId, setSelectedNotesNxtQstId] = useState([]);
+  const [otherQuestions, setOtherQuestions] = useState([]); // 첫번째 질문을 제외한 나머지 질문들
+  const [surveyLength, setSurveyLength] = useState(10);
+  const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [userAnsId, setUserAnsId] = useState(0);
+
   const navigate = useNavigate();
 
-  const mainNotes = ["시트러스", "머스크", "플로랄", "우디", "스파이시", "푸제르", "오리엔탈", "시프레", "가죽", "암브레", "바닐라", "아로마틱"];
-  const subNotes = {
-    "시트러스": ["레몬", "오렌지", "유자", "베르가못", "라임", "자몽", "만다린", "키 라임", "블러드 오렌지", "카피르 라임"],
-    "머스크": ["화이트 머스크", "따뜻한 머스크", "애니멀 머스크", "파우더리 머스크", "크리스탈 머스크", "머스크 엠브레트", "실크 머스크", "리치 머스크", "소프트 머스크", "아쿠아틱 머스크"],
-    "플로랄": ["장미", "라벤더", "재스민", "프리지아", "피오니", "릴리", "튤립", "히아신스", "가르데니아", "일랑일랑"],
-    "우디": ["삼나무", "백단향", "참나무 이끼", "파출리", "가이악 우드", "시더우드", "흑단", "로즈우드", "오크", "티크 우드"],
-    "스파이시": ["계피", "생강", "카다멈", "후추", "정향", "넛맥", "사프란", "아니스", "페퍼민트", "바질"],
-    "푸제르": ["라벤더", "클라리 세이지", "오크 모스", "우디 베이스", "베티버", "머스크", "블랙 커런트", "타임", "로즈마리", "베르가못"],
-    "오리엔탈": ["앰버", "바닐라", "파촐리", "토카빈", "머스크", "샌달우드", "오포포낙스", "인센스", "미르", "로즈우드"],
-    "시프레": ["오크 모스", "라벤더", "시더우드", "파인", "패출리", "로즈마리", "베티버", "레몬", "라임", "머스크"],
-    "가죽": ["가죽", "스웨이드", "연기", "샤프레", "앰버", "머스크", "우디", "토바코", "캐스터럼", "유황"],
-    "암브레": ["앰버", "엠버그리스", "파촐리", "바닐라", "미르", "인센스", "스모크", "머스크", "샌달우드", "라벤더"],
-    "바닐라": ["타히티 바닐라", "마다가스카르 바닐라", "프렌치 바닐라", "앰버 바닐라", "머스크 바닐라", "스파이시 바닐라", "카라멜 바닐라", "코코아 바닐라", "허니 바닐라", "코코넛 바닐라"],
-    "아로마틱": ["라벤더", "로즈마리", "타임", "바질", "베르가못", "클라리 세이지", "유칼립투스", "파인", "민트", "페퍼민트"]
-  };
+  useEffect(() => {
+    if(currentPage >2 && currentPage < surveyLength){
+      const syncSelectedAnswers = () => {
+        // 현재 페이지에 해당하는 질문 아이디
+        const currentQstId = otherQuestions
+          .filter(qstAnsSet => qstAnsSet.order === "MIDDLE")[currentPage - 2]?.qstId;
+    
+        if (currentQstId) {
+          setSelectedAnswers(prevState => ({
+            ...prevState,
+            [currentQstId]: selectedAnswers[currentQstId] || ""
+          }));
+        }
+      };
+      syncSelectedAnswers();
+    }
+    
+  }, [currentPage, otherQuestions]);
+  
 
-  const priceOptions = ["~10만원", "10만원~20만원", "20만원~30만원", "30만원~40만원", "40만원~50만원", "50만원 이상"];
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL
+  });
 
   const handleNextPage = () => {
     if (currentPage === 1 && selectedMainNotes.length < 3) {
+      console.log("현재 페이지 번호(1) : ", currentPage);
       return;
-    } else if (currentPage < 11) {
+    } else if (currentPage < surveyLength) {
+      console.log("현재 페이지 번호 : ", currentPage);
+      console.log("전체 질문 길이 : ", surveyLength);
+      console.log("답변 저장 상태 : ", selectedAnswers);
       setCurrentPage((prev) => prev + 1);
-    } else if (currentPage === 11) {
+    } else if (currentPage === surveyLength) {
+      console.log("마지막 질문 값 저장 상태 : ", selectedPrice);
+      console.log("현재 페이지 번호 : ", currentPage);
+      console.log("전체 질문 길이 : ", surveyLength);
       handleSubmit();
     }
   };
+
+  const handleNextQuestionPages = async () => {
+    if (currentPage === 1 && selectedMainNotes.length < 3) {
+      return;
+    } 
+    else if(currentPage === 1 && selectedNotesNxtQstId.length === 3) {
+      try {
+        const response = await instance.get(
+          `/api/user/recomm/questions/${surveyId}`,
+          {
+            params: {
+              nxt1: selectedNotesNxtQstId[0],
+              nxt2: selectedNotesNxtQstId[1],
+              nxt3: selectedNotesNxtQstId[2]
+            }
+          },
+        );
+        console.log("연계 질문 불러오기 성공 : ", response.data);
+        setOtherQuestions(response.data.qstAnsSets);
+        setSurveyLength(response.data.qstAnsSets.length+1);
+        console.log("질문 개수 : ",response.data.qstAnsSets.length+1);
+        handleNextPage();
+      }catch(error) {
+        console.error("연계 질문 불러오기 실패: ", error);
+        // 에러에 대한 추가적인 처리가 필요하지 않을까?
+      }
+    }else if( currentPage >=2 ) {
+      handleNextPage();
+    }
+  }
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -45,99 +96,159 @@ const SurveyQuestionModal = ({ onClose }) => {
     }
   };
 
-  const handleMainNoteSelection = (note) => {
+  const handleMainNoteSelection = (note, nxtQstId) => {
     if (selectedMainNotes.includes(note)) {
-      setSelectedMainNotes(selectedMainNotes.filter((n) => n !== note));
+      setSelectedMainNotes(selectedMainNotes.filter((n) => n !== note)); // 메인에 대해서만
+      setSelectedNotesNxtQstId(selectedNotesNxtQstId.filter((n) => n !== nxtQstId)); // 선택한 노트의 다음 질문 아이디
     } else if (selectedMainNotes.length < 3) {
       setSelectedMainNotes([...selectedMainNotes, note]);
+      setSelectedNotesNxtQstId([...selectedNotesNxtQstId, nxtQstId]);
       if (selectedMainNotes.length === 2) {
-        setTimeout(handleNextPage, 100);
+        console.log("선택한 답변 메핑값 : ", [...selectedMainNotes, note]);
+        console.log("선택한 답변의 다음 질문 아이디 : ", [...selectedNotesNxtQstId, nxtQstId]);
       }
     }
   };
 
-  const handleSubNoteSelection = (page, note) => {
-    setSelectedSubNotes((prev) => ({ ...prev, [page]: note }));
-    setTimeout(handleNextPage, 100);
+  // 연계질문 답변 선택 처리 함수
+  const handleSubNoteSelection = (qstId, value) => {
+    setSelectedAnswers(prevState => {
+      // 새로운 객체를 생성하여 기존 상태를 복사
+      const newAnswers = { ...prevState };
+      
+      // 해당 qstId의 기존 답변이 존재하면 삭제
+      if (newAnswers[qstId]) {
+        delete newAnswers[qstId];
+      }
+      
+      // 새로운 값을 추가
+      newAnswers[qstId] = value;
+      return newAnswers;
+    });
   };
+  
 
   const handlePriceSelection = (price) => {
     setSelectedPrice(price);
-    setShowAlert(true);  // 알림 모달 표시
   };
+
+  const handleSubmit = async () => {
+    // selectedAnswers 객체를 서버로 보낼 형식으로 변환
+    const formattedNoteData = Object.values(selectedAnswers).map(value => ({
+      noteName: value
+    }));
+    console.log("note 조립 후 : ", formattedNoteData);
+  
+    try {
+      const token = getCookie('accessToken');
+      if (!token) {
+        throw new Error('로그인 토큰이 없습니다.');
+      }
+      const response = await instance.post('/api/user/recomm/result', 
+        {
+          notes: formattedNoteData,
+          price: parseInt(selectedPrice, 10),
+          surveyId: surveyId
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("저장 요청 성공 : ", response.data);
+      setUserAnsId(response.data.id);
+      setShowAlert(true); // 설문 완료 알림 모달 표시
+    } catch (error) {
+      console.error("저장 요청 실패 : ", error);
+    }
+  };
+  
 
   const closeAlertAndNavigate = () => {
     setShowAlert(false);  // 알림 모달 닫기
-    navigate('/PerfumeRecommendation/SurveyResult');  // 결과 페이지로 이동
+    navigate('/PerfumeRecommendation/SurveyResult', { deliverId: userAnsId});  // 결과 페이지로 이동
   };
 
   const renderPageContent = () => {
     if (currentPage === 1) {
       return (
         <>
-          <h2>좋아하는 노트를 선택해주세요 (최대 3개)</h2>
-          <div className="selected-notes">
+          <h2>{data.qstText}</h2>
+          <div className="selected-notes"> 
             {selectedMainNotes.map((note, index) => (
               <span key={index} className="selected-note">{`${index + 1}. ${note}`}</span>
             ))}
           </div>
           <div className="survey-options">
-            {mainNotes.map((note, index) => (
+            {data.ansSets.map((ans, index) => (
               <button
                 key={index}
-                className={`survey-option-button ${selectedMainNotes.includes(note) ? "selected" : ""}`}
-                onClick={() => handleMainNoteSelection(note)}
+                className={`survey-option-button ${selectedMainNotes.includes(ans.value) ? "selected" : ""}`}
+                onClick={() => handleMainNoteSelection(ans.value, ans.nextQstId)}
               >
-                {note}
+                {ans.ansText}
               </button>
             ))}
           </div>
         </>
       );
-    } else if (currentPage >= 2 && currentPage <= 10) {
-      const mainNoteIndex = Math.floor((currentPage - 2) / 3);
-      const selectedMainNote = selectedMainNotes[mainNoteIndex];
-      const previouslySelected = Object.values(selectedSubNotes).slice((mainNoteIndex * 3), currentPage - 2);
-      const pageSubNotes = subNotes[selectedMainNote].filter((note) => !previouslySelected.includes(note));
-      const selectedSubNote = selectedSubNotes[currentPage];
-      const subNoteIndex = (currentPage - 2) % 3 + 1;
-
+    } else if (currentPage >= 2 && currentPage <= surveyLength - 1) {
+      // currentPage에서 현재 페이지를 이용하여 해당 페이지의 질문을 가져옵니다.
+      const currentQuestionIndex = currentPage - 2;
+      const currentQuestion = otherQuestions
+        .filter(qstAnsSet => qstAnsSet.order === "MIDDLE")[currentQuestionIndex];
+    
       return (
         <>
-          <h2>{`${selectedMainNote} 향의 하위 노트를 선택해주세요 (${subNoteIndex}번째 선택)`}</h2>
-          <div className="survey-options">
-            {pageSubNotes.map((note, index) => (
-              <button
-                key={index}
-                className={`survey-option-button ${selectedSubNote === note ? "selected" : ""}`}
-                onClick={() => handleSubNoteSelection(currentPage, note)}
-              >
-                {note}
-              </button>
-            ))}
-          </div>
+          {currentQuestion && (
+            <div key={currentQuestion.qstId}>
+              <h2>{currentQuestion.qstText}</h2>
+              <div className="survey-options">
+                {currentQuestion.ansSets.map((ans, index) => (
+                  <button
+                    key={index}
+                    className={`survey-option-button ${selectedAnswers[currentQuestion.qstId] === ans.value ? "selected" : ""}`}
+                    onClick={() => handleSubNoteSelection(currentQuestion.qstId, ans.value)}
+                  >
+                    {ans.ansText}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       );
-    } else if (currentPage === 11) {
+    } else if (currentPage === surveyLength) {
+      // END 질문을 들고옵니다.
+      const endQuestionIndex = 0; // END 질문은 하나이므로 항상 0번째 인덱스를 사용
+      const endQuestion = otherQuestions
+        .filter(qstAnsSet => qstAnsSet.order === "END")[endQuestionIndex];
+    
       return (
         <>
-          <h2>원하는 가격대를 선택해주세요</h2>
-          <div className="survey-options">
-            {priceOptions.map((price, index) => (
-              <button
-                key={index}
-                className={`survey-option-button ${selectedPrice === price ? "selected" : ""}`}
-                onClick={() => handlePriceSelection(price)}
-              >
-                {price}
-              </button>
-            ))}
-          </div>
+          {endQuestion && (
+            <div key={endQuestion.qstId}>
+              <h2>{endQuestion.qstText}</h2>
+              <div className="survey-options">
+                {endQuestion.ansSets.map((price, index) => (
+                  <button
+                    key={index}
+                    className={`survey-option-button ${selectedPrice === price.value ? "selected" : ""}`}
+                    onClick={() => handlePriceSelection(price.value)}
+                  >
+                    {price.ansText}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       );
-    }
+    }    
   };
 
+  // todo : 여기부터 다시 수정하면 될 것 같다.
   return (
     <div className="survey-question-modal-overlay" onClick={onClose}>
       <div className="survey-question-modal" onClick={(e) => e.stopPropagation()}>
@@ -149,10 +260,10 @@ const SurveyQuestionModal = ({ onClose }) => {
             )}
             <button
               className="survey-next-button"
-              onClick={handleNextPage}
+              onClick={handleNextQuestionPages}
               disabled={currentPage === 1 && selectedMainNotes.length < 3}
             >
-              {currentPage === 11 ? "제출" : "다음"}
+              {currentPage === surveyLength ? "제출" : "다음"}
             </button>
           </div>
         </div>

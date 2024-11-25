@@ -1,28 +1,45 @@
 // src/components/PerfumeRecommendation/SurveyResult.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
 import SurveyResultPerfumeCard from './SurveyResultPerfumeCard';
-import SurveyQuestionModal from './SurveyQuestionModal';
+import axios from 'axios';
 import './SurveyResult.css';
 
-const SurveyResult = () => {
-  const [isSurveyModalOpen, setIsSurveyModalOpen] = useState(false);
+const SurveyResult = ({ userAnsId }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // const id = userAnsId ? userAnsId : location.deliverId;
+  const id = 1; // 주석 처리 예정
 
-  const recommendedPerfumes = [
-    { id: 1, name: '추천 향수 1', brand: 'brand 1', notes: 'Top / Middle / Base' },
-    { id: 2, name: '추천 향수 2', brand: 'brand 2', notes: 'Top / Middle / Base' },
-    { id: 3, name: '추천 향수 3', brand: 'brand 3', notes: 'Top / Middle / Base' },
-    { id: 4, name: '추천 향수 4', brand: 'brand 4', notes: 'Top / Middle / Base' },
-    { id: 5, name: '추천 향수 5', brand: 'brand 5', notes: 'Top / Middle / Base' },
-  ];
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL
+  });
+  
+  const [perfumes, setPerfumes] = useState([]);
+  const [hasSatisSurvey, setHasSatisSurvey] = useState(false);
 
-  const openSurveyModal = () => {
-    setIsSurveyModalOpen(true);
-  };
+  useEffect(() => {
+    const fetchRecommendationDetails = async () => {
+      try{
+        const response = await instance.get(`/api/user/recomm/result/${id}`);
+        console.log("결과 요청 성공 : ", response.data);
+        setPerfumes(response.data.perfumes);
+        setHasSatisSurvey(response.data.hasSatisSurvey);
+      } catch(error) {
+        console.error("결과 요청 실패", error);
+        throw new Error("추천 결과가 존재하지 않습니다.");
+      }
+    };
 
-  const closeSurveyModal = () => {
-    setIsSurveyModalOpen(false);
-  };
+    fetchRecommendationDetails();
+  },[id]);
+
+  const gotoSurveyIntro = () => {
+    navigate('/perfumerecommendation/surveyintro');
+  }
 
   return (
     <div className="survey-result-container">
@@ -34,22 +51,26 @@ const SurveyResult = () => {
             <br />
             다시 추천 받기!
           </p>
-          <button className="survey-result-refresh-button" onClick={openSurveyModal}>
+          <button className="survey-result-refresh-button" onClick={gotoSurveyIntro}>
             ⟳
           </button>
         </div>
         <div className="survey-result-recommended-perfumes">
-          <h1>결과 확인</h1>
-          {recommendedPerfumes.map((perfume, index) => (
-            <SurveyResultPerfumeCard
-              key={perfume.id}
-              perfume={perfume}
-              isEven={index % 2 === 1} // 짝수 인덱스에만 `isEven`을 true로 전달
-            />
-          ))}
+          <h1>추천 결과 확인</h1>
+          {perfumes.length > 0 ? (
+            perfumes.map((perfume, index) => (
+              <SurveyResultPerfumeCard
+                key={perfume.id}
+                perfume={perfume}
+                isEven={index % 2 === 1} // 짝수 인덱스에만 `isEven`을 true로 전달
+              />
+            ))
+          ) : (
+            <p>추천 결과를 불러오는 중입니다...</p>
+          )}
         </div>
+        {!hasSatisSurvey && <div>설문조사 모달 추가하기</div>}
       </div>
-      {isSurveyModalOpen && <SurveyQuestionModal onClose={closeSurveyModal} />}
     </div>
   );
 };
