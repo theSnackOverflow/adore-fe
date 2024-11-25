@@ -169,10 +169,15 @@ const ReviewForm = () => {
         console.log(pair[0], ':', pair[1]);
       }
   
-      const apiUrl = `/api/user/review/update?id=${reviewId}`;
-      console.log(`Submitting PATCH request to ${apiUrl}`);
+      // 작성 모드와 수정 모드에 따른 API URL 및 요청 분기
+      const apiUrl = reviewId
+        ? `/api/user/review/update?id=${reviewId}` // 수정 모드
+        : `/api/user/review/create`; // 작성 모드
+      const method = reviewId ? 'patch' : 'post'; // PATCH 또는 POST 선택
   
-      const response = await axiosInstance.patch(apiUrl, formData, {
+      console.log(`Submitting ${method.toUpperCase()} request to ${apiUrl}`);
+  
+      const response = await axiosInstance[method](apiUrl, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           // Content-Type은 FormData 사용 시 자동 설정
@@ -180,25 +185,25 @@ const ReviewForm = () => {
       });
   
       if (response.status === 200) {
-        console.log('Review updated successfully:', response.data);
-        setAlertMessage('리뷰가 성공적으로 수정되었습니다.');
+        console.log('Review processed successfully:', response.data);
+        setAlertMessage(reviewId ? '리뷰가 성공적으로 수정되었습니다.' : '리뷰가 성공적으로 작성되었습니다.');
         setShowAlertModal(true);
         setTimeout(() => {
           navigate('/mypage/myreviewlist');
         }, 2000);
       } else {
-        console.error('Review update failed:', response.data);
-        setAlertMessage('리뷰 수정에 실패했습니다. 다시 시도해주세요.');
+        console.error('Review processing failed:', response.data);
+        setAlertMessage('리뷰 처리에 실패했습니다. 다시 시도해주세요.');
         setShowAlertModal(true);
       }
     } catch (error) {
-      console.error('리뷰 수정 오류:', error.response || error);
+      console.error('리뷰 처리 오류:', error.response || error);
       if (error.response?.status === 401) {
         setAlertMessage('인증이 만료되었습니다. 다시 로그인해주세요.');
         setShowAlertModal(true);
         navigate('/login');
       } else {
-        setAlertMessage('리뷰 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+        setAlertMessage('리뷰 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
         setShowAlertModal(true);
       }
     }
