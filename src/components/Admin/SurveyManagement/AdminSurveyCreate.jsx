@@ -12,18 +12,18 @@ const AdminSurveyCreate = () => {
   const [questions, setQuestions] = useState([
     {
       id: Date.now(),
-      type: 'START', // START, MIDDLE, END
+      type: 'START',
       questionText: '',
-      domain: 'NOTE', // NOTE, PRICE, GENDER
-      order: 1, // MIDDLE 질문의 순서
-      nextQuestionId: -1, // 다음 질문 ID
-      answers: [
-        { id: Date.now(), text: '', value: '' },
-      ],
+      domain: 'NOTE',
+      order: 1,
+      nextQuestionId: -1,
+      answers: Array(3)
+        .fill(0)
+        .map(() => ({ id: Date.now() + Math.random(), text: '', value: '' })),
     },
   ]);
 
-  const [hasEndQuestion, setHasEndQuestion] = useState(false); // 마지막 질문 추가 여부 상태
+  const [hasEndQuestion, setHasEndQuestion] = useState(false);
 
   const handleSurveyInfoChange = (key, value) => {
     setSurveyInfo((prev) => ({ ...prev, [key]: value }));
@@ -61,20 +61,18 @@ const AdminSurveyCreate = () => {
     if (questions.length < 10) {
       const newQuestion = {
         id: Date.now(),
-        type: type || 'MIDDLE', // 기본적으로 MIDDLE 질문
+        type: type || 'MIDDLE',
         questionText: '',
-        domain: 'NOTE',
-        order: questions.length + 1,
+        domain: type === 'END' ? 'PRICE' : 'NOTE',
+        selectionType: 'SINGLE',
+        order: type === 'END' ? questions.length + 1 : '',
         nextQuestionId: -1,
-        answers: [
-          { id: Date.now(), text: '', value: '' },
-        ],
+        answers: [{ id: Date.now(), text: '', value: '' }],
       };
 
       if (type === 'END') {
-        setHasEndQuestion(true); // 마지막 질문 추가 상태 설정
-        newQuestion.domain = 'PRICE'; // 마지막 질문의 도메인은 PRICE로 고정
-        newQuestion.order = questions.length + 1; // 항상 마지막 순서
+        setHasEndQuestion(true);
+        newQuestion.domain = 'PRICE';
       }
 
       setQuestions([...questions, newQuestion]);
@@ -102,7 +100,7 @@ const AdminSurveyCreate = () => {
   const handleDeleteQuestion = (id) => {
     const questionToDelete = questions.find((q) => q.id === id);
     if (questionToDelete.type === 'END') {
-      setHasEndQuestion(false); // 마지막 질문 삭제 시 상태 초기화
+      setHasEndQuestion(false);
     }
     setQuestions(questions.filter((q) => q.id !== id));
   };
@@ -131,12 +129,12 @@ const AdminSurveyCreate = () => {
         domain: 'NOTE',
         order: 1,
         nextQuestionId: -1,
-        answers: [
-          { id: Date.now(), text: '', value: '' },
-        ],
+        answers: Array(3)
+          .fill(0)
+          .map(() => ({ id: Date.now() + Math.random(), text: '', value: '' })),
       },
     ]);
-    setHasEndQuestion(false); // 상태 초기화
+    setHasEndQuestion(false);
     navigate('/Admin/SurveyManagement/AdminSurveyList');
   };
 
@@ -165,7 +163,7 @@ const AdminSurveyCreate = () => {
                   <span className="question-number">
                     질문 {index + 1} ({question.type})
                   </span>
-                  {question.type !== 'START' && ( // START 질문은 삭제 버튼 비활성화
+                  {question.type !== 'START' && (
                     <button
                       type="button"
                       className="admin-survey-create-delete-button"
@@ -198,6 +196,35 @@ const AdminSurveyCreate = () => {
                           handleQuestionChange(question.id, 'order', e.target.value)
                         }
                       />
+                    </div>
+                    <div className="admin-survey-create-form-group">
+                      <label>선택 유형</label>
+                      <div>
+                        <label>
+                          <input
+                            type="radio"
+                            name={`selectionType-${question.id}`}
+                            value="SINGLE"
+                            checked={question.selectionType === 'SINGLE'}
+                            onChange={(e) =>
+                              handleQuestionChange(question.id, 'selectionType', e.target.value)
+                            }
+                          />
+                          단일 선택
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name={`selectionType-${question.id}`}
+                            value="MULTIPLE"
+                            checked={question.selectionType === 'MULTIPLE'}
+                            onChange={(e) =>
+                              handleQuestionChange(question.id, 'selectionType', e.target.value)
+                            }
+                          />
+                          다중 선택
+                        </label>
+                      </div>
                     </div>
                     <div className="admin-survey-create-form-group">
                       <label>도메인</label>
@@ -251,36 +278,41 @@ const AdminSurveyCreate = () => {
                       <button
                         type="button"
                         onClick={() => handleDeleteAnswer(question.id, answer.id)}
+                        disabled={
+                          question.type === 'START' && question.answers.length <= 3
+                        }
                       >
                         답변 삭제
                       </button>
                     </div>
                   ))}
-                  {question.type !== 'END' && (
-                    <button
-                      type="button"
-                      onClick={() => handleAddAnswer(question.id)}
-                    >
-                      답변 추가
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleAddAnswer(question.id)}
+                    disabled={question.answers.length >= 10}
+                  >
+                    답변 추가
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={() => handleAddQuestion('MIDDLE')}
-          >
-            중간 질문 추가
-          </button>
-          <button
-            type="button"
-            onClick={() => handleAddQuestion('END')}
-          >
-            마지막 질문 추가
-          </button>
-          <button type="submit">설문조사 생성</button>
+          <div className="admin-survey-create-buttons">
+            <button
+              type="button"
+              onClick={() => handleAddQuestion('MIDDLE')}
+            >
+              중간 질문 추가
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAddQuestion('END')}
+              disabled={hasEndQuestion}
+            >
+              마지막 질문 추가
+            </button>
+            <button type="submit">설문조사 생성</button>
+          </div>
         </form>
       </div>
     </div>

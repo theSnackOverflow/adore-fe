@@ -25,6 +25,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
+    gap: 2rem;
   }
   
   .admin-survey-create-form-group label {
@@ -62,7 +63,10 @@
     align-items: center;
     margin-bottom: 0.5rem;
   }
-  
+  .admin-survey-create-question-header span{
+    font-size: 1.5em;
+  }
+
   .question-number {
     font-weight: bold;
     color: #555;
