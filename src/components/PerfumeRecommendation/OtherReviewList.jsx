@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axiosInstance from '../../lib/axiosInstance';
 import axios from 'axios';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
 import FragranceSearchModal from '../Modals/FragranceSearchModal';
@@ -19,7 +20,7 @@ const OtherReviewList = () => {
   useEffect(() => {
     const fetchPerfumeList = async () => {
       try {
-        const response = await axios.get('http://gachon-adore.duckdns.org:8081/user/perfume/perfume/list');
+        const response = await axios.get('http://gachon-adore.duckdns.org:8111/user/perfume/perfume/list');
         setPerfumeList(response.data || []);
       } catch (error) {
         console.error('향수 리스트를 가져오는 중 오류 발생:', error);
@@ -53,7 +54,7 @@ const OtherReviewList = () => {
   // 특정 향수 리뷰 불러오기
   const fetchReviewsByPerfume = async (perfume, page = 1) => {
     try {
-      const response = await axios.get(`http://gachon-adore.duckdns.org:8111/api/user/review/lists/${page}`, {
+      const response = await axiosInstance.get(`/api/user/review/lists/${page}`, {
         params: { type: 'TITLE', keyword: perfume.perfume_nm },
       });
       setReviews(response.data?.reviewList || []);
