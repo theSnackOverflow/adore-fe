@@ -5,303 +5,147 @@
 
 .other-review-list-content {
   flex: 1;
-  padding: 2rem 5rem;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.other-review-list-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  /* margin-bottom: 1rem; */
-}
-
-.other-review-list-header h1 {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.other-review-list-search-bar {
-  display: flex;
-  align-items: center;
-}
-
-.other-review-list-search-bar input {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  width: 300px
-}
-
-.other-review-list-review-details {
-  margin-bottom: 1.5rem;
-  background-color: #f9f9f9;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.other-review-list-review-details-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-.other-review-list-review-details-header h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  /* margin: auto; */
-}
-.other-review-list-review-details-header span {
-  margin: 0.5rem 0 0 1rem;
-  font-size: 1.5rem;
-  color: #aaaa;
-  font-weight: bold;
-  /* margin: auto; */
-}
-
-.other-review-list-review-details p {
-  margin: 0.2rem 0;
-  font-size: 1rem;
-}
-
-.other-review-list-review-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.other-review-list-review-table th,
-.other-review-list-review-table td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  text-align: center;
-}
-
-.other-review-list-review-table th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-}
-.other-review-list-review-table th:nth-child(1)  {
-  width:15%;
-}
-.other-review-list-review-table th:nth-child(2)  {
-  width:35%;
-}
-.other-review-list-review-table th:nth-child(3)  {
-  width:10%;
-}
-.other-review-list-review-table th:nth-child(4)  {
-  width:10%;
-  text-align: center;
-}
-.other-review-list-review-table th:nth-child(5)  {
-  width:10%;
-}
-.other-review-list-review-table th:nth-child(6)  {
-  width:20%;
-}
-
-
-.other-review-list-action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.other-review-list-more-button,
-.other-review-list-write-button {
-  padding: 0.5rem 1rem;
-  border: 0.2px solid black;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.other-review-list-more-button {
-  background-color: #eee;
-}
-
-.other-review-list-write-button {
-  background-color: #333;
-  color: #fff;
-}/* src/components/PerfumeRecommendation/OtherReviewList.css */
-
-.other-review-list-container {
-  display: flex;
-  padding: 2rem;
-}
-
-.other-review-list-content {
-  flex: 1;
   padding: 2rem 5rem;
-  background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.other-review-list-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.other-review-list-header h1 {
-  font-size: 2rem;
+.other-review-list-content h1 {
+  margin-bottom: 1.5rem;
   font-weight: bold;
 }
 
-/* 통일된 입력 필드 스타일 */
-.other-review-list-select-btn,
-.other-review-list-search-bar input {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1.5rem;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  background-color: #f2f2f2;
-  color: #666;
-  font-size: 1rem;
-  width: 250px;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-.other-review-list-select-btn:hover,
-.other-review-list-search-bar input:hover {
-  background-color: #e0e0e0;
-  border-color: #007bff;
-}
-
-.other-review-list-select-btn::after {
-  content: "🔍";
-  margin-left: 0.5rem;
-  font-size: 1.2rem;
-}
-
-.other-review-list-search-bar {
+.other-review-list-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  position: relative;
+  margin-bottom: 1.5rem;
 }
 
-.other-review-list-search-bar input {
-  cursor: text;
-}
-
-.other-review-list-search-btn {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  margin-left: -30px;
-}
-
-.other-review-list-search-results {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 250px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.other-review-list-search-results li {
+.other-review-list-select-btn {
+  background-color: #333;
+  color: white;
   padding: 0.5rem 1rem;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.other-review-list-search-results li:hover {
-  background-color: #f2f2f2;
 }
 
 .other-review-list-review-details {
   margin-bottom: 1.5rem;
-  background-color: #f9f9f9;
-  padding: 2rem;
+  padding: 1rem;
+  border: 2px solid #f0f0f0; /* 테두리 */
+  background-color: #fafafa; /* 배경색 */
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.other-review-list-review-details-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 */
 }
 
 .other-review-list-review-details-header h2 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin: 0;
-}
-
-.other-review-list-review-details-header span {
-  margin: 0 0 0 1rem;
-  font-size: 1.4rem;
-  color: #aaa;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
   font-weight: bold;
 }
 
 .other-review-list-review-details p {
-  margin: 0.3rem 0;
+  margin: 0.5rem 0; /* 텍스트 간 간격 */
   font-size: 1rem;
-  color: #555;
+  color: #555; /* 글자 색상 */
+}
+
+.other-review-list-review-details .other-review-list-brand {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #888; /* 브랜드 색상 */
 }
 
 .other-review-list-review-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  table-layout: fixed;
 }
 
 .other-review-list-review-table th,
 .other-review-list-review-table td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
+  padding: 1rem;
   text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #ccc;
 }
 
 .other-review-list-review-table th {
-  background-color: #f5f5f5;
+  background-color: #f8f8f8;
   font-weight: bold;
 }
 
+.other-review-list-review-table td {
+  white-space: nowrap;
+}
+
+.other-review-list-review-table th:nth-child(1) {
+  width: 20%;
+}
+
+.other-review-list-review-table th:nth-child(2) {
+  width: 50%;
+}
+
+.other-review-list-review-table th:nth-child(3) {
+  width: 20%;
+}
+
+.other-review-list-review-table th:nth-child(4) {
+  width: 10%;
+}
+
+
 .other-review-list-action-buttons {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.other-review-list-more-button,
-.other-review-list-write-button {
+.other-review-list-pagination-container {
+  display: flex;
+  align-items: center;
+
+  margin-top: 1.5rem; /* 위쪽 여백 */
+}
+
+.other-review-list-pagination {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 auto; /* 가운데 정렬 */
+}
+
+.other-review-list-pagination button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+}
+
+.other-review-list-pagination button:hover {
+  background-color: #ddd; /* 호버 시 배경색 */
+  color: #000; /* 호버 시 텍스트 색상 */
+}
+
+.other-review-list-pagination button.active {
+  background-color: #333;
+  color: white;
+}
+
+.other-review-list-pagination button:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.other-review-list-write-btn {
+  background-color: #333;
+  color: white;
   padding: 0.5rem 1rem;
-  border: 1px solid #333;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.other-review-list-more-button {
-  background-color: #eee;
-}
-
-.other-review-list-more-button:hover {
-  background-color: #ddd;
-}
-
-.other-review-list-write-button {
-  background-color: #333;
-  color: #fff;
-}
-
-.other-review-list-write-button:hover {
-  background-color: #555;
+  margin-right: 0; /* 오른쪽 끝으로 이동 */
 }
