@@ -1,52 +1,95 @@
 // src/components/FriendRecommendation/FriendInfoInput.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { getCookie } from '../../lib/CookieUtil';
 import FriendRecommendationSidebar from '../Sidebars/FriendRecommendationSidebar';
 import AlertModal from '../Modals/AlertModal';
 import './FriendInfoInput.css';
 
 const FriendInfoInput = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    gender: '남성',
-    ageRange: '20대',
-    favoriteNotes: '',
-    personality: [],
-    usagePurpose: [],
-    priceRange: '10만원 대',
+
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL
   });
+  
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅 사용
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-
-  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅 사용
+  const [formData, setFormData] = useState({
+    name: '',
+    gender: '',
+    age: '',
+    notes: [],
+    character: '',
+    price: ''
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleCheckboxChange = (e, category) => {
-    const { value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [category]: prevData[category].includes(value)
-        ? prevData[category].filter((item) => item !== value)
-        : [...prevData[category], value],
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
     }));
   };
 
-  const handleRecommendation = () => {
-    if (
-      !formData.name ||
-      !formData.favoriteNotes ||
-      formData.personality.length === 0 ||
-      formData.usagePurpose.length === 0
-    ) {
+  const handleNoteSelection = (note) => {
+    setFormData(prevState => {
+      const { notes } = prevState;
+
+      if (notes.length >= 6 && !notes.includes(note)) {
+        setAlertMessage("최대 6개까지 선택할 수 있습니다.");
+        setIsAlertModalOpen(true);
+        return prevState;
+      }
+
+      return {
+        ...prevState,
+        notes: notes.includes(note) ? notes.filter(n => n !== note) : [...notes, note]
+      };
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // 필수 항목들이 채워져 있는지 확인
+    const { name, gender, age, notes, character, price } = formData;
+    if (!name || !gender || !age || notes.length !== 6 || !character || !price) {
       setAlertMessage("필수 항목들을 모두 입력해주세요!");
       setIsAlertModalOpen(true);
-    } else {
-      navigate('/friendrecommendation/friendresult'); // FriendResult 페이지로 이동
+      return;
+    }
+    const body = {
+      name: name,
+      gender: gender,
+      age: parseInt(age, 10),
+      notes: notes.map(note => ({ noteName: note })),
+      character: character,
+      price: parseInt(price, 10)
+    };
+    console.log("친구 정보 : ", body);
+
+    const token = getCookie('accessToken');
+      if (!token) {
+        throw new Error('로그인 토큰이 없습니다.');
+      }
+    const header = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
+    // 서버에 데이터 전송
+    try {
+      const response = await instance.post('/api/user/recomm/friend', body, header);
+      console.log("저장 및 추천 요청 성공: ", response.data);
+      navigate('/friendrecommendation/friendresult', { deliverId: response.data.id});  // 결과 페이지로 이동
+    } catch (error) {
+      console.error("저장 및 추천 요청 실패: ", error);
+      throw new Error('저장 및 추천 요청에 실패했습니다.');
     }
   };
 
@@ -57,6 +100,7 @@ const FriendInfoInput = () => {
 
   const closeAlertModal = () => {
     setIsAlertModalOpen(false);
+    setAlertMessage("");
   };
 
   return (
@@ -72,6 +116,7 @@ const FriendInfoInput = () => {
                 <input
                   type="text"
                   name="name"
+                  placeholder='이름을 입력해주세요.'
                   value={formData.name}
                   onChange={handleInputChange}
                 />
@@ -85,95 +130,83 @@ const FriendInfoInput = () => {
                   value={formData.gender}
                   onChange={handleInputChange}
                 >
-                  <option value="남성">남성</option>
-                  <option value="여성">여성</option>
+                  <option value="">선택해주세요</option>
+                  <option value="MEN">남성</option>
+                  <option value="WOMEN">여성</option>
+                  <option value="UNISEX" selected>중성</option>
                 </select>
               </td>
             </tr>
             <tr>
-              <th>연령대</th>
+              <th>나이</th>
               <td>
-                <select
-                  name="ageRange"
-                  value={formData.ageRange}
+                <input
+                  type="text"
+                  name="age"
+                  placeholder='숫자만 입력해주세요.'
+                  value={formData.age}
                   onChange={handleInputChange}
-                >
-                  <option value="10대">10대</option>
-                  <option value="20대">20대</option>
-                  <option value="30대">30대</option>
-                  <option value="40대">40대</option>
-                  <option value="50대 이상">50대 이상</option>
-                </select>
+                />
               </td>
             </tr>
             <tr>
-              <th>선호 노트</th>
+              <th>추천노트(6개)</th>
               <td>
-                <div className="friend-info-search-bar">
-                  <input
-                    type="text"
-                    placeholder="노트 검색"
-                    name="favoriteNotes"
-                    value={formData.favoriteNotes}
-                    onChange={handleInputChange}
-                  />
+                <div className="friend-info-checkbox-group">
+                  {['apple', 'lemon', 'floral notes', 'rose', 'jasmine', 'green notes', 'coffee', 'spicy notes', 'butter', 'woody notes', 'mint', 'musk'].map((note) => (
+                    <label key={note}>
+                      <input
+                        type="checkbox"
+                        value={note}
+                        checked={formData.notes.includes(note)}
+                        onChange={() => handleNoteSelection(note)}
+                      />
+                      {note}
+                    </label>
+                  ))}
                 </div>
               </td>
             </tr>
             <tr>
               <th>성격</th>
               <td>
-                <div className="friend-info-checkbox-group">
-                  {['활동적', '차분함', '감성적', '지적인', '독립적', '유쾌한', '계획적'].map((trait) => (
-                    <label key={trait}>
-                      <input
-                        type="checkbox"
-                        value={trait}
-                        checked={formData.personality.includes(trait)}
-                        onChange={(e) => handleCheckboxChange(e, 'personality')}
-                      />
-                      {trait}
-                    </label>
-                  ))}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th>사용 목적</th>
-              <td>
-                <div className="friend-info-checkbox-group">
-                  {['일상용', '데이트용', '파티용'].map((purpose) => (
-                    <label key={purpose}>
-                      <input
-                        type="checkbox"
-                        value={purpose}
-                        checked={formData.usagePurpose.includes(purpose)}
-                        onChange={(e) => handleCheckboxChange(e, 'usagePurpose')}
-                      />
-                      {purpose}
-                    </label>
-                  ))}
-                </div>
+                <select
+                  name="character"
+                  value={formData.character}
+                  onChange={handleInputChange}
+                >
+                  <option value="">선택해주세요</option>
+                  <option value="ENERGETIC" selected>활동적</option>
+                  <option value="CALM">차분함</option>
+                  <option value="EMOTIONAL">감성적</option>
+                  <option value="INTELLECTUAL">지적인</option>
+                  <option value="INDEPENDENT">독립적</option>
+                  <option value="CHEERFUL">유쾌한</option>
+                </select>
               </td>
             </tr>
             <tr>
               <th>가격대</th>
               <td>
                 <select
-                  name="priceRange"
-                  value={formData.priceRange}
+                  name="price"
+                  value={formData.price}
                   onChange={handleInputChange}
                 >
-                  <option value="5만원 대">5만원 대</option>
-                  <option value="10만원 대">10만원 대</option>
-                  <option value="20만원 대">20만원 대</option>
+                  <option value="">선택해주세요</option>
+                  <option value={50000}>10만원 미만(5만원 대)</option>
+                  <option value={100000} selected>10만원 대</option>
+                  <option value={200000}>20만원 대</option>
+                  <option value={300000}>30만원 대</option>
+                  <option value={400000}>40만원 대</option>
+                  <option value={500000}>50만원 대</option>
                 </select>
               </td>
             </tr>
           </tbody>
         </table>
         <div className="friend-info-form-buttons">
-          <button type="button" onClick={handleRecommendation}>
+          <button type="button" onClick={handleSubmit}>
             추천 받기
           </button>
           <button type="button" onClick={handleCancel}>
