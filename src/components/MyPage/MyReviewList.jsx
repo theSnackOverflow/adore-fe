@@ -1,28 +1,102 @@
-// src/components/MyPage/MyReviewList.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../lib/axiosInstance'; // Axios 인스턴스
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
 import './MyReviewList.css';
 import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../../lib/CookieUtil'; // 쿠키에서 Access Token 가져오기
 
 const MyReviewList = () => {
-  const [reviews, setReviews] = useState([
-    { id: 1, fragrance: '향수 C', title: '제목 3', rating: 5, date: '2024-10-02' },
-    { id: 2, fragrance: '향수 B', title: '제목 2', rating: 4, date: '2024-10-02' },
-    { id: 3, fragrance: '향수 A', title: '제목 1', rating: 3, date: '2024-10-02' },
-  ]);
+  const [reviews, setReviews] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [memberName, setMemberName] = useState(''); // 로그인 사용자 이름
   const navigate = useNavigate();
+
+  // 사용자 이름 가져오기
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const accessToken = getCookie('accessToken');
+        if (!accessToken) {
+          alert('로그인이 필요합니다.');
+          navigate('/login'); // 로그인 페이지로 이동
+          return;
+        }
+
+        const response = await axiosInstance.get('/api/auth/token', {
+          params: { token: accessToken },
+        });
+
+        setMemberName(response.data.memberName); // 사용자 이름 저장
+      } catch (error) {
+        console.error('사용자 정보를 가져오는 중 오류가 발생했습니다:', error);
+        alert('사용자 정보를 확인할 수 없습니다.');
+      }
+    };
+    fetchUserName();
+  }, [navigate]);
+
+  // 리뷰 데이터 로드
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axiosInstance.get(`/api/user/review/lists/${currentPage}`, {
+          params: { type: 'NAME', keyword: searchQuery },
+        });
+
+        // 사용자의 이름과 일치하는 리뷰만 필터링
+        const filteredReviews = response.data.reviewList.filter(
+          (review) => review.name === memberName
+        );
+
+        setReviews(filteredReviews || []);
+        setTotalPages(response.data.totalPages || 1); // 전체 페이지 수 설정
+      } catch (error) {
+        console.error('리뷰 데이터를 가져오는 중 오류가 발생했습니다:', error);
+      }
+    };
+    if (memberName) {
+      fetchReviews();
+    }
+  }, [searchQuery, currentPage, memberName]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
   };
 
-  const handleDelete = (id) => {
-    setReviews(reviews.filter((review) => review.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      const accessToken = getCookie('accessToken');
+      if (!accessToken) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+
+      await axiosInstance.delete(`/api/user/review/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Access Token 포함
+        },
+      });
+
+      setReviews(reviews.filter((review) => review.id !== id));
+      alert('리뷰가 삭제되었습니다.');
+    } catch (error) {
+      console.error('리뷰 삭제 중 오류가 발생했습니다:', error);
+      alert('리뷰 삭제에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   const handleEdit = (id) => {
-    alert(`Editing review with ID: ${id}`);
+    navigate(`/mypage/reviewform/edit/${id}`); // 수정 페이지로 이동
+  };
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
@@ -33,7 +107,7 @@ const MyReviewList = () => {
         <div className="search-bar">
           <input
             type="text"
-            placeholder="향수 이름, 제목 등"
+            placeholder="제목"
             value={searchQuery}
             onChange={handleSearch}
           />
@@ -42,43 +116,61 @@ const MyReviewList = () => {
         <table className="review-table">
           <thead>
             <tr>
-              <th>향수</th>
+              <th>작성자</th>
               <th>제목</th>
-              <th>평점</th>
-              <th>작성 날짜</th>
-              <th>상태</th>
+              <th>작성일</th>
+              <th>관리</th>
             </tr>
           </thead>
           <tbody>
-            {reviews
-              .filter((review) =>
-                review.fragrance.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                review.title.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-              .map((review) => (
-                <tr key={review.id}>
-                  <td>{review.fragrance}</td>
-                  <td>{review.title}</td>
-                  <td>
-                    {'★'.repeat(review.rating)}
-                    {'☆'.repeat(5 - review.rating)}
-                  </td>
-                  <td>{review.date}</td>
-                  <td>
-                    <button className="edit-btn" onClick={() => handleEdit(review.id)}>
-                      수정
-                    </button>
-                    <button className="delete-btn" onClick={() => handleDelete(review.id)}>
-                      삭제
-                    </button>
-                  </td>
-                </tr>
-              ))}
+            {reviews.map((review) => (
+              <tr key={review.id}>
+                <td>{review.name}</td>
+                <td>{review.title}</td>
+                <td>{new Date(review.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleEdit(review.id)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(review.id)}
+                  >
+                    삭제
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-        <button className="write-btn" onClick={() => navigate('/mypage/reviewform')}>
-          글쓰기
-        </button>
+        <div className="pagination-container">
+          <div className="pagination">
+            {currentPage > 1 && (
+              <button onClick={() => goToPage(currentPage - 1)}>이전</button>
+            )}
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={currentPage === i + 1 ? 'active' : ''}
+                onClick={() => goToPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+            {currentPage < totalPages && (
+              <button onClick={() => goToPage(currentPage + 1)}>다음</button>
+            )}
+          </div>
+          <button
+            className="write-btn"
+            onClick={() => navigate('/mypage/reviewform')}
+          >
+            리뷰 작성
+          </button>
+        </div>
       </div>
     </div>
   );
