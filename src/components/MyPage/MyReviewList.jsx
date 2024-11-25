@@ -68,24 +68,31 @@ const MyReviewList = () => {
 
   const handleDelete = async (id) => {
     try {
-      const accessToken = getCookie('accessToken');
+      const accessToken = getCookie('accessToken'); // Access Token 가져오기
       if (!accessToken) {
         alert('로그인이 필요합니다.');
-        navigate('/login');
+        navigate('/login'); // 로그인 페이지로 이동
         return;
       }
-
-      await axiosInstance.delete(`/api/user/review/${id}`, {
+  
+      // 리뷰 삭제 API 호출
+      const response = await axiosInstance.delete(`/api/user/review/delete`, {
         headers: {
           Authorization: `Bearer ${accessToken}`, // Access Token 포함
         },
+        params: { id }, // 리뷰 ID 전달
       });
-
-      setReviews(reviews.filter((review) => review.id !== id));
-      alert('리뷰가 삭제되었습니다.');
+  
+      if (response.data === 'REVIEW_DELETE_SUCCESS') {
+        // 삭제 성공 시 리뷰 목록 갱신
+        setReviews(reviews.filter((review) => review.id !== id));
+        alert('리뷰가 성공적으로 삭제되었습니다.');
+      } else {
+        alert('리뷰 삭제에 실패했습니다. 다시 시도해주세요.');
+      }
     } catch (error) {
       console.error('리뷰 삭제 중 오류가 발생했습니다:', error);
-      alert('리뷰 삭제에 실패했습니다. 다시 시도해주세요.');
+      alert('리뷰 삭제 도중 문제가 발생했습니다.');
     }
   };
 
