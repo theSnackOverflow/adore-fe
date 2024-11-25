@@ -1,36 +1,30 @@
-// src/components/Admin/SurveyManagement/AdminSurveyList.jsx
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AdminSurveyManagementSidebar from '../../Sidebars/AdminSidebars/AdminSurveyManagementSidebar';
+import axiosInstance from '../../../lib/axiosInstance'; // Axios 인스턴스
 import './AdminSurveyList.css';
-
-// 더미 데이터 생성
-const authors = ['관리자1', '관리자2', '관리자3'];
-const getRandomDate = () => {
-  const start = new Date(2024, 0, 1);
-  const end = new Date();
-  const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-};
-const getRandomResponses = () => Math.floor(Math.random() * 100) + 1;
-
-// 더미 설문조사 데이터 생성 (200개)
-const surveys = Array.from({ length: 200 }, (_, index) => ({
-  id: 200 - index,
-  author: authors[Math.floor(Math.random() * authors.length)],
-  title: `설문조사 ${200 - index}`,
-  date: getRandomDate(),
-  responses: getRandomResponses(),
-}));
 
 const AdminSurveyList = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [surveys, setSurveys] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const pagesPerGroup = 10;
+
+  // 설문조사 데이터 로드
+  // useEffect(() => {
+  //   const fetchSurveys = async () => {
+  //     try {
+  //       const response = await axiosInstance.get('/api/surveys'); // API 호출
+  //       setSurveys(response.data);
+  //     } catch (error) {
+  //       console.error('설문조사 데이터를 가져오는 중 오류가 발생했습니다:', error);
+  //     }
+  //   };
+  //   fetchSurveys();
+  // }, []);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -40,7 +34,7 @@ const AdminSurveyList = () => {
   const filteredSurveys = surveys
     .filter(
       (survey) =>
-        survey.title.includes(searchQuery) || survey.author.includes(searchQuery)
+        survey.id.toString().includes(searchQuery) || survey.author.includes(searchQuery)
     )
     .sort((a, b) => b.id - a.id);
 
@@ -74,7 +68,7 @@ const AdminSurveyList = () => {
           <div className="admin-survey-list-search-bar">
             <input
               type="text"
-              placeholder="제목, 작성자 등"
+              placeholder="ID 또는 작성자"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -84,7 +78,7 @@ const AdminSurveyList = () => {
           <thead>
             <tr>
               <th>작성자</th>
-              <th>제목</th>
+              <th>설문조사 ID</th>
               <th>작성 날짜</th>
               <th>응답 수</th>
               <th>작업</th>
@@ -96,7 +90,7 @@ const AdminSurveyList = () => {
                 <td>{survey.author}</td>
                 <td>
                   <Link to={`/Admin/SurveyManagement/AdminSurveyDetail/${survey.id}`}>
-                    {survey.title}
+                    {survey.id}
                   </Link>
                 </td>
                 <td>{survey.date}</td>
@@ -117,7 +111,9 @@ const AdminSurveyList = () => {
 
         <div className="admin-survey-list-pagination">
           {startPage > 1 && (
-            <button onClick={goToPreviousGroup} className="admin-survey-list-pagination-nav">이전</button>
+            <button onClick={goToPreviousGroup} className="admin-survey-list-pagination-nav">
+              이전
+            </button>
           )}
           {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
             <button
@@ -129,7 +125,9 @@ const AdminSurveyList = () => {
             </button>
           ))}
           {endPage < totalPages && (
-            <button onClick={goToNextGroup} className="admin-survey-list-pagination-nav">다음</button>
+            <button onClick={goToNextGroup} className="admin-survey-list-pagination-nav">
+              다음
+            </button>
           )}
         </div>
       </div>
