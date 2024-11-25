@@ -1,0 +1,104 @@
+.survey-result-list-container {
+    display: flex;
+    padding: 2rem;
+    /* background-color: #f9f9f9; */
+  }
+  
+  .survey-result-list-content {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem 3rem;
+  }
+  
+  .survey-result-list-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .survey-result-list-header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .survey-result-list-table-container {
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .survey-result-list-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .survey-result-list-table th,
+  .survey-result-list-table td {
+    padding: 12px 16px;
+    text-align: left;
+  }
+  
+  .survey-result-list-table th {
+    background-color: #f1f1f1; /* 연한 회색 */
+    color: #333; /* 텍스트 색상 */
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .survey-result-list-table td {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .survey-result-list-table tr:hover {
+    background-color: #f9f9f9; /* 행에 호버 시 밝은 회색 */
+  }
+  
+  .survey-result-list-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .delete-button {
+    background-color: #ff6666; /* 빨간색 */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #e63946; /* 더 진한 빨간색 */
+  }
+  
+  .survey-result-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .survey-result-pagination button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: white;
+    color: #007bff; /* 파란색 */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .survey-result-pagination button:hover {
+    background-color: #007bff; /* 파란색으로 변경 */
+    color: white;
+  }
+  
+  .survey-result-pagination button.active {
+    background-color: #007bff; /* 활성화된 페이지 */
+    color: white;
+    font-weight: bold;
+  }

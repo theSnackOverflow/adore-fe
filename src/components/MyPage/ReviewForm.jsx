@@ -56,13 +56,37 @@ const ReviewForm = () => {
           const data = response.data;
   
           // 기존 데이터로 폼 필드 채우기
-          setSelectedFragrance({ id: data.perfumeId, name: data.perfumeName });
+          setSelectedFragrance({ name: data.perfumeName });
           setTitle(data.title);
           setContent(data.content);
-          setPhoto(data.photo || '');
+          setPhoto(data.img || ''); // img를 이미지 URL에 매핑
+  
+          // 향수 ID를 조회
+          console.log(`Fetching perfume ID for perfume name: ${data.perfumeName}`);
+          const perfumeIdResponse = await axiosInstance.get(
+            `/api/user/perfume/lists/1`, // 1은 기본 페이지 번호
+            {
+              params: {
+                type: 'NAME',
+                keyword: data.perfumeName,
+              },
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+  
+          if (perfumeIdResponse.data && perfumeIdResponse.data.perfumeList.length > 0) {
+            const fetchedPerfume = perfumeIdResponse.data.perfumeList[0];
+            console.log('Fetched perfume ID:', fetchedPerfume.id);
+            setSelectedFragrance((prev) => ({ ...prev, id: fetchedPerfume.id }));
+          } else {
+            console.error('Perfume not found in the list response:', perfumeIdResponse.data);
+            alert('향수 정보를 불러오는 데 실패했습니다.');
+          }
         }
       } catch (error) {
-        console.error('리뷰 조회 중 오류가 발생했습니다:', error);
+        console.error('리뷰 조회 중 오류가 발생했습니다:', error.response || error);
         alert('리뷰 정보를 불러오는 데 실패했습니다.');
       }
     };
@@ -79,8 +103,8 @@ const ReviewForm = () => {
         setShowAlertModal(true);
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        setAlertMessage('이미지 파일 크기는 5MB 이하만 가능합니다.');
+      if (file.size > 100 * 1024 * 1024) {
+        setAlertMessage('이미지 파일 크기는 100MB 이하만 가능합니다.');
         setShowAlertModal(true);
         return;
       }
@@ -111,58 +135,70 @@ const ReviewForm = () => {
       setShowAlertModal(true);
       return;
     }
-
+  
     try {
       const accessToken = getCookie('accessToken');
       if (!accessToken) {
         setAlertMessage('로그인이 필요합니다. 다시 로그인해주세요.');
         setShowAlertModal(true);
-        navigate('/login'); // 로그인 페이지로 리다이렉트
+        navigate('/login');
         return;
       }
-
+  
       const formData = new FormData();
       formData.append('title', title);
       formData.append('content', content);
-      formData.append('perfumeId', selectedFragrance.id); // 향수 ID
-      formData.append('photo', photo); // 이미지 URI
-      if (image) {
-        formData.append('file', image); // 이미지 파일
+      formData.append('perfumeId', selectedFragrance.id || '');
+  
+      // 이미지 처리
+      if (photo) {
+        formData.append('photo', photo); // URI를 추가
+      } else {
+        console.log('No photo URI provided.');
       }
-
-      const apiUrl = reviewId
-        ? `/api/user/review/update` // 수정 API
-        : `/api/user/review/create`; // 생성 API
-
-      console.log(`Submitting review to ${apiUrl}`);
-      const response = await axiosInstance.post(apiUrl, formData, {
+  
+      if (image) {
+        formData.append('file', image); // 실제 파일 추가
+      } else {
+        console.log('No image file provided.');
+      }
+  
+      // 디버깅: FormData 확인
+      console.log('FormData entries:');
+      for (let pair of formData.entries()) {
+        console.log(pair[0], ':', pair[1]);
+      }
+  
+      const apiUrl = `/api/user/review/update?id=${reviewId}`;
+      console.log(`Submitting PATCH request to ${apiUrl}`);
+  
+      const response = await axiosInstance.patch(apiUrl, formData, {
         headers: {
-          Authorization: `Bearer ${accessToken}`, // Access Token 추가
-          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${accessToken}`,
+          // Content-Type은 FormData 사용 시 자동 설정
         },
       });
-
+  
       if (response.status === 200) {
-        setAlertMessage(reviewId ? '리뷰가 성공적으로 수정되었습니다.' : '리뷰가 성공적으로 작성되었습니다.');
+        console.log('Review updated successfully:', response.data);
+        setAlertMessage('리뷰가 성공적으로 수정되었습니다.');
         setShowAlertModal(true);
-
-        // 2초 후에 페이지 이동
         setTimeout(() => {
           navigate('/mypage/myreviewlist');
         }, 2000);
       } else {
-        console.error('리뷰 처리 실패:', response.data);
-        setAlertMessage('리뷰 처리에 실패했습니다. 다시 시도해주세요.');
+        console.error('Review update failed:', response.data);
+        setAlertMessage('리뷰 수정에 실패했습니다. 다시 시도해주세요.');
         setShowAlertModal(true);
       }
     } catch (error) {
-      console.error('리뷰 처리 오류:', error.response || error);
+      console.error('리뷰 수정 오류:', error.response || error);
       if (error.response?.status === 401) {
         setAlertMessage('인증이 만료되었습니다. 다시 로그인해주세요.');
         setShowAlertModal(true);
         navigate('/login');
       } else {
-        setAlertMessage('리뷰 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+        setAlertMessage('리뷰 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
         setShowAlertModal(true);
       }
     }
@@ -218,10 +254,15 @@ const ReviewForm = () => {
             <span className="review-form-label">사진</span>
             <div className="review-form-file-upload">
               <input type="file" accept="image/*" onChange={handleImageUpload} />
+              {photo && (
+                <div className="image-preview">
+                  <img src={photo} alt="리뷰 이미지 미리보기" />
+                </div>
+              )}
               {imageError && <p className="error-message">{imageError}</p>}
             </div>
           </div>
-          </div>
+        </div>
         <div className="review-form-action-buttons">
           <button
             onClick={handleSubmit}

@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header/Header';
@@ -18,6 +17,7 @@ import PerfumeList from './components/PerfumeRecommendation/PerfumeList';
 import NoteList from './components/PerfumeRecommendation/NoteList';
 import SurveyIntro from './components/PerfumeRecommendation/SurveyIntro';
 import SurveyResult from './components/PerfumeRecommendation/SurveyResult';
+import SurveyResultList from './components/PerfumeRecommendation/SurveyResultList'; // 추가된 SurveyResultList
 import OtherReviewList from './components/PerfumeRecommendation/OtherReviewList';
 import ReviewDetail from './components/PerfumeRecommendation/ReviewDetail';
 import FriendInfoInput from './components/FriendRecommendation/FriendInfoInput';
@@ -49,7 +49,7 @@ function App() {
   const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
   const instance = axios.create({
     baseURL: gatewayURL,
-    timeout: 5000
+    timeout: 5000,
   });
 
   instance.interceptors.request.use(
@@ -93,11 +93,11 @@ function App() {
     setUserRole(isLogin() ? extractRole() : "GUEST");
   }, []);
 
-  const PrivateRoute = ({ element, isLoggedIn }) => {
+  const PrivateRoute = ({ element }) => {
     return userRole === "USER" ? element : <Navigate to="/login" replace />;
   };
   
-  const AdminRoute = ({ element, isAdmin }) => {
+  const AdminRoute = ({ element }) => {
     return userRole === "ADMIN" ? element : <Navigate to="/login" replace />;
   };
 
@@ -105,65 +105,61 @@ function App() {
     <Router>
       <div className="app">
         <Header userRole={userRole} onLogout={handleLogout} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/SignUpForm" element={<SignUpForm />} />
-        <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
-        {/* 일반 사용자 라우트 */}
-        <Route path="/" element={<Home />} />
-        <Route path="/SignUpForm" element={<SignUpForm />} />
-        <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/SignUpForm" element={<SignUpForm />} />
+          <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
 
-        {/* MyPage 관련 라우트 */}
-        <Route path="/MyPage/PasswordChange" element={<PrivateRoute element={<PasswordChange />} userRole={userRole} />} />
-        <Route path="/MyPage/PersonalInfoEdit" element={<PrivateRoute element={<PersonalInfoEdit />} userRole={userRole} />} />
-        <Route path="/MyPage/AccountDelete" element={<PrivateRoute element={<AccountDelete />} userRole={userRole} />} />
-        <Route path="/MyPage/ReviewForm" element={<PrivateRoute element={<ReviewForm />} userRole={userRole} />} />
-        <Route path="/MyPage/MyReviewList" element={<PrivateRoute element={<MyReviewList />} userRole={userRole} />} />
+          {/* MyPage 관련 라우트 */}
+          <Route path="/MyPage/PasswordChange" element={<PrivateRoute element={<PasswordChange />} />} />
+          <Route path="/MyPage/PersonalInfoEdit" element={<PrivateRoute element={<PersonalInfoEdit />} />} />
+          <Route path="/MyPage/AccountDelete" element={<PrivateRoute element={<AccountDelete />} />} />
+          <Route path="/MyPage/ReviewForm" element={<PrivateRoute element={<ReviewForm />} />} />
+          <Route path="/MyPage/MyReviewList" element={<PrivateRoute element={<MyReviewList />} />} />
 
-        {/* Customer Support 관련 라우트 */}
-        <Route path="/CustomerSupport/NoticeList" element={<PrivateRoute element={<NoticeList />} userRole={userRole} />} />
-        <Route path="/CustomerSupport/InquiryForm" element={<PrivateRoute element={<InquiryForm />} userRole={userRole} />} />
-        <Route path="/CustomerSupport/InquiryList" element={<PrivateRoute element={<InquiryList />} userRole={userRole} />} />
+          {/* Customer Support 관련 라우트 */}
+          <Route path="/CustomerSupport/NoticeList" element={<PrivateRoute element={<NoticeList />} />} />
+          <Route path="/CustomerSupport/InquiryForm" element={<PrivateRoute element={<InquiryForm />} />} />
+          <Route path="/CustomerSupport/InquiryList" element={<PrivateRoute element={<InquiryList />} />} />
 
-        {/* Perfume Recommendation 관련 라우트 */}
-        <Route path="/perfumerecommendation/perfumelist" element={<PrivateRoute element={<PerfumeList />} userRole={userRole} />} />
-        <Route path="/perfumerecommendation/notelist" element={<PrivateRoute element={<NoteList />} userRole={userRole} />} />
-        <Route path="/perfumerecommendation/surveyintro" element={<PrivateRoute element={<SurveyIntro />} userRole={userRole} />} />
-        <Route path="/perfumerecommendation/surveyresult" element={<PrivateRoute element={<SurveyResult />} userRole={userRole} />} />
-        <Route path="/perfumerecommendation/otherreviewlist" element={<PrivateRoute element={<OtherReviewList />} userRole={userRole} />} />
-        <Route path="/perfumerecommendation/review/:id" element={<PrivateRoute element={<ReviewDetail />} userRole={userRole} />} />
+          {/* Perfume Recommendation 관련 라우트 */}
+          <Route path="/perfumerecommendation/perfumelist" element={<PrivateRoute element={<PerfumeList />} />} />
+          <Route path="/perfumerecommendation/notelist" element={<PrivateRoute element={<NoteList />} />} />
+          <Route path="/perfumerecommendation/surveyintro" element={<PrivateRoute element={<SurveyIntro />} />} />
+          <Route path="/perfumerecommendation/surveyresult" element={<PrivateRoute element={<SurveyResult />} />} />
+          <Route path="/perfumerecommendation/surveyresultlist" element={<PrivateRoute element={<SurveyResultList />} />} /> {/* 추가된 SurveyResultList */}
+          <Route path="/perfumerecommendation/otherreviewlist" element={<PrivateRoute element={<OtherReviewList />} />} />
+          <Route path="/perfumerecommendation/review/:id" element={<PrivateRoute element={<ReviewDetail />} />} />
 
-        {/* Friend Recommendation 관련 라우트 */}
-        <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendInfoInput />} userRole={userRole} />} />
-        <Route path="/friendrecommendation/friendresult" element={<PrivateRoute element={<FriendResult />} userRole={userRole} />} />
+          {/* Friend Recommendation 관련 라우트 */}
+          <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendInfoInput />} />} />
+          <Route path="/friendrecommendation/friendresult" element={<PrivateRoute element={<FriendResult />} />} />
 
-        {/* Admin Routes */}
-        <Route path="/Admin/UserManagement/UserList" element={<AdminRoute element={<UserList />} userRole={userRole} />} />
-        <Route path="/Admin/UserManagement/UserInfoEdit" element={<AdminRoute element={<UserInfoEdit />} userRole={userRole} />} />
-        <Route path="/Admin/UserManagement/UserRegistration" element={<AdminRoute element={<UserRegistration />} userRole={userRole} />} />
-        <Route path="/Admin/UserManagement/ReportList" element={<AdminRoute element={<ReportList />} userRole={userRole} />} />
-        <Route path="/Admin/UserManagement/ReportDetail" element={<AdminRoute element={<ReportDetail />} userRole={userRole} />} />
-        <Route path="/Admin/PerfumeManagement/AdminPerfumeList" element={<AdminRoute element={<AdminPerfumeList />} userRole={userRole} />} />
-        <Route path="/Admin/PerfumeManagement/PerfumeInfoEdit" element={<AdminRoute element={<PerfumeInfoEdit />} userRole={userRole} />} />
-        <Route path="/Admin/PerfumeManagement/PerfumeRegistration" element={<AdminRoute element={<PerfumeRegistration />} userRole={userRole} />} />
-        <Route path="/Admin/InquiryManagement/AdminInquiryList" element={<AdminRoute element={<AdminInquiryList />} userRole={userRole} />} />
+          {/* Admin Routes */}
+          <Route path="/Admin/UserManagement/UserList" element={<AdminRoute element={<UserList />} />} />
+          <Route path="/Admin/UserManagement/UserInfoEdit" element={<AdminRoute element={<UserInfoEdit />} />} />
+          <Route path="/Admin/UserManagement/UserRegistration" element={<AdminRoute element={<UserRegistration />} />} />
+          <Route path="/Admin/UserManagement/ReportList" element={<AdminRoute element={<ReportList />} />} />
+          <Route path="/Admin/UserManagement/ReportDetail" element={<AdminRoute element={<ReportDetail />} />} />
+          <Route path="/Admin/PerfumeManagement/AdminPerfumeList" element={<AdminRoute element={<AdminPerfumeList />} />} />
+          <Route path="/Admin/PerfumeManagement/PerfumeInfoEdit" element={<AdminRoute element={<PerfumeInfoEdit />} />} />
+          <Route path="/Admin/PerfumeManagement/PerfumeRegistration" element={<AdminRoute element={<PerfumeRegistration />} />} />
+          <Route path="/Admin/InquiryManagement/AdminInquiryList" element={<AdminRoute element={<AdminInquiryList />} />} />
 
-        {/* Notice Management Routes */}
-        <Route path="/Admin/NoticeManagement/AdminNoticeList" element={<AdminRoute element={<AdminNoticeList />} userRole={userRole} />} />
-        <Route path="/Admin/NoticeManagement/AdminNoticeCreate" element={<AdminRoute element={<AdminNoticeCreate />} userRole={userRole} />} />
-        <Route path="/Admin/NoticeManagement/AdminNoticeEdit" element={<AdminRoute element={<AdminNoticeEdit />} />} /> {/* 추가 */}
+          {/* Notice Management Routes */}
+          <Route path="/Admin/NoticeManagement/AdminNoticeList" element={<AdminRoute element={<AdminNoticeList />} />} />
+          <Route path="/Admin/NoticeManagement/AdminNoticeCreate" element={<AdminRoute element={<AdminNoticeCreate />} />} />
+          <Route path="/Admin/NoticeManagement/AdminNoticeEdit" element={<AdminRoute element={<AdminNoticeEdit />} />} />
 
+          {/* Survey Management Routes */}
+          <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} />} />
+          <Route path="/Admin/SurveyManagement/AdminSurveyDetail/:id" element={<AdminRoute element={<AdminSurveyDetail />} />} />
+          <Route path="/Admin/SurveyManagement/AdminSurveyCreate" element={<AdminRoute element={<AdminSurveyCreate />} />} />
 
-        {/* Survey Management Routes */}
-        <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} userRole={userRole} />} />
-        <Route path="/Admin/SurveyManagement/AdminSurveyDetail/:id" element={<AdminRoute element={<AdminSurveyDetail />} userRole={userRole} />} />
-        <Route path="/Admin/SurveyManagement/AdminSurveyCreate" element={<AdminRoute element={<AdminSurveyCreate />} userRole={userRole} />} />
-
-        {/* Statistics Management Route */}
-        <Route path="/Admin/StatisticsManagement/AdminStatistics" element={<AdminRoute element={<AdminStatistics />} userRole={userRole} />} />
-      </Routes>
-      <Footer />
+          {/* Statistics Management Route */}
+          <Route path="/Admin/StatisticsManagement/AdminStatistics" element={<AdminRoute element={<AdminStatistics />} />} />
+        </Routes>
+        <Footer />
       </div>
     </Router>
   );

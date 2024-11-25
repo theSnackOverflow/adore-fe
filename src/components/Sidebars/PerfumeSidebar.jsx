@@ -11,7 +11,7 @@ const FragranceSidebar = () => {
       <h3><Link to="../perfumerecommendation/surveyintro">향수 추천 받기</Link></h3>
         <ul>
           {/* <li><Link to="/">설문 조사</Link></li> */}
-          <li><Link to="../PerfumeRecommendation/SurveyResult">결과 확인</Link></li>
+          <li><Link to="../perfumerecommendation/surveyresultlist">추천 결과 확인</Link></li>
         </ul>
       <h3>향수 리뷰 보기</h3>
       <ul>
