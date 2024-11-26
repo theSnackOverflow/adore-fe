@@ -30,13 +30,39 @@ const AdminStatistics = () => {
   
       console.log(`Period: ${period}일, StartDate: ${startDate}, EndDate: ${endDate}`);
   
+      // 기간 내의 모든 날짜 생성
+      const generateDateRange = (start, end) => {
+        const dateArray = [];
+        let currentDate = new Date(start);
+        const lastDate = new Date(end);
+        while (currentDate <= lastDate) {
+          dateArray.push(getFormattedDate(currentDate));
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+        return dateArray;
+      };
+  
+      const dateRange = generateDateRange(startDate, endDate);
+  
+      // 데이터 채우기 함수
+      const fillMissingDates = (data) => {
+        const dataMap = data.reduce((acc, item) => {
+          acc[item.date] = item.count;
+          return acc;
+        }, {});
+        return dateRange.map((date) => ({
+          date,
+          count: dataMap[date] || 0, // 데이터가 없으면 count를 0으로 설정
+        }));
+      };
+  
       // 접속 사용자 데이터
       const connectedResponse = await axiosInstance.get('/api/admin/statics/activeUser', {
         params: { startDate, endDate },
       });
       console.log('Connected Users Response:', connectedResponse.data);
       const connectedData = connectedResponse.data.dateCountDtoList || [];
-      setConnectedUsersData(connectedData);
+      setConnectedUsersData(fillMissingDates(connectedData));
   
       // 신규 사용자 데이터
       const newUsersResponse = await axiosInstance.get('/api/admin/statics/newUser', {
@@ -44,7 +70,7 @@ const AdminStatistics = () => {
       });
       console.log('New Users Response:', newUsersResponse.data);
       const newUsersData = newUsersResponse.data.dateCountDtoList || [];
-      setNewUsersData(newUsersData);
+      setNewUsersData(fillMissingDates(newUsersData));
   
       // 미접속 사용자 데이터
       const inactiveUsersResponse = await axiosInstance.get('/api/admin/statics/inactiveMembers', {
@@ -52,7 +78,7 @@ const AdminStatistics = () => {
       });
       console.log('Inactive Users Response:', inactiveUsersResponse.data);
       const inactiveUsersData = inactiveUsersResponse.data.dateCountDtoList || [];
-      setInactiveUsersData(inactiveUsersData);
+      setInactiveUsersData(fillMissingDates(inactiveUsersData));
   
       // 추천 기능 이용자 데이터
       const recommendUsersResponse = await axiosInstance.get('/api/admin/statics/recommendUser', {
@@ -60,7 +86,7 @@ const AdminStatistics = () => {
       });
       console.log('Recommend Users Response:', recommendUsersResponse.data);
       const recommendUsersData = recommendUsersResponse.data.dateCountDtoList || [];
-      setRecommendUsersData(recommendUsersData);
+      setRecommendUsersData(fillMissingDates(recommendUsersData));
   
       setError(null); // 오류 초기화
     } catch (error) {
@@ -102,8 +128,9 @@ const AdminStatistics = () => {
     scales: {
       x: {
         ticks: {
-          autoSkip: false,
-          maxRotation: 0,
+          autoSkip: false, // 자동 건너뛰기 비활성화
+          maxRotation: 45, // 최대 회전 각도 (45도)
+          minRotation: 45, // 최소 회전 각도 (45도)
         },
       },
       y: {
