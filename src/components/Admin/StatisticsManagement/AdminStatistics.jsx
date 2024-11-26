@@ -109,28 +109,31 @@ const AdminStatistics = () => {
     setPeriod(newPeriod);
   };
 
-  const createChartData = (data, label) => ({
-    labels: data.map((item) => item.date),
-    datasets: [
-      {
-        label,
-        data: data.map((item) => item.count),
-        fill: false,
-        borderColor: '#007bff',
-        tension: 0.3,
-      },
-    ],
-  });
-
+  const createChartData = (data, label) => {
+    const labels = period === 1 ? ['', data[0]?.date || '', ''] : data.map((item) => item.date);
+    return {
+      labels,
+      datasets: [
+        {
+          label,
+          data: period === 1 ? [0, data[0]?.count || 0, 0] : data.map((item) => item.count),
+          fill: false,
+          borderColor: '#007bff',
+          tension: 0.3,
+        },
+      ],
+    };
+  };
+  
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
       x: {
         ticks: {
-          autoSkip: false, // 자동 건너뛰기 비활성화
-          maxRotation: 45, // 최대 회전 각도 (45도)
-          minRotation: 45, // 최소 회전 각도 (45도)
+          autoSkip: false, 
+          maxRotation: period === 30 ? 45 : 0,
+          minRotation: period === 30 ? 45 : 0,
         },
       },
       y: {
