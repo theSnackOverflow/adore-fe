@@ -187,6 +187,7 @@ const ReviewDetail = () => {
           ))}
         </div>
         <div className="review-detail-new-comment">
+          <p className="review-detail-new-comment-writer">{nickname}</p>
           <input
             type="text"
             placeholder="댓글 내용"
