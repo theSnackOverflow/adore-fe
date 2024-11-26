@@ -129,7 +129,7 @@ function App() {
           <Route path="/perfumerecommendation/surveyresult" element={<PrivateRoute element={<SurveyResult />} />} />
           <Route path="/perfumerecommendation/surveyresultlist" element={<PrivateRoute element={<SurveyResultList />} />} /> {/* 추가된 SurveyResultList */}
           <Route path="/perfumerecommendation/otherreviewlist" element={<PrivateRoute element={<OtherReviewList />} />} />
-          <Route path="/perfumerecommendation/review/:id" element={<PrivateRoute element={<ReviewDetail />} />} />
+          <Route path="/perfumerecommendation/reviewdetail/:reviewId" element={<PrivateRoute element={<ReviewDetail />} />} />
 
           {/* Friend Recommendation 관련 라우트 */}
           <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendInfoInput />} />} />

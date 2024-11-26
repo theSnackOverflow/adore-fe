@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../lib/axiosInstance';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
 import AlertModal from '../Modals/AlertModal';
 import './ReviewDetail.css';
@@ -8,6 +8,7 @@ import './ReviewDetail.css';
 const ReviewDetail = () => {
   const { reviewId } = useParams(); // 리뷰 ID를 URL 파라미터에서 가져옴
   const [reviewData, setReviewData] = useState(null); // 리뷰 데이터를 저장할 상태
+  const [nickname, setNickname] = useState('익명 사용자'); // 사용자 닉네임
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [likes, setLikes] = useState(0);
@@ -15,102 +16,115 @@ const ReviewDetail = () => {
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState(''); // AlertModal에 표시할 메시지
 
-  // 리뷰 데이터를 서버에서 가져오는 함수
-  useEffect(() => {
-    const fetchReviewData = async () => {
-      try {
-        const response = await axios.get(`http://gachon-adore.duckdns.org:8111/api/user/review/detail`, {
-          params: { id: reviewId }, // API 요청 파라미터
-        });
+  // 리뷰 데이터를 가져오는 함수
+  const fetchReviewData = async () => {
+    try {
+      console.log(`Fetching review data for ID: ${reviewId}`); // 디버깅 로그
+      const response = await axiosInstance.get(`api/user/review/`, {
+        params: { id: reviewId },
+      });
+      console.log("Review API Response Data:", response.data); // 디버깅 로그
+      const data = response.data;
 
-        if (response.data) {
-          console.log("Fetched review data:", response.data); // 디버깅 로그
-          setReviewData(response.data);
-          setLikes(response.data.likeCnt || 0);
-          setComments(response.data.comments || []); // 응답의 comments 필드 매핑
-        } else {
-          console.error("리뷰 데이터가 비어 있습니다.");
-        }
-      } catch (error) {
-        console.error("리뷰 데이터를 가져오는 중 오류 발생:", error);
-        setAlertMessage("리뷰 데이터를 불러오는 데 실패했습니다.");
-        setIsAlertModalOpen(true);
+      // 기본값 설정
+      setReviewData({
+        perfumeName: data.perfumeName || '알 수 없음',
+        memberId: data.memberId,
+        title: data.title || '제목 없음',
+        content: data.content || '내용 없음',
+        rating: data.rating || 0,
+        createdAt: data.createdAt || new Date(),
+        likeCnt: data.likeCnt || 0,
+      });
+
+      setLikes(data.likeCnt || 0);
+      setComments(data.CommentList || []);
+
+      // 사용자 닉네임 가져오기
+      if (data.memberId) {
+        fetchUserNickname(data.memberId);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching review data:', error); // 디버깅 로그
+    }
+  };
 
-    fetchReviewData();
+  // 사용자 닉네임을 가져오는 함수
+  const fetchUserNickname = async (memberId) => {
+    try {
+      console.log(`Fetching user data for memberId: ${memberId}`); // 디버깅 로그
+      const response = await axiosInstance.get(`api/admin/user/`, {
+        params: { id: memberId },
+      });
+      console.log("User API Response Data:", response.data); // 디버깅 로그
+      setNickname(response.data.nickname || '익명 사용자');
+    } catch (error) {
+      console.error('Error fetching user data:', error); // 디버깅 로그
+    }
+  };
+
+  // 초기 로딩 시 데이터 가져오기
+  useEffect(() => {
+    if (reviewId) {
+      fetchReviewData();
+    } else {
+      console.error("No review ID provided."); // 디버깅 로그
+    }
   }, [reviewId]);
 
+  // 좋아요 처리 함수
   const handleLike = async () => {
     if (hasLiked) {
       setAlertMessage("추천은 한 번만 할 수 있습니다!");
       setIsAlertModalOpen(true);
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `http://gachon-adore.duckdns.org:8111/api/user/review/like`,
-        { id: reviewId }
-      );
-
-      if (response.data === "SUCCESS") {
-        setLikes(likes + 1);
+    } else {
+      try {
+        console.log("Sending like for review ID:", reviewId); // 디버깅 로그
+        await axiosInstance.patch(`api/user/review/like`, null, {
+          params: { id: reviewId },
+        });
+        console.log("Like successful"); // 디버깅 로그
         setHasLiked(true);
-      } else {
-        setAlertMessage("추천 처리 중 문제가 발생했습니다.");
-        setIsAlertModalOpen(true);
+        fetchReviewData(); // 좋아요 후 데이터를 다시 가져옴
+      } catch (error) {
+        console.error('Error sending like:', error); // 디버깅 로그
       }
-    } catch (error) {
-      console.error("추천 처리 중 오류 발생:", error);
-      setAlertMessage("추천 처리에 실패했습니다.");
-      setIsAlertModalOpen(true);
     }
   };
 
-  const handleReportComment = () => {
-    setAlertMessage("신고가 완료되었습니다");
-    setIsAlertModalOpen(true);
-  };
-
-  const handleDeleteComment = (commentId) => {
-    setComments(comments.filter((comment) => comment.id !== commentId));
-    setAlertMessage("댓글을 삭제했습니다");
-    setIsAlertModalOpen(true);
-  };
-
+  // 댓글 작성 함수
   const handleCommentSubmit = async () => {
-    if (!newComment.trim()) {
-      setAlertMessage("댓글 내용을 입력해주세요.");
-      setIsAlertModalOpen(true);
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `http://gachon-adore.duckdns.org:8111/api/user/review/comment`,
-        {
+    if (newComment.trim()) {
+      try {
+        console.log("Submitting comment:", newComment); // 디버깅 로그
+        const response = await axiosInstance.post(`api/user/review/comment`, {
           reviewId,
           content: newComment,
-        }
-      );
-
-      if (response.data === "SUCCESS") {
-        const newCommentObj = {
-          id: comments.length + 1,
-          user: "내 닉네임", // 서버에서 받아오거나 하드코딩
-          content: newComment,
-        };
-        setComments([...comments, newCommentObj]);
+        });
+        setComments([...comments, response.data]);
         setNewComment('');
-      } else {
-        setAlertMessage("댓글 작성 중 문제가 발생했습니다.");
-        setIsAlertModalOpen(true);
+        console.log("Comment submission successful"); // 디버깅 로그
+      } catch (error) {
+        console.error('Error submitting comment:', error); // 디버깅 로그
       }
-    } catch (error) {
-      console.error("댓글 작성 중 오류 발생:", error);
-      setAlertMessage("댓글 작성에 실패했습니다.");
+    } else {
+      console.log("Comment is empty, not submitting."); // 디버깅 로그
+    }
+  };
+
+  // 댓글 삭제 함수
+  const handleDeleteComment = async (commentId) => {
+    try {
+      console.log("Deleting comment ID:", commentId); // 디버깅 로그
+      await axiosInstance.delete(`api/user/review/comment`, {
+        params: { id: commentId },
+      });
+      setComments(comments.filter((comment) => comment.id !== commentId));
+      setAlertMessage("댓글을 삭제했습니다");
       setIsAlertModalOpen(true);
+      console.log("Comment deletion successful"); // 디버깅 로그
+    } catch (error) {
+      console.error('Error deleting comment:', error); // 디버깅 로그
     }
   };
 
@@ -124,42 +138,37 @@ const ReviewDetail = () => {
     <div className="review-detail-container">
       <PerfumeSidebar />
       <div className="review-detail-content">
-        <h1>{reviewData.perfumeName}</h1>
+        <div className="review-detail-perfume-name">
+          <h1>{reviewData.perfumeName}</h1>
+        </div>
         <div className="review-detail-card">
           <div className="review-detail-header">
             <div className="review-detail-user-info">
-              <div className="review-detail-profile-pic"></div>
-              <h1>{reviewData.writer?.nickname || "익명"}</h1>
+              <h1>{nickname}</h1>
             </div>
-            <div className="review-detail-image">사진</div>
+            <div className="review-detail-actions">
+              <button onClick={handleLike} className="review-detail-like-btn">
+                추천 👍 {likes}
+              </button>
+            </div>
           </div>
           <div className="review-detail-body">
             <h2>{reviewData.title}</h2>
-            <div className="review-detail-body-info">
-              <p>별점 : {reviewData.rating}</p>
-              <p>작성시간 : {new Date(reviewData.createdAt).toLocaleDateString()}</p>
+            <div className="review-detail-body-2">
+              <p>작성일: {new Date(reviewData.createdAt).toLocaleDateString()}</p>
+              <p>별점: {reviewData.rating}</p>
             </div>
-            <div className="review-detail-body-content">
-              <p>{reviewData.content}</p>
-            </div>
-          </div>
-          <div className="review-detail-actions">
-            <button onClick={handleLike} className="review-detail-like-btn">
-              추천 👍 {likes}
-            </button>
-            <button onClick={handleReportComment} className="review-detail-report-btn">
-              신고하기
-            </button>
+            <hr />
+            <p>{reviewData.content}</p>
           </div>
         </div>
-
-        <h2>댓글</h2>
         <div className="review-detail-comments">
+          <h2>댓글</h2>
           {comments.map((comment) => (
             <div key={comment.id} className="review-detail-comment">
-              <strong>{comment.user}</strong>
-              <p>{comment.content}</p>
-              {comment.user === "내 닉네임" ? (
+              <strong>{comment.user || '익명'}</strong>
+              <p>{comment.content || '내용 없음'}</p>
+              {comment.user === '내 닉네임' ? (
                 <button
                   onClick={() => handleDeleteComment(comment.id)}
                   className="review-detail-delete-comment-btn"
@@ -168,7 +177,7 @@ const ReviewDetail = () => {
                 </button>
               ) : (
                 <button
-                  onClick={handleReportComment}
+                  onClick={() => setAlertMessage("신고가 완료되었습니다")}
                   className="review-detail-report-comment-btn"
                 >
                   신고하기
@@ -177,7 +186,6 @@ const ReviewDetail = () => {
             </div>
           ))}
         </div>
-
         <div className="review-detail-new-comment">
           <input
             type="text"
@@ -185,15 +193,11 @@ const ReviewDetail = () => {
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
           />
-          <button onClick={handleCommentSubmit}>작성하기</button>
+          <button onClick={handleCommentSubmit}>댓글 작성</button>
         </div>
       </div>
-
       {isAlertModalOpen && (
-        <AlertModal
-          message={alertMessage}
-          onClose={closeAlertModal}
-        />
+        <AlertModal message={alertMessage} onClose={closeAlertModal} />
       )}
     </div>
   );
