@@ -18,17 +18,18 @@ const PerfumeList = () => {
   const fetchPerfumes = async (page = 1, query = '') => {
     setLoading(true);
     setError(null); // 오류 초기화
+  
     try {
       const response = await axiosInstance.get(`/api/admin/perfume/lists/${page}`, {
         params: {
-          type: 'TITLE', // 검색 기준 (TITLE 고정)
+          type: 'NAME', // 이름으로 검색
           keyword: query, // 검색어
         },
       });
-
+  
       const perfumeList = response.data.perfumeList || [];
-      
-      // 각 향수의 상세 정보 가져오기
+  
+      // 향수 상세 정보를 가져오기
       const detailedPerfumes = await Promise.all(
         perfumeList.map(async (perfume) => {
           try {
@@ -43,10 +44,9 @@ const PerfumeList = () => {
           }
         })
       );
-
-      // API 응답 데이터 설정
-      setPerfumes(detailedPerfumes);
-      setTotalPages(response.data.totalPages || 1);
+  
+      setPerfumes(detailedPerfumes); // 향수 목록 업데이트
+      setTotalPages(response.data.totalPages || 1); // 전체 페이지 수 설정
     } catch (error) {
       console.error('Error fetching perfumes:', error);
       setError('향수 데이터를 가져오는 중 오류가 발생했습니다.');
@@ -60,13 +60,19 @@ const PerfumeList = () => {
     setSearchQuery(e.target.value);
   };
 
-  // 검색 실행 핸들러
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    setCurrentPage(1); // 페이지를 1로 초기화
-    setCurrentGroup(1); // 페이지 그룹을 1로 초기화
-    fetchPerfumes(1, searchQuery); // 검색어에 맞는 첫 번째 페이지 데이터 가져오기
-  };
+// 검색 실행 핸들러
+const handleSearchSubmit = async (e) => {
+  e.preventDefault(); // 기본 제출 동작 방지
+  setCurrentPage(1); // 페이지를 1로 초기화
+  setCurrentGroup(1); // 페이지 그룹을 1로 초기화
+
+  // 검색어에 맞는 첫 번째 페이지 데이터 가져오기
+  try {
+    await fetchPerfumes(1, searchQuery); // 검색어를 포함한 데이터를 가져옵니다.
+  } catch (error) {
+    console.error("검색 실패:", error);
+  }
+};
 
   // 페이지 변경 핸들러
   const handlePageChange = (page) => {
@@ -85,8 +91,8 @@ const PerfumeList = () => {
 
   // 초기 데이터 로드
   useEffect(() => {
-    fetchPerfumes();
-  }, []);
+    fetchPerfumes(currentPage, searchQuery); // 검색어에 맞는 데이터 로드
+  }, [currentPage, searchQuery]); // 페이지 또는 검색어가 변경될 때마다 다시 로드
 
   // 현재 그룹의 페이지 번호 계산
   const startPage = (currentGroup - 1) * BUTTONS_PER_GROUP + 1;
@@ -135,11 +141,11 @@ const PerfumeList = () => {
                       <span className="note-section">
                         <strong>Top:</strong> {perfume.top || 'N/A'}
                       </span>
-                      <br/>
+                      <br />
                       <span className="note-section">
                         <strong>Middle:</strong> {perfume.middle || 'N/A'}
                       </span>
-                      <br/>
+                      <br />
                       <span className="note-section">
                         <strong>Base:</strong> {perfume.base || 'N/A'}
                       </span>
@@ -176,9 +182,7 @@ const PerfumeList = () => {
                 )}
               </div>
               <div className="admin-perfume-list-action-buttons">
-                <button className="admin-perfume-list-write-btn">
-                  향수 추가
-                </button>
+                <button className="admin-perfume-list-write-btn">향수 추가</button>
               </div>
             </div>
           </>
