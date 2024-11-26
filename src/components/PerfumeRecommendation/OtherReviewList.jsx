@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../../lib/axiosInstance';
-import axios from 'axios';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
 import FragranceSearchModal from '../Modals/FragranceSearchModal';
 import './OtherReviewList.css';
@@ -16,26 +15,11 @@ const OtherReviewList = () => {
 
   const navigate = useNavigate();
 
-  // 향수 리스트 불러오기
-  useEffect(() => {
-    const fetchPerfumeList = async () => {
-      try {
-        const response = await axios.get('http://gachon-adore.duckdns.org:8111/user/perfume/perfume/list');
-        setPerfumeList(response.data || []);
-      } catch (error) {
-        console.error('향수 리스트를 가져오는 중 오류 발생:', error);
-        setPerfumeList([]);
-      }
-    };
-
-    fetchPerfumeList();
-  }, []);
-
   // 전체 리뷰 불러오기
   useEffect(() => {
     const fetchAllReviews = async () => {
       try {
-        const response = await axios.get(`http://gachon-adore.duckdns.org:8111/api/user/review/lists/${currentPage}`, {
+        const response = await axiosInstance.get(`/api/user/review/lists/${currentPage}`, {
           params: { type: 'TITLE', keyword: '' },
         });
         setReviews(response.data?.reviewList || []);
@@ -123,7 +107,7 @@ const OtherReviewList = () => {
               <tr key={review.id}>
                 <td>{review.name}</td>
                 <td>
-                  <Link to={`/perfumerecommendation/review/${review.id}`} className="review-link">
+                  <Link to={'/perfumerecommendation/reviewdetail'} className="review-link">
                     {review.title}
                   </Link>
                 </td>

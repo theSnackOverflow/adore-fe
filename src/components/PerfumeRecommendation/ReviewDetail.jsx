@@ -1,5 +1,3 @@
-// src/components/PerfumeRecommendation/ReviewDetail.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -17,32 +15,56 @@ const ReviewDetail = () => {
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState(''); // AlertModal에 표시할 메시지
 
+  // 리뷰 데이터를 서버에서 가져오는 함수
   useEffect(() => {
-    // 리뷰 데이터를 서버에서 가져오는 함수
     const fetchReviewData = async () => {
       try {
-        const response = await axios.get(`http://gachon-adore.duckdns.org:8081/user/review`, {
-          params: { id: reviewId },
+        const response = await axios.get(`http://gachon-adore.duckdns.org:8111/api/user/review/detail`, {
+          params: { id: reviewId }, // API 요청 파라미터
         });
-        console.log("API Response Data:", response.data); // API 응답 출력
-        setReviewData(response.data);
-        setLikes(response.data.likeCnt || 0);
-        setComments(response.data.CommentList || []);
+
+        if (response.data) {
+          console.log("Fetched review data:", response.data); // 디버깅 로그
+          setReviewData(response.data);
+          setLikes(response.data.likeCnt || 0);
+          setComments(response.data.comments || []); // 응답의 comments 필드 매핑
+        } else {
+          console.error("리뷰 데이터가 비어 있습니다.");
+        }
       } catch (error) {
-        console.error('리뷰 데이터를 가져오는 중 오류 발생:', error);
+        console.error("리뷰 데이터를 가져오는 중 오류 발생:", error);
+        setAlertMessage("리뷰 데이터를 불러오는 데 실패했습니다.");
+        setIsAlertModalOpen(true);
       }
     };
 
     fetchReviewData();
   }, [reviewId]);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (hasLiked) {
       setAlertMessage("추천은 한 번만 할 수 있습니다!");
       setIsAlertModalOpen(true);
-    } else {
-      setLikes(likes + 1);
-      setHasLiked(true);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `http://gachon-adore.duckdns.org:8111/api/user/review/like`,
+        { id: reviewId }
+      );
+
+      if (response.data === "SUCCESS") {
+        setLikes(likes + 1);
+        setHasLiked(true);
+      } else {
+        setAlertMessage("추천 처리 중 문제가 발생했습니다.");
+        setIsAlertModalOpen(true);
+      }
+    } catch (error) {
+      console.error("추천 처리 중 오류 발생:", error);
+      setAlertMessage("추천 처리에 실패했습니다.");
+      setIsAlertModalOpen(true);
     }
   };
 
@@ -57,15 +79,38 @@ const ReviewDetail = () => {
     setIsAlertModalOpen(true);
   };
 
-  const handleCommentSubmit = () => {
-    if (newComment.trim()) {
-      const newCommentObj = {
-        id: comments.length + 1,
-        user: '내 닉네임',
-        content: newComment,
-      };
-      setComments([...comments, newCommentObj]);
-      setNewComment('');
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) {
+      setAlertMessage("댓글 내용을 입력해주세요.");
+      setIsAlertModalOpen(true);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `http://gachon-adore.duckdns.org:8111/api/user/review/comment`,
+        {
+          reviewId,
+          content: newComment,
+        }
+      );
+
+      if (response.data === "SUCCESS") {
+        const newCommentObj = {
+          id: comments.length + 1,
+          user: "내 닉네임", // 서버에서 받아오거나 하드코딩
+          content: newComment,
+        };
+        setComments([...comments, newCommentObj]);
+        setNewComment('');
+      } else {
+        setAlertMessage("댓글 작성 중 문제가 발생했습니다.");
+        setIsAlertModalOpen(true);
+      }
+    } catch (error) {
+      console.error("댓글 작성 중 오류 발생:", error);
+      setAlertMessage("댓글 작성에 실패했습니다.");
+      setIsAlertModalOpen(true);
     }
   };
 
@@ -84,7 +129,7 @@ const ReviewDetail = () => {
           <div className="review-detail-header">
             <div className="review-detail-user-info">
               <div className="review-detail-profile-pic"></div>
-              <h1>{reviewData.writer.nickname}</h1>
+              <h1>{reviewData.writer?.nickname || "익명"}</h1>
             </div>
             <div className="review-detail-image">사진</div>
           </div>
@@ -102,10 +147,7 @@ const ReviewDetail = () => {
             <button onClick={handleLike} className="review-detail-like-btn">
               추천 👍 {likes}
             </button>
-            <button onClick={() => {
-              setAlertMessage("신고가 완료되었습니다");
-              setIsAlertModalOpen(true);
-            }} className="review-detail-report-btn">
+            <button onClick={handleReportComment} className="review-detail-report-btn">
               신고하기
             </button>
           </div>
@@ -117,7 +159,7 @@ const ReviewDetail = () => {
             <div key={comment.id} className="review-detail-comment">
               <strong>{comment.user}</strong>
               <p>{comment.content}</p>
-              {comment.user === '내 닉네임' ? (
+              {comment.user === "내 닉네임" ? (
                 <button
                   onClick={() => handleDeleteComment(comment.id)}
                   className="review-detail-delete-comment-btn"
