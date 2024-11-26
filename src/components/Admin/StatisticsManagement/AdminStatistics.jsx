@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../lib/axiosInstance';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
 import './AdminStatistics.css';
@@ -27,47 +27,41 @@ const AdminStatistics = () => {
       const today = new Date();
       const endDate = getFormattedDate(today);
       const startDate = getFormattedDate(new Date(today.setDate(today.getDate() - period + 1)));
-
+  
+      console.log(`Period: ${period}일, StartDate: ${startDate}, EndDate: ${endDate}`);
+  
       // 접속 사용자 데이터
-      const connectedResponse = await axios.get('/api/admin/statics/activeUser', {
+      const connectedResponse = await axiosInstance.get('/api/admin/statics/activeUser', {
         params: { startDate, endDate },
       });
-
+      console.log('Connected Users Response:', connectedResponse.data);
+      const connectedData = connectedResponse.data.dateCountDtoList || [];
+      setConnectedUsersData(connectedData);
+  
       // 신규 사용자 데이터
-      const newUsersResponse = await axios.get('/api/admin/statics/newUser', {
+      const newUsersResponse = await axiosInstance.get('/api/admin/statics/newUser', {
         params: { startDate, endDate },
       });
-
+      console.log('New Users Response:', newUsersResponse.data);
+      const newUsersData = newUsersResponse.data.dateCountDtoList || [];
+      setNewUsersData(newUsersData);
+  
       // 미접속 사용자 데이터
-      const inactiveUsersResponse = await axios.get('/api/admin/statics/inactiveMembers', {
+      const inactiveUsersResponse = await axiosInstance.get('/api/admin/statics/inactiveMembers', {
         params: { startDate, endDate },
       });
-
+      console.log('Inactive Users Response:', inactiveUsersResponse.data);
+      const inactiveUsersData = inactiveUsersResponse.data.dateCountDtoList || [];
+      setInactiveUsersData(inactiveUsersData);
+  
       // 추천 기능 이용자 데이터
-      const recommendUsersResponse = await axios.get('/api/admin/statics/recommendUser', {
+      const recommendUsersResponse = await axiosInstance.get('/api/admin/statics/recommendUser', {
         params: { startDate, endDate },
       });
-
-      setConnectedUsersData([
-        { date: startDate, count: connectedResponse.data.count || 0 },
-        { date: endDate, count: connectedResponse.data.count || 0 },
-      ]);
-
-      setNewUsersData([
-        { date: startDate, count: newUsersResponse.data.count || 0 },
-        { date: endDate, count: newUsersResponse.data.count || 0 },
-      ]);
-
-      setInactiveUsersData([
-        { date: startDate, count: inactiveUsersResponse.data.count || 0 },
-        { date: endDate, count: inactiveUsersResponse.data.count || 0 },
-      ]);
-
-      setRecommendUsersData([
-        { date: startDate, count: recommendUsersResponse.data.count || 0 },
-        { date: endDate, count: recommendUsersResponse.data.count || 0 },
-      ]);
-
+      console.log('Recommend Users Response:', recommendUsersResponse.data);
+      const recommendUsersData = recommendUsersResponse.data.dateCountDtoList || [];
+      setRecommendUsersData(recommendUsersData);
+  
       setError(null); // 오류 초기화
     } catch (error) {
       if (error.response) {
