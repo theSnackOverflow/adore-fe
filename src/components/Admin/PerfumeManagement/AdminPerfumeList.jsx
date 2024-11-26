@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/PerfumeManagementSidebar';
 import axiosInstance from '../../../lib/axiosInstance';
 import './AdminPerfumeList.css';
 
 const PerfumeList = () => {
+  const navigate = useNavigate(); // useNavigate 훅 사용
+
   const [perfumes, setPerfumes] = useState([]); // API에서 가져온 향수 목록
   const [searchQuery, setSearchQuery] = useState(''); // 검색어
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
@@ -60,19 +63,19 @@ const PerfumeList = () => {
     setSearchQuery(e.target.value);
   };
 
-// 검색 실행 핸들러
-const handleSearchSubmit = async (e) => {
-  e.preventDefault(); // 기본 제출 동작 방지
-  setCurrentPage(1); // 페이지를 1로 초기화
-  setCurrentGroup(1); // 페이지 그룹을 1로 초기화
+  // 검색 실행 핸들러
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault(); // 기본 제출 동작 방지
+    setCurrentPage(1); // 페이지를 1로 초기화
+    setCurrentGroup(1); // 페이지 그룹을 1로 초기화
 
-  // 검색어에 맞는 첫 번째 페이지 데이터 가져오기
-  try {
-    await fetchPerfumes(1, searchQuery); // 검색어를 포함한 데이터를 가져옵니다.
-  } catch (error) {
-    console.error("검색 실패:", error);
-  }
-};
+    // 검색어에 맞는 첫 번째 페이지 데이터 가져오기
+    try {
+      await fetchPerfumes(1, searchQuery); // 검색어를 포함한 데이터를 가져옵니다.
+    } catch (error) {
+      console.error("검색 실패:", error);
+    }
+  };
 
   // 페이지 변경 핸들러
   const handlePageChange = (page) => {
@@ -87,6 +90,11 @@ const handleSearchSubmit = async (e) => {
     } else if (direction === 'next' && currentGroup < Math.ceil(totalPages / BUTTONS_PER_GROUP)) {
       setCurrentGroup((prev) => prev + 1);
     }
+  };
+
+  // 향수 추가 버튼 클릭 시 페이지 이동
+  const handleAddPerfumeClick = () => {
+    navigate('../admin/perfumemanagement/perfumeregistration');  // 향수 추가 페이지로 이동
   };
 
   // 초기 데이터 로드
@@ -182,7 +190,9 @@ const handleSearchSubmit = async (e) => {
                 )}
               </div>
               <div className="admin-perfume-list-action-buttons">
-                <button className="admin-perfume-list-write-btn">향수 추가</button>
+                <button className="admin-perfume-list-write-btn" onClick={handleAddPerfumeClick}>
+                  향수 추가
+                </button>
               </div>
             </div>
           </>
