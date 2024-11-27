@@ -9,8 +9,10 @@ const NoteRegistration = () => {
 
   const [noteData, setNoteData] = useState({
     name: '',
-    description: '',
-    status: 'ACTIVE', // 기본값 설정
+    content: '',
+    parentNoteId: 1,  // 부모 노트 ID, 기본값은 1로 설정
+    file: null,  // 파일 업로드
+    noteImg: '',  // 이미지 URL 또는 경로
   });
 
   // 입력값 변경 핸들러
@@ -19,17 +21,30 @@ const NoteRegistration = () => {
     setNoteData({ ...noteData, [name]: value });
   };
 
+  // 파일 변경 핸들러
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setNoteData({ ...noteData, [name]: files[0] });
+  };
+
   // 노트 등록 핸들러
   const handleRegisterNote = async (e) => {
     e.preventDefault();
 
-    if (!noteData.name || !noteData.description) {
-      alert('노트 이름과 설명은 필수 항목입니다.');
+    if (!noteData.name || !noteData.content) {
+      alert('노트 이름과 내용은 필수 항목입니다.');
       return;
     }
 
+    const formData = new FormData();
+    formData.append('name', noteData.name);
+    formData.append('content', noteData.content);
+    formData.append('parentNoteId', noteData.parentNoteId);
+    if (noteData.file) formData.append('file', noteData.file);  // 파일이 있을 경우 추가
+    formData.append('noteImg', noteData.noteImg);  // 이미지 URL 또는 경로 추가
+
     try {
-      const response = await axiosInstance.post('/api/admin/note/create', noteData);
+      const response = await axiosInstance.post('/api/admin/perfume/note/create', formData);
 
       if (response.status === 200) {
         alert('노트가 성공적으로 등록되었습니다.');
@@ -45,8 +60,10 @@ const NoteRegistration = () => {
   const handleCancel = () => {
     setNoteData({
       name: '',
-      description: '',
-      status: 'ACTIVE',
+      content: '',
+      parentNoteId: 1,
+      file: null,
+      noteImg: '',
     });
     alert('노트 등록이 취소되었습니다!');
     navigate('/admin/perfumemanagement/adminnotelist');
@@ -73,27 +90,47 @@ const NoteRegistration = () => {
                 </td>
               </tr>
               <tr>
-                <th>설명</th>
+                <th>노트 내용</th>
                 <td>
                   <textarea
-                    name="description"
-                    placeholder="설명"
-                    value={noteData.description}
+                    name="content"
+                    placeholder="노트 내용"
+                    value={noteData.content}
                     onChange={handleInputChange}
                   />
                 </td>
               </tr>
               <tr>
-                <th>상태</th>
+                <th>부모 노트 ID</th>
                 <td>
-                  <select
-                    name="status"
-                    value={noteData.status}
+                  <input
+                    type="number"
+                    name="parentNoteId"
+                    value={noteData.parentNoteId}
                     onChange={handleInputChange}
-                  >
-                    <option value="ACTIVE">활성</option>
-                    <option value="INACTIVE">비활성</option>
-                  </select>
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>파일</th>
+                <td>
+                  <input
+                    type="file"
+                    name="file"
+                    onChange={handleFileChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>노트 이미지</th>
+                <td>
+                  <input
+                    type="text"
+                    name="noteImg"
+                    placeholder="이미지 GCS 경로"
+                    value={noteData.noteImg}
+                    onChange={handleInputChange}
+                  />
                 </td>
               </tr>
             </tbody>
