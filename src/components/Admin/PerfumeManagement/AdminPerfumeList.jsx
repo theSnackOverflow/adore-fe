@@ -37,7 +37,7 @@ const PerfumeList = () => {
       const detailedPerfumes = await Promise.all(
         perfumeList.map(async (perfume) => {
           try {
-            const detailsResponse = await axiosInstance.get(`/api/admin/perfume/`, {
+            const detailsResponse = await axios.get(`https://gachon-adore.duckdns.org/api/admin/perfume/`, {
               params: { id: perfume.id },
             });
             const { top, middle, base } = detailsResponse.data;
@@ -48,7 +48,7 @@ const PerfumeList = () => {
           }
         })
       );
-  
+
       setPerfumes(detailedPerfumes); // 향수 목록 업데이트
       setTotalPages(response.data.totalPages || 1); // 전체 페이지 수 설정
     } catch (error) {
