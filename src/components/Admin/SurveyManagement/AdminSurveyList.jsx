@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import AdminSurveyManagementSidebar from '../../Sidebars/AdminSidebars/AdminSurveyManagementSidebar';
-import axiosInstance from '../../../lib/axiosInstance'; // Axios 인스턴스
 import './AdminSurveyList.css';
 
 const AdminSurveyList = () => {
@@ -15,9 +15,14 @@ const AdminSurveyList = () => {
   // const itemsPerPage = 10;
   const pagesPerGroup = 10;
 
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL
+  });
+
   const fetchSurveys = async () => {
     try {
-      const response = await axiosInstance.get(`/api/admin/survey/list/${currentPage}?filter=${filterType}`, {
+      const response = await instance.get(`/api/admin/survey/list/${currentPage}?filter=${filterType}`, {
       });
       if(response.data && response.data.surveyList){
         console.log('설문 리스트 응답 성공 : ', response.data);
@@ -64,8 +69,7 @@ const AdminSurveyList = () => {
 
   const handleDeleteClick = async (surveyId) => {
     try{
-      axiosInstance.delete('/api/admin/survey/delete', {
-        params: { surveyId: surveyId }
+      instance.delete(`/api/admin/survey/delete?surveyId=${surveyId}`, {
       });
       console.log("설문 삭제 성공");
       setSurveys((prev) => prev.filter((result) => result.id !== surveyId));

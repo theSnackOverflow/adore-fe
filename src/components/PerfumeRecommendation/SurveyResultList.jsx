@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../lib/CookieUtil';
+import axios from 'axios';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
-import axiosInstance from '../../lib/axiosInstance';
 import './SurveyResultList.css';
 
 const SurveyResultList = () => {
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL
+  });
+
   const [surveyResults, setSurveyResults] = useState([]);
   const [searchType, setSearchType] = useState("NAME"); // 선택한 노트 이름 검색
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,7 +32,7 @@ const SurveyResultList = () => {
       if (!token) {
         throw new Error('로그인 토큰이 없습니다.');
       }
-      const response = await axiosInstance.get(`/api/user/recomm/result/list/${currentPage}?type=${searchType}&keyword=${searchQuery}`,
+      const response = await instance.get(`/api/user/recomm/result/list/${currentPage}?type=${searchType}&keyword=${searchQuery}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         },
@@ -52,7 +57,7 @@ const SurveyResultList = () => {
           Authorization: `Bearer ${token}`
         }
       };
-      const response = await axiosInstance.delete(`/api/user/recomm/result/${userAnsId}`, header);
+      const response = await instance.delete(`/api/user/recomm/result/${userAnsId}`, header);
       if (response.status === 200) {
         setSurveyResults((prevResults) => prevResults.filter((result) => result.userAnsId !== userAnsId));
         alert('설문조사 결과가 삭제되었습니다.');

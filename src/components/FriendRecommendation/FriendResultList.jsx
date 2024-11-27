@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../lib/CookieUtil';
+import axios from 'axios';
 import FriendRecommendationSidebar from '../Sidebars/FriendRecommendationSidebar';
-import axiosInstance from '../../lib/axiosInstance';
 import './FriendResultList.css';
 
 const FriendResultList = () => {
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL
+  });
+
   const [surveyResults, setSurveyResults] = useState([]);
   const [searchType, setSearchType] = useState("NAME"); // 친구 이름
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,7 +31,7 @@ const FriendResultList = () => {
       if (!token) {
         throw new Error('로그인 토큰이 없습니다.');
       }
-      const response = await axiosInstance.get(`/api/user/recomm/friend/list/${currentPage}?type=${searchType}&keyword=${searchQuery}`,
+      const response = await instance.get(`/api/user/recomm/friend/list/${currentPage}?type=${searchType}&keyword=${searchQuery}`,
         {
           headers: { Authorization: `Bearer ${token}`}
         },
@@ -51,7 +56,7 @@ const FriendResultList = () => {
           Authorization: `Bearer ${token}`
         }
       };
-      const response = await axiosInstance.delete(`/api/user/recomm/friend/${friendId}`, header);
+      const response = await instance.delete(`/api/user/recomm/friend/${friendId}`, header);
       if (response.status === 200) {
         setSurveyResults((prevResults) => prevResults.filter((result) => result.friendId !== friendId));
         alert('설문조사 결과가 삭제되었습니다.');
@@ -96,7 +101,7 @@ const FriendResultList = () => {
               placeholder='친구이름 또는 성별(MEN, WOMEN, UNISEX)'
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-             <button className="survey-result-list-search-btn" onClick={handleSearch}>검색</button>
+            <button className="survey-result-list-search-btn" onClick={handleSearch}>검색</button>
           </div>
         </div>
         <div className="survey-result-list-table-container">
