@@ -133,7 +133,7 @@ const FriendInfoInput = () => {
                   <option value="">선택해주세요</option>
                   <option value="MEN">남성</option>
                   <option value="WOMEN">여성</option>
-                  <option value="UNISEX" selected>중성</option>
+                  <option value="UNISEX">중성</option>
                 </select>
               </td>
             </tr>
@@ -176,7 +176,7 @@ const FriendInfoInput = () => {
                   onChange={handleInputChange}
                 >
                   <option value="">선택해주세요</option>
-                  <option value="ENERGETIC" selected>활동적</option>
+                  <option value="ENERGETIC">활동적</option>
                   <option value="CALM">차분함</option>
                   <option value="EMOTIONAL">감성적</option>
                   <option value="INTELLECTUAL">지적인</option>
@@ -195,7 +195,7 @@ const FriendInfoInput = () => {
                 >
                   <option value="">선택해주세요</option>
                   <option value={50000}>10만원 미만(5만원 대)</option>
-                  <option value={100000} selected>10만원 대</option>
+                  <option value={100000}>10만원 대</option>
                   <option value={200000}>20만원 대</option>
                   <option value={300000}>30만원 대</option>
                   <option value={400000}>40만원 대</option>

@@ -1,53 +1,57 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import AdminSurveyManagementSidebar from '../../Sidebars/AdminSidebars/AdminSurveyManagementSidebar';
-import axiosInstance from '../../../lib/axiosInstance'; // Axios 인스턴스
 import './AdminSurveyList.css';
 
 const AdminSurveyList = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+
+  const [filterType, setFilterType] = useState('ACTIVE'); // 기본은 ACTIVE
   const [surveys, setSurveys] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [hasNext, setHasNext] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
+  // const itemsPerPage = 10;
   const pagesPerGroup = 10;
 
-  // 설문조사 데이터 로드
-  // useEffect(() => {
-  //   const fetchSurveys = async () => {
-  //     try {
-  //       const response = await axiosInstance.get('/api/surveys'); // API 호출
-  //       setSurveys(response.data);
-  //     } catch (error) {
-  //       console.error('설문조사 데이터를 가져오는 중 오류가 발생했습니다:', error);
-  //     }
-  //   };
-  //   fetchSurveys();
-  // }, []);
+  const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
+  const instance = axios.create({
+    baseURL: gatewayURL
+  });
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
+  const fetchSurveys = async () => {
+    try {
+      const response = await instance.get(`/api/admin/survey/list/${currentPage}?filter=${filterType}`, {
+      });
+      if(response.data && response.data.surveyList){
+        console.log('설문 리스트 응답 성공 : ', response.data);
+        setSurveys(response.data.surveyList);
+        setHasNext(response.data.hasNext);
+        setTotalPages(response.data.totalPages);
+      }
+    } catch (error) {
+      console.error('설문조사 데이터를 가져오는 중 오류가 발생했습니다:', error);
+      throw new Error('설문 리스트 조회 실패');
+    }
   };
 
-  const filteredSurveys = surveys
-    .filter(
-      (survey) =>
-        survey.id.toString().includes(searchQuery) || survey.author.includes(searchQuery)
-    )
-    .sort((a, b) => b.id - a.id);
+  useEffect(() => {
+    fetchSurveys();
+  }, [filterType, currentPage])
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentSurveys = filteredSurveys.slice(indexOfFirstItem, indexOfLastItem);
+  const handleFilterType = (e) => {
+    setFilterType(e.target.value);
+    setCurrentPage(1);
+  }
 
-  const totalPages = Math.ceil(filteredSurveys.length / itemsPerPage);
   const currentGroup = Math.floor((currentPage - 1) / pagesPerGroup);
   const startPage = currentGroup * pagesPerGroup + 1;
   const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
 
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
   const goToPreviousGroup = () => {
     if (startPage > 1) setCurrentPage(startPage - 1);
   };
@@ -56,7 +60,24 @@ const AdminSurveyList = () => {
   };
 
   const handleEditClick = (surveyId) => {
-    navigate(`/Admin/SurveyManagement/AdminSurveyDetail/${surveyId}`);
+    navigate(`/Admin/SurveyManagement/AdminSurveyDetail/${surveyId}`); // 이 방식이 된다고?
+  };
+
+  const handleDetailPageRequestClick = (id) => {
+    navigate(`/Admin/SurveyManagement/AdminSurveyDetail/${id}`);
+  }
+
+  const handleDeleteClick = async (surveyId) => {
+    try{
+      instance.delete(`/api/admin/survey/delete?surveyId=${surveyId}`, {
+      });
+      console.log("설문 삭제 성공");
+      setSurveys((prev) => prev.filter((result) => result.id !== surveyId));
+      alert("설문이 삭제되었습니다.");
+    }catch(error) {
+      console.error("설문 삭제 중 오류가 발생했습니다.", error);
+      throw new Error('설문 삭제 실패');
+    }
   };
 
   return (
@@ -66,12 +87,18 @@ const AdminSurveyList = () => {
         <div className="admin-survey-list-header">
           <h1>설문조사 목록 조회</h1>
           <div className="admin-survey-list-search-bar">
-            <input
-              type="text"
-              placeholder="ID 또는 작성자"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
+            <label>
+              상태
+              <br />
+              <select
+                name='filterType'
+                value={filterType}
+                onChange={handleFilterType}
+              >
+                <option value="ACTIVE">활성화 설문</option>
+                <option value="INACTIVE">비활성화 설문</option>
+              </select>
+            </label>
           </div>
         </div>
         <table className="admin-survey-list-table">
@@ -85,16 +112,12 @@ const AdminSurveyList = () => {
             </tr>
           </thead>
           <tbody>
-            {currentSurveys.map((survey) => (
+            {surveys.map((survey) => (
               <tr key={survey.id}>
-                <td>{survey.author}</td>
-                <td>
-                  <Link to={`/Admin/SurveyManagement/AdminSurveyDetail/${survey.id}`}>
-                    {survey.id}
-                  </Link>
-                </td>
-                <td>{survey.date}</td>
-                <td>{survey.responses}</td>
+                <td onClick={() => handleDetailPageRequestClick(survey.id)}>{survey.name}</td>
+                <td onClick={() => handleDetailPageRequestClick(survey.id)}>{`설문조사 ${survey.id}`}</td>
+                <td onClick={() => handleDetailPageRequestClick(survey.id)}>{new Date(survey.createdAt).toLocaleString()}</td>
+                <td onClick={() => handleDetailPageRequestClick(survey.id)}>{survey.surveyCnt}</td>
                 <td>
                   <button
                     className="admin-survey-list-edit-button"
@@ -102,7 +125,12 @@ const AdminSurveyList = () => {
                   >
                     수정
                   </button>
-                  <button className="admin-survey-list-delete-button">삭제</button>
+                  <button 
+                    className="admin-survey-list-delete-button"
+                    onClick={() => handleDeleteClick(survey.id)}
+                  >
+                    삭제
+                  </button>
                 </td>
               </tr>
             ))}
