@@ -95,6 +95,11 @@ const AdminNoteList = () => {
     navigate('/admin/perfumemanagement/noteregistration');
   };
 
+  // 수정 버튼 클릭 시 NoteInfoEdit 페이지로 이동
+  const handleEditNote = (noteId) => {
+    navigate(`/admin/perfumemanagement/noteinfoedit?id=${noteId}`); // noteId를 쿼리 파라미터로 전달
+  };
+
   return (
     <div className="admin-note-list-container">
       <PerfumeManagementSidebar />
@@ -143,7 +148,7 @@ const AdminNoteList = () => {
                       <td>
                         <button
                           className="admin-note-list-edit-button"
-                          onClick={() => navigate(`/admin/perfumemanagement/notedetail?id=${note.id}`)}
+                          onClick={() => handleEditNote(note.id)} // 수정 버튼 클릭 시 handleEditNote 호출
                         >
                           수정
                         </button>
