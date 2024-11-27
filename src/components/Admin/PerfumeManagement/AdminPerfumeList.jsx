@@ -97,6 +97,11 @@ const PerfumeList = () => {
     navigate('../admin/perfumemanagement/perfumeregistration');  // 향수 추가 페이지로 이동
   };
 
+  // 향수 수정 버튼 클릭 시 향수 ID와 함께 수정 페이지로 이동
+  const handleEditClick = (perfumeId) => {
+    navigate(`/admin/perfumemanagement/perfumeinfoedit?id=${perfumeId}`); // 향수 수정 페이지로 이동
+  };
+
   // 초기 데이터 로드
   useEffect(() => {
     fetchPerfumes(currentPage, searchQuery); // 검색어에 맞는 데이터 로드
@@ -161,7 +166,12 @@ const PerfumeList = () => {
                     <td>{new Date(perfume.createdAt).toLocaleDateString()}</td>
                     <td>{new Date(perfume.updatedAt).toLocaleDateString()}</td>
                     <td>
-                      <button className="admin-perfume-list-edit-button">수정</button>
+                      <button
+                        className="admin-perfume-list-edit-button"
+                        onClick={() => handleEditClick(perfume.id)} // 향수 수정 페이지로 이동
+                      >
+                        수정
+                      </button>
                     </td>
                   </tr>
                 ))}
