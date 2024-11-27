@@ -1,19 +1,18 @@
 // src/components/FriendRecommendation/FriendRecommendationResult.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import FriendRecommendationSidebar from '../Sidebars/FriendRecommendationSidebar';
 import SurveyResultPerfumeCard from '../PerfumeRecommendation/SurveyResultPerfumeCard';
 import './FriendResult.css';
 
-const FriendResult = ({ friendId }) => {
+const FriendResult = () => {
 
   const navigate = useNavigate(); // useNavigate 훅을 가져옵니다.
-  const location = useLocation();
+  const params = useParams();
 
-  // const id = friendId ? friendId : location.deliverId;
-  const id = 1;
+  const id = params.friendId;
 
   const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
   const instance = axios.create({

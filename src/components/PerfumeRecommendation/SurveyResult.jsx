@@ -1,17 +1,16 @@
 // src/components/PerfumeRecommendation/SurveyResult.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
 import SurveyResultPerfumeCard from './SurveyResultPerfumeCard';
 import axios from 'axios';
 import './SurveyResult.css';
 
-const SurveyResult = ({ userAnsId }) => {
-  const location = useLocation();
+const SurveyResult = () => {
   const navigate = useNavigate();
+  const params = useParams();
   
-  // const id = userAnsId ? userAnsId : location.deliverId;
-  const id = 1; // 주석 처리 예정
+  const id = params.userAnsId;
 
   const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
   const instance = axios.create({

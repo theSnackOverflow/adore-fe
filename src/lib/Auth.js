@@ -7,7 +7,7 @@ export const isLogin = () => {
 }
 
 export const reissue = (accessToken) => {
-    axios.post('https://localhost:8111/auth/reissue', {
+    axios.post('http://gachon-adore.duckdns.org:8111/auth/reissue', {
         withCredentials: true,
     }).then((res) => {
     }).catch((err) => {
