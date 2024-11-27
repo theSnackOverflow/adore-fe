@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../lib/CookieUtil';
 import axios from 'axios';
-import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
-import './SurveyResultList.css';
+import FriendRecommendationSidebar from '../Sidebars/FriendRecommendationSidebar';
+import './FriendResultList.css';
 
-const SurveyResultList = () => {
+const FriendResultList = () => {
   const gatewayURL = import.meta.env.VITE_GATEWAY_URL;
   const instance = axios.create({
     baseURL: gatewayURL
   });
 
   const [surveyResults, setSurveyResults] = useState([]);
-  const [searchType, setSearchType] = useState("NAME"); // 선택한 노트 이름 검색
+  const [searchType, setSearchType] = useState("NAME"); // 친구 이름
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNext, setHasNext] = useState(true);
@@ -25,28 +25,27 @@ const SurveyResultList = () => {
     fetchSurveyResults();
   }, [searchQuery, searchType, currentPage]);
 
-
   const fetchSurveyResults = async () => {
     try {
       const token = getCookie('accessToken');
       if (!token) {
         throw new Error('로그인 토큰이 없습니다.');
       }
-      const response = await instance.get(`/api/user/recomm/result/list/${currentPage}?type=${searchType}&keyword=${searchQuery}`,
+      const response = await instance.get(`/api/user/recomm/friend/list/${currentPage}?type=${searchType}&keyword=${searchQuery}`,
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}`}
         },
       );
-      setSurveyResults(response.data.surveyList);
+      setSurveyResults(response.data.friendList);
       setHasNext(response.data.hasNext);
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error('설문 결과 리스트를 조회하는데 실패했습니다 : ', error);
-      throw new Error('설문 결과 리스트 조회 실패');
+      console.error('친구 설문 결과 리스트를 조회하는데 실패했습니다 : ', error);
+      throw new Error('친구 설문 결과 리스트 조회 실패');
     }
   };
 
-  const handleDelete = async (userAnsId) => {
+  const handleDelete = async (friendId) => {
     try {
       const token = getCookie('accessToken');
       if (!token) {
@@ -57,9 +56,9 @@ const SurveyResultList = () => {
           Authorization: `Bearer ${token}`
         }
       };
-      const response = await instance.delete(`/api/user/recomm/result/${userAnsId}`, header);
+      const response = await instance.delete(`/api/user/recomm/friend/${friendId}`, header);
       if (response.status === 200) {
-        setSurveyResults((prevResults) => prevResults.filter((result) => result.userAnsId !== userAnsId));
+        setSurveyResults((prevResults) => prevResults.filter((result) => result.friendId !== friendId));
         alert('설문조사 결과가 삭제되었습니다.');
       } else {
         alert('설문조사 결과 삭제에 실패했습니다.');
@@ -74,31 +73,32 @@ const SurveyResultList = () => {
     setCurrentPage(pageNumber);
   }
 
-  const handleDetailPageRequestClick = (id) => {
-    navigate(`/perfumerecommendation/surveyresult/${id}`);
-  }
-
   const handleSearch = () => {
     setCurrentPage(1); // 검색 시 첫 페이지로 이동
     fetchSurveyResults();
   };
 
+  const handleDetailPageRequestClick = (id) => {
+    navigate(`/friendrecommendation/friendresult/${id}`);
+  }
+
   return (
     <div className="survey-result-list-container">
-      <PerfumeSidebar />
+      <FriendRecommendationSidebar />
       <div className="survey-result-list-content">
         <div className="survey-result-list-header">
-          <h1>설문조사 결과</h1>
+          <h1>친구 설문조사 결과</h1>
           <div className="survey-result-list-search-bar">
             <select
               value={searchType}
               onChange={(e) => setSearchType(e.target.value)}
             >
               <option value="NAME">이름</option>
+              <option value="GENDER">성별</option>
             </select>
             <input
               type='text'
-              placeholder='향수 노트 이름 입력'
+              placeholder='친구이름 또는 성별(MEN, WOMEN, UNISEX)'
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button className="survey-result-list-search-btn" onClick={handleSearch}>검색</button>
@@ -108,19 +108,19 @@ const SurveyResultList = () => {
           <table className="survey-result-list-table">
             <thead>
               <tr>
-                <th>제목</th>
-                <th>추천 향수</th>
-                <th>생성 일자</th>
+                <th>이름</th>
+                <th>성별</th>
+                <th>나이</th>
+                <th>생성일</th>
                 <th>작업</th>
               </tr>
             </thead>
             <tbody>
               {surveyResults.map((result) => (
-                <tr key={result.userAnsId}>
-                  <td onClick={() => handleDetailPageRequestClick(result.userAnsId)}>{result.userAnsTitle}</td>
-                  <td onClick={() => handleDetailPageRequestClick(result.userAnsId)}>
-                    {result.perfumeNameLists.map((perfume) => perfume.perfumeName).slice(0, 3).join(', ')}
-                  </td>
+                <tr key={result.friendId}>
+                  <td onClick={() => handleDetailPageRequestClick(result.friendId)}>{result.name}</td>
+                  <td onClick={() => handleDetailPageRequestClick(result.friendId)}>{result.gender}</td>
+                  <td onClick={() => handleDetailPageRequestClick(result.friendId)}>{result.age}</td>
                   <td>{new Date(result.createdAt).toLocaleString()}</td>
                   <td>
                     <button className="delete-button" onClick={() => handleDelete(result.id)}>
@@ -148,4 +148,4 @@ const SurveyResultList = () => {
   );
 };
 
-export default SurveyResultList;
+export default FriendResultList;

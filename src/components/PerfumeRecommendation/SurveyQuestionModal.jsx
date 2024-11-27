@@ -167,7 +167,7 @@ const SurveyQuestionModal = ({ onClose, data, surveyId }) => {
 
   const closeAlertAndNavigate = () => {
     setShowAlert(false);  // 알림 모달 닫기
-    navigate('/PerfumeRecommendation/SurveyResult', { deliverId: userAnsId});  // 결과 페이지로 이동
+    navigate(`/PerfumeRecommendation/SurveyResult/${userAnsId}`);  // 결과 페이지로 이동
   };
 
   const renderPageContent = () => {
@@ -248,7 +248,6 @@ const SurveyQuestionModal = ({ onClose, data, surveyId }) => {
     }    
   };
 
-  // todo : 여기부터 다시 수정하면 될 것 같다.
   return (
     <div className="survey-question-modal-overlay" onClick={onClose}>
       <div className="survey-question-modal" onClick={(e) => e.stopPropagation()}>

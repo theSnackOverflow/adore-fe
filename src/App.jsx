@@ -41,6 +41,7 @@ import AdminSurveyList from './components/Admin/SurveyManagement/AdminSurveyList
 import AdminSurveyDetail from './components/Admin/SurveyManagement/AdminSurveyDetail';
 import AdminSurveyCreate from './components/Admin/SurveyManagement/AdminSurveyCreate';
 import AdminStatistics from './components/Admin/StatisticsManagement/AdminStatistics'; // 관리자 통계 페이지 추가
+import FriendResultList from './components/FriendRecommendation/FriendResultList';
 import axios from 'axios';
 import { removeCookie, getCookie, setCookie } from './lib/CookieUtil';
 import { isLogin, extractRole } from './lib/Auth';
@@ -129,14 +130,14 @@ function App() {
           <Route path="/perfumerecommendation/perfumelist" element={<PrivateRoute element={<PerfumeList />} />} />
           <Route path="/perfumerecommendation/notelist" element={<PrivateRoute element={<NoteList />} />} />
           <Route path="/perfumerecommendation/surveyintro" element={<PrivateRoute element={<SurveyIntro />} />} />
-          <Route path="/perfumerecommendation/surveyresult" element={<PrivateRoute element={<SurveyResult />} />} />
+          <Route path="/perfumerecommendation/surveyresult/:userAnsId" element={<PrivateRoute element={<SurveyResult />} />} />
           <Route path="/perfumerecommendation/surveyresultlist" element={<PrivateRoute element={<SurveyResultList />} />} /> {/* 추가된 SurveyResultList */}
           <Route path="/perfumerecommendation/otherreviewlist" element={<PrivateRoute element={<OtherReviewList />} />} />
           <Route path="/perfumerecommendation/reviewdetail/:reviewId" element={<PrivateRoute element={<ReviewDetail />} />} />
 
           {/* Friend Recommendation 관련 라우트 */}
-          <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendInfoInput />} />} />
-          <Route path="/friendrecommendation/friendresult" element={<PrivateRoute element={<FriendResult />} />} />
+          <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendResultList />} />} />
+          <Route path="/friendrecommendation/friendresult/:friendId" element={<PrivateRoute element={<FriendResult />} />} />
 
           {/* Admin Routes */}
           <Route path="/Admin/UserManagement/UserList" element={<AdminRoute element={<UserList />} />} />
@@ -162,7 +163,7 @@ function App() {
 
           {/* Survey Management Routes */}
           <Route path="/Admin/SurveyManagement/AdminSurveyList" element={<AdminRoute element={<AdminSurveyList />} />} />
-          <Route path="/Admin/SurveyManagement/AdminSurveyDetail/:id" element={<AdminRoute element={<AdminSurveyDetail />} />} />
+          <Route path="/Admin/SurveyManagement/AdminSurveyDetail/:surveyId" element={<AdminRoute element={<AdminSurveyDetail />} />} />
           <Route path="/Admin/SurveyManagement/AdminSurveyCreate" element={<AdminRoute element={<AdminSurveyCreate />} />} />
 
           {/* Statistics Management Route */}

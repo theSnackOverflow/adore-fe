@@ -145,7 +145,7 @@ const AdminSurveyCreate = () => {
         <h1>설문조사 생성</h1>
 
         <form onSubmit={handleSubmit} className="admin-survey-create-form">
-          <div className="admin-survey-create-form-group">
+          {/* <div className="admin-survey-create-form-group">
             <label>상태</label>
             <select
               value={surveyInfo.status}
@@ -154,7 +154,7 @@ const AdminSurveyCreate = () => {
               <option value="활성화">활성화</option>
               <option value="비활성화">비활성화</option>
             </select>
-          </div>
+          </div> */}
 
           <div className="admin-survey-create-questions-section">
             {questions.map((question, index) => (
