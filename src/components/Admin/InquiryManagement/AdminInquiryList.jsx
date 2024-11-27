@@ -21,7 +21,7 @@ const AdminInquiryList = () => {
   const fetchInquiries = async (page = 1) => {
     try {
       const response = await axios.get(
-        `http://gachon-adore.duckdns.org:8111/api/admin/question/lists/${page}`,
+        `https://gachon-adore.duckdns.org/api/admin/question/lists/${page}`,
         {
           params: {
             type: 'TITLE', // 제목 검색

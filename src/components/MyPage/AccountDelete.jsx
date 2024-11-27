@@ -7,7 +7,7 @@ const AccountDelete = () => {
   const [confirmText, setConfirmText] = useState('');
 
   const handleDelete = () => {
-    if (confirmText === '탈퇴') {
+    if (confirmText === '다음에 다시 만나요') {
       alert('계정이 탈퇴되었습니다.');
     } else {
       alert('탈퇴 확인 문구를 정확히 입력해주세요.');
@@ -59,7 +59,7 @@ const AccountDelete = () => {
               className="input-confirm" 
               value={confirmText} 
               onChange={(e) => setConfirmText(e.target.value)} 
-              placeholder="탈퇴 확인 문구를 입력하세요"
+              placeholder="다음에 다시 만나요"
             />
           </label>
           <p>* 탈퇴 버튼을 클릭하면 계정이 즉시 삭제되며, 복구가 불가능합니다.</p>

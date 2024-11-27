@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axiosInstance';
 import PerfumeSidebar from '../Sidebars/PerfumeSidebar';
 import FragranceSearchModal from '../Modals/FragranceSearchModal';
 import './OtherReviewList.css';
@@ -19,8 +19,10 @@ const OtherReviewList = () => {
   useEffect(() => {
     const fetchPerfumeList = async () => {
       try {
-        const response = await axios.get('http://gachon-adore.duckdns.org:8081/user/perfume/perfume/list');
-        setPerfumeList(response.data || []);
+        const response = await axiosInstance.get('/api/user/perfume/lists/1', {
+          params: { type: 'NAME', keyword: '' },
+        });
+        setPerfumeList(response.data?.perfumeList || []);
       } catch (error) {
         console.error('향수 리스트를 가져오는 중 오류 발생:', error);
         setPerfumeList([]);
@@ -34,7 +36,7 @@ const OtherReviewList = () => {
   useEffect(() => {
     const fetchAllReviews = async () => {
       try {
-        const response = await axios.get(`http://gachon-adore.duckdns.org:8111/api/user/review/lists/${currentPage}`, {
+        const response = await axiosInstance.get(`/api/user/review/lists/${currentPage}`, {
           params: { type: 'TITLE', keyword: '' },
         });
         setReviews(response.data?.reviewList || []);
@@ -50,11 +52,22 @@ const OtherReviewList = () => {
     }
   }, [currentPage, selectedPerfume]);
 
+  // 특정 향수 정보 불러오기
+  const fetchPerfumeDetails = async (perfumeId) => {
+    try {
+      const response = await axiosInstance.get(`/api/user/perfume/?id=${perfumeId}`);
+      setSelectedPerfume(response.data || null); // 서버에서 받은 향수 정보를 설정
+      console.log(response.data);
+    } catch (error) {
+      console.error('향수 세부 정보를 가져오는 중 오류 발생:', error);
+    }
+  };
+
   // 특정 향수 리뷰 불러오기
   const fetchReviewsByPerfume = async (perfume, page = 1) => {
     try {
-      const response = await axios.get(`http://gachon-adore.duckdns.org:8111/api/user/review/lists/${page}`, {
-        params: { type: 'TITLE', keyword: perfume.perfume_nm },
+      const response = await axiosInstance.get(`/api/user/review/lists/${page}`, {
+        params: { type: 'TITLE', keyword: perfume.name },
       });
       setReviews(response.data?.reviewList || []);
       setTotalPages(response.data?.totalPages || 1);
@@ -68,7 +81,7 @@ const OtherReviewList = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const handleSelectFragrance = (perfume) => {
-    setSelectedPerfume(perfume);
+    fetchPerfumeDetails(perfume.id); // ID 기반으로 세부 데이터 요청
     setIsModalOpen(false);
     setCurrentPage(1); // 페이지를 초기화하고 향수 리뷰 로드
     fetchReviewsByPerfume(perfume, 1);
@@ -98,16 +111,62 @@ const OtherReviewList = () => {
           </button>
         </div>
         {selectedPerfume && (
-          <div className="other-review-list-review-details">
-            <div className="other-review-list-review-details-header">
-              <h2>{selectedPerfume.perfume_nm}</h2>
-              <span className="other-review-list-brand">{selectedPerfume.brand}</span>
-            </div>
-            <p>평점: {'★'.repeat(selectedPerfume.rating_value)}{'☆'.repeat(5 - selectedPerfume.rating_value)}</p>
-            <p>노트: {selectedPerfume.top} / {selectedPerfume.middle} / {selectedPerfume.base}</p>
-            <p>{selectedPerfume.perfume_desc}</p>
-          </div>
+  <div className="other-review-list-review-details">
+    <div className="other-review-perfume-info-main-box">
+      <div className="other-review-perfume-info-box1">
+        <div className="other-review-list-review-details-header">
+        {/* 향수 이름과 브랜드 */}
+        <h2>{selectedPerfume.name}</h2>
+        <span className="other-review-list-brand">{selectedPerfume.brand}</span>
+      </div>
+      <div className="other-review-perfume-info">
+        <div>
+          {/* 노트 정보 */}
+          <p>
+            <span>Tope : </span>{selectedPerfume.top || '알 수 없음'}
+          </p>
+          <p>
+            <span>Middle : </span>{selectedPerfume.middle || '알 수 없음'}
+          </p>
+          <p>
+            <span>Base : </span>{selectedPerfume.base || '알 수 없음'}
+          </p>
+        </div>
+        <div>
+          <p><span>출시 연도 : </span>{selectedPerfume.year || '정보 없음'}</p>
+          <p><span>성별 : </span>{selectedPerfume.gender || '정보 없음'}</p>
+          <p>
+            <span>가격 : </span>
+            {selectedPerfume.price ? `${selectedPerfume.price.toLocaleString()}원` : '정보 없음'}
+          </p>
+        </div>
+      </div>
+        {/* 설명 */}
+        <p className="other-review-list-perfume-desc">
+          <span>설명 : </span>
+          <div> {selectedPerfume.perfumeDesc || '설명이 없습니다.'}
+          </div>          
+        </p>
+        {/* 평점 */}
+        <p>
+          <span>평점 : </span>
+          {'★'.repeat(selectedPerfume.rating || 0)}
+          {'☆'.repeat(5 - (selectedPerfume.rating || 0))}
+        </p>
+      </div>
+      <div className="other-review-perfume-info-box2">
+        {/* 이미지 표시 */}
+        {selectedPerfume.perfumePhoto && (
+          <img
+            src={selectedPerfume.perfumePhoto}
+            alt={`${selectedPerfume.name} 사진`}
+            className="perfume-image"
+          />
         )}
+      </div>
+    </div>
+  </div>
+)}
         <table className="other-review-list-review-table">
           <thead>
             <tr>
@@ -122,7 +181,7 @@ const OtherReviewList = () => {
               <tr key={review.id}>
                 <td>{review.name}</td>
                 <td>
-                  <Link to={`/perfumerecommendation/review/${review.id}`} className="review-link">
+                  <Link to={`/perfumerecommendation/reviewdetail/${review.id}`} className="review-link">
                     {review.title}
                   </Link>
                 </td>
@@ -146,11 +205,11 @@ const OtherReviewList = () => {
             ))}
             {currentPage < totalPages && <button onClick={() => handlePageChange(currentPage + 1)}>다음</button>}
           </div>
-        <div className="other-review-list-action-buttons">
-          <button className="other-review-list-write-btn" onClick={handleWriteReview}>
-            리뷰 작성
-          </button>
-        </div>
+          <div className="other-review-list-action-buttons">
+            <button className="other-review-list-write-btn" onClick={handleWriteReview}>
+              리뷰 작성
+            </button>
+          </div>
         </div>
         {isModalOpen && (
           <FragranceSearchModal

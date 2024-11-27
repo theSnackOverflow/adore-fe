@@ -1,44 +1,55 @@
-// src/components/CustomerSupport/InquiryForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CustomerSupportSidebar from '../Sidebars/CustomerSupportSidebar';
 import './InquiryForm.css';
+import { getCookie } from '../../lib/CookieUtil';
 
-const InquiryForm = ({ addInquiry }) => {
+const InquiryForm = () => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [content, setContent] = useState('');
-  const [image, setImage] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-  const [showHoverPreview, setShowHoverPreview] = useState(false); // 이미지 확대 상태
+  const [image, setImage] = useState(null); // 이미지 처리는 나중 추가 가능
   const navigate = useNavigate();
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      const previewUrl = URL.createObjectURL(file);
-      setImage(file);
-      setImagePreviewUrl(previewUrl);
-    } else {
-      alert("이미지 파일만 업로드할 수 있습니다.");
-    }
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title.trim() || !category.trim() || !content.trim()) {
       alert('제목, 카테고리, 내용은 필수 입력 사항입니다.');
       return;
     }
-    const newInquiry = {
-      id: Date.now(),
-      category,
+
+    const token = getCookie('accessToken'); // 인증 토큰을 로컬 스토리지에서 가져옴
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    const requestData = {
       title,
+      category,
       content,
-      date: new Date().toISOString().split('T')[0],
     };
-    addInquiry(newInquiry);
-    alert('문의가 제출되었습니다.');
-    navigate('/customersupport/inquirylist');
+
+    try {
+      const response = await fetch(`http://gachon-adore.duckdns.org:8111/api/user/my/question/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // 토큰 추가
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (response.ok) {
+        alert('문의가 성공적으로 제출되었습니다.');
+        navigate('/customersupport/inquirylist');
+      } else {
+        const errorData = await response.json();
+        alert(`문의 제출에 실패했습니다: ${errorData.message || '알 수 없는 오류'}`);
+      }
+    } catch (error) {
+      console.error('문의 제출 중 오류 발생:', error);
+      alert('서버와 통신 중 문제가 발생했습니다.');
+    }
   };
 
   return (
@@ -64,10 +75,11 @@ const InquiryForm = ({ addInquiry }) => {
               <td>
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
                   <option value="">선택</option>
-                  <option value="배송">배송</option>
-                  <option value="제품">제품</option>
-                  <option value="결제">결제</option>
-                  <option value="기타">기타</option>
+                  <option value="USER">회원</option>
+                  <option value="SERVICE">서비스</option>
+                  <option value="REVIEW">리뷰</option>
+                  <option value="COMMENT">댓글</option>
+                  <option value="ETC">기타</option>
                 </select>
               </td>
             </tr>
@@ -85,7 +97,12 @@ const InquiryForm = ({ addInquiry }) => {
         </table>
         <div className="inquiry-form-action-buttons">
           <button className="inquiry-form-submit-btn" onClick={handleSubmit}>작성</button>
-          <button className="inquiry-form-cancel-btn" onClick={() => navigate('/customersupport/inquirylist')}>취소</button>
+          <button
+            className="inquiry-form-cancel-btn"
+            onClick={() => navigate('/customersupport/inquirylist')}
+          >
+            취소
+          </button>
         </div>
       </div>
     </div>

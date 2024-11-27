@@ -27,7 +27,9 @@
 }
 
 .admin-perfume-list-search-bar {
+  display: flex;
   margin-top: 0.5rem;
+  gap: 1rem;
 }
 
 .admin-perfume-list-search-bar input {
@@ -35,6 +37,13 @@
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+.admin-perfume-list-search-bar button {
+  width: 4rem;
+  border-radius: 4px;
+  background-color: black;
+  color: white;
 }
 
 .admin-perfume-list-table {
@@ -62,10 +71,25 @@
   font-weight: bold;
 }
 
-/* .admin-perfume-note-list-td {
-  display: flex;
-
-} */
+.admin-perfume-list-table th:nth-child(1){
+  width: 15%;
+}
+.admin-perfume-list-table th:nth-child(2){
+  width: 25%;
+}
+.admin-perfume-list-table th:nth-child(3){
+  width: 30%;
+  flex-wrap: wrap;
+}
+.admin-perfume-list-table th:nth-child(4){
+  width: 10%;
+}
+.admin-perfume-list-table th:nth-child(5){
+  width: 10%;
+}
+.admin-perfume-list-table th:nth-child(6){
+  width: 10%;
+}
 
 .admin-perfume-note {
   display: inline-block;
@@ -81,7 +105,8 @@
 }
 
 .admin-perfume-list-edit-button {
-  padding: 0.4rem 1rem;
+  width: 3rem;
+  height: 2rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #f9f9f9;
@@ -124,4 +149,47 @@
 
 .admin-perfume-list-add-button:hover {
   background-color: #218838;
+}
+
+.admin-perfume-list-pagination-container {
+  display: flex;
+  align-items: center;
+}
+
+.admin-perfume-list-pagination {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 auto; /* 가운데 정렬 */
+}
+
+.admin-perfume-list-pagination button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+}
+
+.admin-perfume-list-pagination button:hover {
+  background-color: #ddd; /* 호버 시 배경색 */
+  color: #000; /* 호버 시 텍스트 색상 */
+}
+
+.admin-perfume-list-pagination button.active {
+  background-color: #333;
+  color: white;
+}
+
+.admin-perfume-list-pagination button:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.admin-perfume-list-write-btn {
+  background-color: #333;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1rem; /* 오른쪽 끝으로 이동 */
 }

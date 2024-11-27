@@ -1,11 +1,11 @@
-/* src/components/Admin/PerfumeManagement/PerfumeInfoEdit.css */
+/* src/components/Admin/PerfumeManagement/PerfumeRegistration.css */
 
-.perfume-info-edit-container {
+.perfume-registration-container {
     display: flex;
     padding: 2rem;
 }
 
-.perfume-info-edit-content {
+.perfume-registration-content {
     flex: 1;
     background-color: white;
     padding: 2rem 5rem;
@@ -13,87 +13,93 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.perfume-info-edit-content h1 {
+.perfume-registration-content h1 {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 2rem;
 }
 
-.perfume-info-edit-table {
+.perfume-registration-form {
     width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1.5rem;
 }
 
-.perfume-info-edit-table th,
-.perfume-info-edit-table td {
+.perfume-registration-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.perfume-registration-table th,
+.perfume-registration-table td {
     padding: 1rem;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
 
-.perfume-info-edit-table th {
+.perfume-registration-table th {
     width: 20%;
     font-weight: bold;
     background-color: #f5f5f5;
     text-align: left;
 }
 
-.perfume-info-edit-table td {
+.perfume-registration-table td {
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* 입력 필드와 검색 버튼 간의 간격 */
+    gap: 1rem; /* Increased gap between label and input */
 }
 
-.full-width-input {
+/* Style for input fields and select elements */
+.perfume-registration-table td input,
+.perfume-registration-table td select,
+.perfume-registration-table td textarea {
     flex: 1;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 1rem;
 }
 
-.perfume-info-edit-search-btn {
+.perfume-registration-search-btn {
     padding: 0.5rem 1rem;
     border: 1px solid #ddd;
     background-color: #f9f9f9;
-    border-radius: 4px;
     cursor: pointer;
+    border-radius: 4px;
 }
 
-.perfume-info-edit-search-btn:hover {
+.perfume-registration-search-btn:hover {
     background-color: #e0e0e0;
 }
 
-.perfume-note {
-    display: inline-block;
-    margin-right: 0.5rem;
-    padding: 0.3rem 0.8rem;
-    background-color: #f1f1f1;
-    border-radius: 12px;
-}
-
-.gender-options,
-.mood-options {
+/* Styling for checkboxes and radio buttons */
+.perfume-registration-checkbox-group,
+.perfume-registration-radio-group {
     display: flex;
     gap: 1rem;
     align-items: center;
 }
 
-.mood-checkbox {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+/* Styling for select input */
+.perfume-registration-content select {
+    width: 50%;
 }
 
-.perfume-info-edit-buttons {
+/* Styling for file upload */
+.perfume-registration-table td input[type="file"] {
+    padding: 0.3rem;
+}
+
+/* Button styles */
+.perfume-registration-buttons {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
-.perfume-info-edit-save-btn,
-.perfume-info-edit-delete-btn {
+.perfume-registration-register-btn,
+.perfume-registration-cancel-btn {
     padding: 0.6rem 1.5rem;
     border: none;
     border-radius: 4px;
@@ -101,12 +107,26 @@
     font-weight: bold;
 }
 
-.perfume-info-edit-save-btn {
+.perfume-registration-register-btn {
     background-color: #333;
     color: white;
 }
 
-.perfume-info-edit-delete-btn {
+.perfume-registration-cancel-btn {
     background-color: #ccc;
     color: black;
+}
+
+.perfume-registration-register-btn:hover {
+    background-color: #555;
+}
+
+.perfume-registration-cancel-btn:hover {
+    background-color: #bbb;
+}
+
+/* Additional style for textarea */
+.perfume-registration-table td textarea {
+    height: 100px;
+    resize: none; /* Disable resize for textarea */
 }

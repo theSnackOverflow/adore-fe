@@ -33,29 +33,68 @@
 
 .other-review-list-review-details {
   margin-bottom: 1.5rem;
-  padding: 1rem;
+  padding: 2rem 3rem;
   border: 2px solid #f0f0f0; /* 테두리 */
   background-color: #fafafa; /* 배경색 */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 */
 }
+.other-review-list-review-details-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
 
 .other-review-list-review-details-header h2 {
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: bold;
+  margin: 0;
+}
+.other-review-list-review-details-header span {
+  margin-bottom: 0.5rem;
 }
 
 .other-review-list-review-details p {
   margin: 0.5rem 0; /* 텍스트 간 간격 */
   font-size: 1rem;
-  color: #555; /* 글자 색상 */
+  /* color: #555; */
 }
 
 .other-review-list-review-details .other-review-list-brand {
   font-size: 1.2rem;
   font-weight: 500;
   color: #888; /* 브랜드 색상 */
+}
+
+.other-review-perfume-info-main-box {
+  display: flex;
+  width:100%;
+}
+
+.other-review-perfume-info {
+  display: flex;
+  width: 60%;
+  justify-content: space-between;
+}
+
+.other-review-perfume-info-box1 span {
+  font-weight: medium;
+  font-size: 1.3rem;
+  margin-right: 0.3rem;
+}
+
+.other-review-list-perfume-desc {
+  display: flex;
+}
+.other-review-list-perfume-desc div{
+  width: 80%;
+}
+
+.other-review-perfume-info-box2 img{
+  width: 300px;
+  height: 300px;
+  
 }
 
 .other-review-list-review-table {

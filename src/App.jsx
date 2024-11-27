@@ -28,6 +28,9 @@ import UserRegistration from './components/Admin/UserManagement/UserRegistration
 import ReportList from './components/Admin/UserManagement/ReportList';
 import ReportDetail from './components/Admin/UserManagement/ReportDetail';
 import AdminPerfumeList from './components/Admin/PerfumeManagement/AdminPerfumeList';
+import AdminNoteList from './components/Admin/PerfumeManagement/AdminNoteList';
+import NoteRegistration from './components/Admin/PerfumeManagement/NoteRegistration';
+import NoteInfoEdit from './components/Admin/PerfumeManagement/NoteInfoEdit';
 import PerfumeInfoEdit from './components/Admin/PerfumeManagement/PerfumeInfoEdit';
 import PerfumeRegistration from './components/Admin/PerfumeManagement/PerfumeRegistration';
 import AdminInquiryList from './components/Admin/InquiryManagement/AdminInquiryList';
@@ -130,7 +133,7 @@ function App() {
           <Route path="/perfumerecommendation/surveyresult/:userAnsId" element={<PrivateRoute element={<SurveyResult />} />} />
           <Route path="/perfumerecommendation/surveyresultlist" element={<PrivateRoute element={<SurveyResultList />} />} /> {/* 추가된 SurveyResultList */}
           <Route path="/perfumerecommendation/otherreviewlist" element={<PrivateRoute element={<OtherReviewList />} />} />
-          <Route path="/perfumerecommendation/review/:id" element={<PrivateRoute element={<ReviewDetail />} />} />
+          <Route path="/perfumerecommendation/reviewdetail/:reviewId" element={<PrivateRoute element={<ReviewDetail />} />} />
 
           {/* Friend Recommendation 관련 라우트 */}
           <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendResultList />} />} />
@@ -142,9 +145,15 @@ function App() {
           <Route path="/Admin/UserManagement/UserRegistration" element={<AdminRoute element={<UserRegistration />} />} />
           <Route path="/Admin/UserManagement/ReportList" element={<AdminRoute element={<ReportList />} />} />
           <Route path="/Admin/UserManagement/ReportDetail" element={<AdminRoute element={<ReportDetail />} />} />
+
+          {/* Admin Perfume & Note Routes */}
           <Route path="/Admin/PerfumeManagement/AdminPerfumeList" element={<AdminRoute element={<AdminPerfumeList />} />} />
           <Route path="/Admin/PerfumeManagement/PerfumeInfoEdit" element={<AdminRoute element={<PerfumeInfoEdit />} />} />
           <Route path="/Admin/PerfumeManagement/PerfumeRegistration" element={<AdminRoute element={<PerfumeRegistration />} />} />
+          <Route path="/admin/perfumemanagement/adminnotelist" element={<AdminRoute element={<AdminNoteList />} />} />
+          <Route path="/Admin/PerfumeManagement/NoteRegistration" element={<AdminRoute element={<NoteRegistration />} />} />
+          <Route path="/admin/perfumemanagement/noteinfoedit" element={<AdminRoute element={<NoteInfoEdit />} />} />
+
           <Route path="/Admin/InquiryManagement/AdminInquiryList" element={<AdminRoute element={<AdminInquiryList />} />} />
 
           {/* Notice Management Routes */}

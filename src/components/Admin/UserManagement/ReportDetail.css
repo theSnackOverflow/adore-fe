@@ -13,10 +13,42 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
-  .report-detail-content h1 {
+  .report-detail-header {
+    display: flex;
+    align-items: center;
+    gap : 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .report-detail-header h1 {
     font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .report-detail-search-bar {
+    display: flex;
+    margin-top: 0.5rem;
+  }
+
+  .report-detail-search-bar form{
+    gap: 1rem;
+  }
+  
+  .report-detail-search-bar input {
+    width: 300px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .report-detail-search-bar button {
+    width: 4rem;
+    border-radius: 4px;
+    background-color: black;
+    height: 100%;
+    margin-left: 1rem;
+    color: white;
   }
   
   .report-detail-table {
