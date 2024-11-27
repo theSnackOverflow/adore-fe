@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/PerfumeManagementSidebar';
 import axiosInstance from '../../../lib/axiosInstance';
+import axios from 'axios';
 import './AdminPerfumeList.css';
 
 const PerfumeList = () => {
@@ -23,7 +24,7 @@ const PerfumeList = () => {
     setError(null); // 오류 초기화
   
     try {
-      const response = await axiosInstance.get(`/api/admin/perfume/lists/${page}`, {
+      const response = await axios.get(`https://gachon-adore.duckdns.org/api/admin/perfume/lists/${page}`, {
         params: {
           type: 'NAME', // 이름으로 검색
           keyword: query, // 검색어
