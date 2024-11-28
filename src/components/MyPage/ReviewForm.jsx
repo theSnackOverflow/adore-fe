@@ -50,6 +50,10 @@ const ReviewForm = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         });
+
+        if (response.data.code === "MEM-ERR-004") {
+          alert('제제된 회원입니다.');
+        }
   
         if (response.data) {
           console.log('Review details fetched successfully:', response.data); // 디버깅 로그
