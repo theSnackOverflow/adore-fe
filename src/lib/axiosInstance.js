@@ -5,7 +5,7 @@ import { getCookie } from './CookieUtil'; // lib 디렉토리 안에 CookieUtil.
 
 const axiosInstance = axios.create({
   baseURL: 'https://gachon-adore.duckdns.org',
-  timeout: 5000,
+  timeout: 10000,
 });
 
 axiosInstance.interceptors.request.use(

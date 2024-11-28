@@ -99,7 +99,7 @@ function App() {
   }, []);
 
   const PrivateRoute = ({ element }) => {
-    return userRole === "USER" ? element : <Navigate to="/login" replace />;
+    return userRole === "USER" || "ADMIN" ? element : <Navigate to="/login" replace />;
   };
   
   const AdminRoute = ({ element }) => {

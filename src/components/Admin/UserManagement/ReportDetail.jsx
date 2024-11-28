@@ -3,9 +3,11 @@ import { useParams } from 'react-router-dom'; // useParams로 URL의 reportId �
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSidebar';
 import axiosInstance from '../../../lib/axiosInstance';
 import AlertModal from '../../Modals/AlertModal'; // AlertModal 임포트
+import { useNavigate } from 'react-router-dom';
 import './ReportDetail.css';
 
 const ReportDetail = () => {
+  const navigate = useNavigate(); // React Router의 useNavigate 사용
   const { reportId } = useParams(); // URL에서 reportId 가져오기
   const [reportData, setReportData] = useState({
     title: '',
@@ -20,6 +22,7 @@ const ReportDetail = () => {
     updatedDate: '',
     response: '',
     memo: '',
+    contentId: '',
     canProcess: false,
   });
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,7 @@ const ReportDetail = () => {
       const response = await axiosInstance.get('/api/admin/report/', {
         params: { id: reportId },
       });
+      console.log(response.data);
       setReportData(response.data); // API 응답 데이터로 상태 업데이트
       setError('');
     } catch (error) {
@@ -49,11 +53,6 @@ const ReportDetail = () => {
     setPenaltyLevel(e.target.value);
   };
 
-  const handleSave = () => {
-    setAlertMessage('신고가 성공적으로 저장되었습니다!');
-    setIsAlertModalOpen(true); // AlertModal 열기
-  };
-
   const handleDelete = async () => {
     console.log(penaltyLevel);
     if (penaltyLevel === 'NONE') {
@@ -64,7 +63,7 @@ const ReportDetail = () => {
       await axiosInstance.post('/api/admin/report/process', null, {
         params: { id: reportData.id, penaltyLevel },
       });
-      setAlertMessage('신고가 삭제되었습니다.');
+      setAlertMessage('신고가 처리되었습니다.');
       setIsAlertModalOpen(true);
       setError('');
     } catch (error) {
@@ -78,6 +77,10 @@ const ReportDetail = () => {
   const closeAlertModal = () => {
     setIsAlertModalOpen(false);
   };
+
+  const navigateToContent = (contentId) => {
+    navigate(`/perfumerecommendation/reviewdetail/${contentId}`);
+  }
 
   useEffect(() => {
     fetchReportData(); // 컴포넌트가 마운트될 때 신고 데이터 로드
@@ -120,6 +123,15 @@ const ReportDetail = () => {
                   <td>{reportData.content}</td>
                 </tr>
                 <tr>
+                  <th>신고 링크</th>
+                  <td>
+                    <button className="report-navigate-button"
+                      onClick={() => navigate(`/perfumerecommendation/reviewdetail/${reportData.contentId}`)}>
+                        상세 보기
+                    </button>
+                  </td>
+                </tr>
+                <tr>
                   <th>페널티 부여</th>
                   <td>
                     <select
@@ -137,11 +149,8 @@ const ReportDetail = () => {
               </tbody>
             </table>
             <div className="report-detail-buttons">
-              <button onClick={handleSave} className="report-detail-save-btn">
-                저장
-              </button>
               <button onClick={handleDelete} className="report-detail-delete-btn">
-                삭제
+                처리
               </button>
             </div>
           </div>

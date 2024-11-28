@@ -344,7 +344,7 @@ const handleCommentSubmit = async () => {
                 </button>
               ) : (
                 <button
-                onClick={() => handleReport(comment.id, "COMMENT")}>
+                onClick={() => handleReport(reviewId, "COMMENT")}>
                 신고하기
               </button>
               )}

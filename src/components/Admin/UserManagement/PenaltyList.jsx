@@ -99,7 +99,7 @@ const PenaltyList = () => {
                           {penalty.nickname}
                       </td>
                       <td>{penalty.email}</td>
-                      <td>{penalty.penaltyLevel}</td>
+                      <td>{penalty.level}</td>
                       <td>{new Date(penalty.createdAt).toLocaleString("ko-KR", {dateStyle: "full"})}</td>
                       <td>{new Date(penalty.expiredAt).toLocaleString("ko-KR", {dateStyle: "full"})}</td>
                     </tr>

@@ -109,7 +109,7 @@ const ReportList = () => {
                       <td>
                         <button
                           className="report-title-button"
-                          onClick={() => navigate(`/ReportDetail/${report.id}`)}
+                          onClick={() => navigate(`/Admin/UserManagement/ReportDetail/${report.id}`)}
                         >
                           {report.title}
                         </button>
