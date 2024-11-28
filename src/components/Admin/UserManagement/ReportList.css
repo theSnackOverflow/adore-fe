@@ -39,6 +39,11 @@
     border: 1px solid #ddd;
     border-radius: 4px;
   }
+
+  .report-title-button {
+    border: 0;
+    background-color: transparent;
+  }
   
   .report-list-search-bar select {
     padding: 0.5rem;

@@ -144,7 +144,7 @@ function App() {
           <Route path="/Admin/UserManagement/UserInfoEdit" element={<AdminRoute element={<UserInfoEdit />} />} />
           <Route path="/Admin/UserManagement/UserRegistration" element={<AdminRoute element={<UserRegistration />} />} />
           <Route path="/Admin/UserManagement/ReportList" element={<AdminRoute element={<ReportList />} />} />
-          <Route path="/Admin/UserManagement/ReportDetail" element={<AdminRoute element={<ReportDetail />} />} />
+          <Route path="/Admin/UserManagement/ReportDetail/:reportId" element={<AdminRoute element={<ReportDetail />} />} />
 
           {/* Admin Perfume & Note Routes */}
           <Route path="/Admin/PerfumeManagement/AdminPerfumeList" element={<AdminRoute element={<AdminPerfumeList />} />} />
