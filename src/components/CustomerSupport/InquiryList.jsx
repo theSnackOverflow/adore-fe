@@ -66,7 +66,7 @@ const InquiryList = () => {
       <CustomerSupportSidebar />
       <div className="inquiry-list">
         <div className="inquiry-list-header">
-          <h1>내 문의 목록</h1>
+          <h1>문의 목록</h1>
           <div className="inquiry-list-filters">
             <div className="inquiry-search-bar">
             <select className="inquiry-search-select" value={type} onChange={(e) => setType(e.target.value)}>
@@ -102,8 +102,8 @@ const InquiryList = () => {
               <th>번호</th>
               <th>제목</th>
               <th>작성자</th>
-              <th>작성 날짜</th>
               <th>상태</th>
+              <th>작성 날짜</th>
             </tr>
           </thead>
           <tbody>
@@ -112,8 +112,8 @@ const InquiryList = () => {
                 <td>{index + 1 + (currentPage - 1) * 10}</td>
                 <td>{inquiry.title}</td>
                 <td>{inquiry.nickname}</td>
-                <td>{new Date(inquiry.createdAt).toLocaleString()}</td>
                 <td>{inquiry.state}</td>
+                <td>{new Date(inquiry.createdAt).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

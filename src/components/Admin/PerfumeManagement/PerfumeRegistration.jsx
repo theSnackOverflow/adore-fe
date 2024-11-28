@@ -1,73 +1,221 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import PerfumeManagementSidebar from '../../Sidebars/AdminSidebars/PerfumeManagementSidebar';
 import axiosInstance from '../../../lib/axiosInstance';
-import './NoteRegistration.css';
+import PerfumeManagementSidebar from '../../Sidebars/AdminSidebars/PerfumeManagementSidebar';
+import './PerfumeRegistration.css';
 
-const NoteRegistration = () => {
-  const navigate = useNavigate();
-
-  const [noteData, setNoteData] = useState({
+const PerfumeRegistration = () => {
+  const [perfumeData, setPerfumeData] = useState({
     name: '',
+    notes: '',
+    brand: '',
+    gender: '',
+    season: '',
+    price: '',
+    perfumePhoto: null,
+    base: '',
+    top: '',
+    middle: '',
+    country: '',
     description: '',
-    status: 'ACTIVE', // 기본값 설정
   });
 
-  // 입력값 변경 핸들러
+  // Handle input changes for text inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNoteData({ ...noteData, [name]: value });
+    setPerfumeData({ ...perfumeData, [name]: value });
   };
 
-  // 노트 등록 핸들러
-  const handleRegisterNote = async (e) => {
-    e.preventDefault();
+  // Handle file changes (image upload)
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setPerfumeData({ ...perfumeData, [name]: files[0] });
+  };
 
-    if (!noteData.name || !noteData.description) {
-      alert('노트 이름과 설명은 필수 항목입니다.');
+  // Handle the perfume registration process
+  const handleRegister = async () => {
+    // 필수 항목 체크
+    if (!perfumeData.name || !perfumeData.price || !perfumeData.perfumePhoto || !perfumeData.brand) {
+      alert('향수 이름, 가격, 브랜드, 그리고 사진은 필수입니다!');
       return;
     }
-
+  
+    // 가격을 정수로 변환
+    const price = parseInt(perfumeData.price, 10);
+    if (isNaN(price)) {
+      alert('가격은 숫자여야 합니다!');
+      return;
+    }
+  
+    // FormData 객체에 필드 추가
+    const formData = new FormData();
+    formData.append('name', perfumeData.name);
+    formData.append('notes', perfumeData.notes);
+    formData.append('brand', perfumeData.brand);
+    formData.append('gender', perfumeData.gender);
+    formData.append('season', perfumeData.season);
+    formData.append('price', price); // 가격을 숫자로 변환하여 추가
+    formData.append('perfumePhoto', perfumeData.perfumePhoto);
+    formData.append('base', perfumeData.base);
+    formData.append('top', perfumeData.top);
+    formData.append('middle', perfumeData.middle);
+    formData.append('country', perfumeData.country);
+    formData.append('description', perfumeData.description);
+  
+    console.log('Sending request with the following data:', perfumeData); // 디버깅용 로그
+  
     try {
-      const response = await axiosInstance.post('/api/admin/note/create', noteData);
-
-      if (response.status === 200) {
-        alert('노트가 성공적으로 등록되었습니다.');
-        navigate('/admin/perfumemanagement/adminnotelist'); // 노트 목록 페이지로 이동
-      }
+      const response = await axiosInstance.post('/api/admin/perfume/create', formData);
+      console.log('Response received:', response.data); // 디버깅용 로그
+      alert('향수가 등록되었습니다!');
     } catch (error) {
-      console.error('노트 등록 오류:', error);
-      alert('노트 등록에 실패했습니다.');
+      console.error('Error registering perfume:', error.response ? error.response.data : error.message); // 디버깅용 로그
+      alert('향수 등록에 실패했습니다.');
     }
   };
 
-  // 등록 취소 핸들러
+  // Handle cancellation of the registration
   const handleCancel = () => {
-    setNoteData({
+    // 입력된 데이터 초기화
+    setPerfumeData({
       name: '',
+      notes: '',
+      brand: '',
+      gender: '',
+      season: '',
+      price: '',
+      perfumePhoto: null,
+      base: '',
+      top: '',
+      middle: '',
+      country: '',
       description: '',
-      status: 'ACTIVE',
     });
-    alert('노트 등록이 취소되었습니다!');
-    navigate('/admin/perfumemanagement/adminnotelist');
+
+    alert('향수 등록이 취소되었습니다!');
+    
+    // 화면 새로고침
+    window.location.reload();
   };
 
   return (
-    <div className="note-registration-container">
+    <div className="perfume-registration-container">
       <PerfumeManagementSidebar />
-      <div className="note-registration-content">
-        <h1>노트 등록</h1>
-        <div className="note-registration-form">
-          <table className="note-registration-table">
+      <div className="perfume-registration-content">
+        <h1>향수 정보 등록</h1>
+        <div className="perfume-registration-form">
+          <table className="perfume-registration-table">
             <tbody>
+              {/* Inputs for the form */}
               <tr>
-                <th>노트 이름</th>
+                <th>향수 이름</th>
                 <td>
                   <input
                     type="text"
                     name="name"
-                    placeholder="노트 이름"
-                    value={noteData.name}
+                    placeholder="향수 이름"
+                    value={perfumeData.name}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>주 사용 성별</th>
+                <td className="gender-options">
+                  <label><input type="radio" name="gender" value="남성" onChange={handleInputChange} /> 남성</label>
+                  <label><input type="radio" name="gender" value="여성" onChange={handleInputChange} /> 여성</label>
+                  <label><input type="radio" name="gender" value="중성" onChange={handleInputChange} /> 중성</label>
+                </td>
+              </tr>
+              <tr>
+                <th>계절</th>
+                <td>
+                  <input
+                    type="text"
+                    name="season"
+                    placeholder="계절"
+                    value={perfumeData.season}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>가격</th>
+                <td>
+                  <input
+                    type="text"
+                    name="price"
+                    placeholder="가격"
+                    value={perfumeData.price}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>향수 사진</th>
+                <td>
+                  <input
+                    type="file"
+                    name="perfumePhoto"
+                    onChange={handleFileChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>브랜드</th>
+                <td>
+                  <input
+                    type="text"
+                    name="brand"
+                    placeholder="브랜드"
+                    value={perfumeData.brand}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>베이스 노트</th>
+                <td>
+                  <input
+                    type="text"
+                    name="base"
+                    placeholder="베이스 노트"
+                    value={perfumeData.base}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>탑 노트</th>
+                <td>
+                  <input
+                    type="text"
+                    name="top"
+                    placeholder="탑 노트"
+                    value={perfumeData.top}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>미들 노트</th>
+                <td>
+                  <input
+                    type="text"
+                    name="middle"
+                    placeholder="미들 노트"
+                    value={perfumeData.middle}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>국가</th>
+                <td>
+                  <input
+                    type="text"
+                    name="country"
+                    placeholder="국가"
+                    value={perfumeData.country}
                     onChange={handleInputChange}
                   />
                 </td>
@@ -78,33 +226,16 @@ const NoteRegistration = () => {
                   <textarea
                     name="description"
                     placeholder="설명"
-                    value={noteData.description}
+                    value={perfumeData.description}
                     onChange={handleInputChange}
                   />
                 </td>
               </tr>
-              <tr>
-                <th>상태</th>
-                <td>
-                  <select
-                    name="status"
-                    value={noteData.status}
-                    onChange={handleInputChange}
-                  >
-                    <option value="ACTIVE">활성</option>
-                    <option value="INACTIVE">비활성</option>
-                  </select>
-                </td>
-              </tr>
             </tbody>
           </table>
-          <div className="note-registration-buttons">
-            <button onClick={handleRegisterNote} className="note-registration-register-btn">
-              등록
-            </button>
-            <button onClick={handleCancel} className="note-registration-cancel-btn">
-              취소
-            </button>
+          <div className="perfume-registration-buttons">
+            <button onClick={handleRegister} className="perfume-registration-register-btn">등록</button>
+            <button onClick={handleCancel} className="perfume-registration-cancel-btn">취소</button>
           </div>
         </div>
       </div>
@@ -112,4 +243,4 @@ const NoteRegistration = () => {
   );
 };
 
-export default NoteRegistration;
+export default PerfumeRegistration;

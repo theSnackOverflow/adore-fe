@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MyPageSidebar from '../Sidebars/MyPageSidebar';
 import axiosInstance from '../../lib/axiosInstance'; // Axios 인스턴스
+import axios from 'axios';
 import './PasswordChange.css';
 
 const PasswordChange = () => {
@@ -26,7 +27,7 @@ const PasswordChange = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/api/auth/email-send', null, {
+      const response = await axios.post('https://gachon-adore.duckdns.org/api/auth/email-send', null, {
         params: { email },
       });
 
@@ -54,7 +55,7 @@ const PasswordChange = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/api/auth/email-verify', {
+      const response = await axios.post('https://gachon-adore.duckdns.org/api/auth/email-verify', {
         email,
         code: verificationCode,
       });
@@ -98,7 +99,7 @@ const PasswordChange = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/api/auth/reset-password', {
+      const response = await axios.post('https://gachon-adore.duckdns.org/api/auth/reset-password', {
         email,
         newPassword,
         newPasswordConfirm: confirmPassword,
