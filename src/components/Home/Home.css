@@ -88,9 +88,11 @@
 
 .home-perfume-card {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   flex: 1;
   max-width: 300px;
-  height: 250px;
+  height: 350px;
   padding: 1.5rem;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -102,4 +104,12 @@
 
 .home-perfume-card:hover {
   transform: translateY(-5px);
+}
+
+.home-perfume-image-placeholder img{
+  margin: 1rem;
+  margin-left: 1.7rem;
+  width: 80%;
+  height: 80%;
+  background-color: #e0e0e0;
 }
