@@ -56,23 +56,20 @@
 }
 
 .inquiry-list-table th:nth-child(1) {
-    width: 10%;
-    /* border-right: 0.1px solid black; */
+    width: 15%;
+
 }
-/* .inquiry-list-table td:nth-child(1) {
-    border-right: 0.1px solid black;
-} */
 .inquiry-list-table th:nth-child(2) {
-    width: 50%;
+    width: 25%;
 }
 .inquiry-list-table th:nth-child(3) {
-    width: 15%;
+    width: 20%;
 }
 .inquiry-list-table th:nth-child(4) {
     width: 15%;
 }
 .inquiry-list-table th:nth-child(5) {
-    width: 10%;
+    width: 25%;
 }
 
 .inquiry-list-delete-btn {
@@ -132,7 +129,7 @@ background-color: #555;
   width: 100px;
   border: 1px solid #C4C4C4;
   box-sizing: border-box;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 6px 7px;
   font-family: 'Roboto';
   font-style: normal;
@@ -145,7 +142,7 @@ background-color: #555;
   width: 100px;
   border: 1px solid #C4C4C4;
   box-sizing: border-box;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 6px 7px;
   font-family: 'Roboto';
   font-style: normal;

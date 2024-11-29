@@ -45,6 +45,7 @@ import FriendResultList from './components/FriendRecommendation/FriendResultList
 import axios from 'axios';
 import { removeCookie, getCookie, setCookie } from './lib/CookieUtil';
 import { isLogin, extractRole } from './lib/Auth';
+import PenaltyList from './components/Admin/UserManagement/PenaltyList';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => isLogin());
@@ -98,7 +99,7 @@ function App() {
   }, []);
 
   const PrivateRoute = ({ element }) => {
-    return userRole === "USER" ? element : <Navigate to="/login" replace />;
+    return userRole === "USER" || "ADMIN" ? element : <Navigate to="/login" replace />;
   };
   
   const AdminRoute = ({ element }) => {
@@ -145,7 +146,8 @@ function App() {
           <Route path="/Admin/UserManagement/UserInfoEdit" element={<AdminRoute element={<UserInfoEdit />} />} />
           <Route path="/Admin/UserManagement/UserRegistration" element={<AdminRoute element={<UserRegistration />} />} />
           <Route path="/Admin/UserManagement/ReportList" element={<AdminRoute element={<ReportList />} />} />
-          <Route path="/Admin/UserManagement/ReportDetail" element={<AdminRoute element={<ReportDetail />} />} />
+          <Route path="/Admin/UserManagement/PenaltyList" element={<AdminRoute element={<PenaltyList />} />} />
+          <Route path="/Admin/UserManagement/ReportDetail/:reportId" element={<AdminRoute element={<ReportDetail />} />} />
 
           {/* Admin Perfume & Note Routes */}
           <Route path="/Admin/PerfumeManagement/AdminPerfumeList" element={<AdminRoute element={<AdminPerfumeList />} />} />

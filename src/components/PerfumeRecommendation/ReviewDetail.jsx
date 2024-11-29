@@ -6,6 +6,7 @@ import AlertModal from '../Modals/AlertModal';
 import { getCookie } from '../../lib/CookieUtil'; // 쿠키에서 토큰 가져오기 유틸
 import './ReviewDetail.css';
 
+
 const ReviewDetail = () => {
   const { reviewId } = useParams(); // 리뷰 ID를 URL 파라미터에서 가져옴
   const [reviewData, setReviewData] = useState(null); // 리뷰 데이터를 저장할 상태
@@ -17,6 +18,71 @@ const ReviewDetail = () => {
   const [hasLiked, setHasLiked] = useState(false); // 추천 여부
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState(''); // AlertModal에 표시할 메시지
+  const [contentId, setContentId] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 표시 여부
+  const [reportData, setReportData] = useState({
+    title: "",
+    content: "",
+  });
+  const [reportCategory, setReportCategory] = useState("");
+
+
+
+
+  // 모달 열기
+  const openModal = (category) => {
+    setReportCategory(category);
+    setIsModalOpen(true);
+  };
+
+
+  // 모달 닫기
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setReportData({ title: "", content: "" }); // 입력 필드 초기화
+  };
+
+  // 입력 필드 업데이트
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setReportData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleReport = (id, category) => {
+    setContentId(id);
+    openModal(category);
+  }
+
+  const updateContentId = (id) => {
+    setContentId(id);
+  };
+
+  // 신고 요청 전송
+  const submitReport = async () => {
+    const data = {
+      contentId: contentId,
+      category: reportCategory,
+      title: reportData.title,
+      content: reportData.content,
+    };
+
+    try {
+      const response = await axiosInstance.post(`api/user/review/report`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      alert("신고가 성공적으로 접수되었습니다.");
+      closeModal(); // 모달 닫기
+    } catch (error) {
+      console.error("신고 요청 중 오류 발생:", error);
+      alert("신고 접수에 실패했습니다.");
+    }
+  };
+
 
   // 리뷰 데이터를 가져오는 함수
   const fetchReviewData = async () => {
@@ -26,7 +92,6 @@ const ReviewDetail = () => {
       });
 
       console.log('Fetched Review Data:', response.data);
-
       setReviewData({
         perfumeName: response.data.perfumeName || '알 수 없음',
         memberId: response.data.memberId,
@@ -68,6 +133,7 @@ const ReviewDetail = () => {
   useEffect(() => {
     fetchReviewData();
   }, []); // 의존성 배열 빈 배열로 설정해 초기 실행만 수행
+
 
   // 좋아요 처리 함수
   const handleLike = async () => {
@@ -248,6 +314,9 @@ const handleCommentSubmit = async () => {
               <button onClick={handleLike} className="review-detail-like-btn">
                 추천 👍 {likes}
               </button>
+              <button onClick={() => handleReport(reviewId, "REVIEW")} className="review-detail-like-btn">
+                신고하기
+              </button>
             </div>
           </div>
           <div className="review-detail-body">
@@ -275,11 +344,9 @@ const handleCommentSubmit = async () => {
                 </button>
               ) : (
                 <button
-                  onClick={() => setAlertMessage('신고가 완료되었습니다.')}
-                  className="review-detail-report-comment-btn"
-                >
-                  신고하기
-                </button>
+                onClick={() => handleReport(reviewId, "COMMENT")}>
+                신고하기
+              </button>
               )}
             </div>
           ))}
@@ -297,6 +364,35 @@ const handleCommentSubmit = async () => {
       </div>
       {isAlertModalOpen && (
         <AlertModal message={alertMessage} onClose={closeAlertModal} />
+      )}
+      {/* 신고 모달 */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>신고하기</h2>
+              <input
+                type="text"
+                name="title"
+                value={reportData.title}
+                placeholder="제목"
+                onChange={handleInputChange}
+              />
+              <textarea
+                name="content"
+                value={reportData.content}
+                onChange={handleInputChange}
+                placeholder="신고 내용"
+              ></textarea>
+            <div className="modal-actions">
+              <button onClick={submitReport} className="modal-submit-btn">
+                신고 제출
+              </button>
+              <button onClick={closeModal} className="modal-cancel-btn">
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

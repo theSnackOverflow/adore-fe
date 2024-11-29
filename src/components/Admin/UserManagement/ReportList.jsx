@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
 import UserManagementSidebar from '../../Sidebars/AdminSidebars/UserManagementSidebar';
 import axiosInstance from '../../../lib/axiosInstance';
 import './ReportList.css';
 
 const ReportList = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
   const [totalPages, setTotalPages] = useState(1); // 총 페이지 수 상태
+  const [filter, setFilter] = useState('WAIT');
+  const navigate = useNavigate(); // React Router의 useNavigate 사용
 
   // API 호출
   const fetchReports = async (page = 1) => {
@@ -20,13 +22,13 @@ const ReportList = () => {
     try {
       const response = await axiosInstance.get(`/api/admin/report/lists/${page}`, {
         params: {
-          filter: 'USER', // 필터링 (USER로 고정, 필요 시 변경 가능)
+          filter: filter || 'WAIT', // 필터링
           category: categoryFilter || 'REVIEW', // 카테고리 필터
-          page: page,
         },
       });
       setReports(response.data.reportList || []);
       setTotalPages(response.data.totalPages); // 총 페이지 수 설정
+
     } catch (error) {
       console.error('Error fetching reports:', error);
       setError('보고서 데이터를 가져오는 중 오류가 발생했습니다.');
@@ -43,11 +45,6 @@ const ReportList = () => {
     }
   };
 
-  // 검색 입력 핸들러
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
   // 카테고리 필터 변경 핸들러
   const handleCategoryChange = (e) => {
     setCategoryFilter(e.target.value);
@@ -55,15 +52,15 @@ const ReportList = () => {
     fetchReports(1); // 첫 페이지 데이터 가져오기
   };
 
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+    setCurrentPage(1); // 카테고리 변경 시 첫 페이지로 리셋
+    fetchReports(1); // 첫 페이지 데이터 가져오기
+  };
+
   useEffect(() => {
     fetchReports(currentPage); // 컴포넌트가 마운트될 때 첫 페이지 데이터 로드
-  }, [categoryFilter, currentPage]);
-
-  // 필터링된 리포트 목록
-  const filteredReports = reports.filter(
-    (report) =>
-      report.reporter.includes(searchQuery) || report.title.includes(searchQuery)
-  );
+  }, [categoryFilter, filter, currentPage]);
 
   return (
     <div className="report-list-container">
@@ -72,16 +69,13 @@ const ReportList = () => {
         <div className="report-list-header">
           <h1>신고 목록 조회</h1>
           <div className="report-list-search-bar">
-            <input
-              type="text"
-              placeholder="작성자, 제목 등"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
             <select value={categoryFilter} onChange={handleCategoryChange}>
-              <option value="">카테고리 선택</option>
               <option value="REVIEW">리뷰</option>
               <option value="COMMENT">댓글</option>
+            </select>
+            <select value={filter} onChange={handleFilterChange}>
+              <option value="WAIT">대기</option>
+              <option value="COMPLETE">완료</option>
             </select>
           </div>
         </div>
@@ -103,18 +97,26 @@ const ReportList = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredReports.length === 0 ? (
+                {reports.length === 0 ? (
                   <tr>
                     <td colSpan="5">No reports found.</td>
                   </tr>
                 ) : (
-                  filteredReports.map((report, index) => (
-                    <tr key={index}>
-                      <td>{report.reporter}</td>
-                      <td>{report.title}</td>
+                  reports.map((report) => (
+                    <tr key={report.id}>
+                      <td>{report.nickname}</td>
+                      {/* 제목 클릭 시 ReportDetail로 이동 */}
+                      <td>
+                        <button
+                          className="report-title-button"
+                          onClick={() => navigate(`/Admin/UserManagement/ReportDetail/${report.id}`)}
+                        >
+                          {report.title}
+                        </button>
+                      </td>
                       <td>{report.category}</td>
-                      <td>{report.date}</td>
-                      <td>{report.status}</td>
+                      <td>{new Date(report.createdAt).toLocaleString()}</td>
+                      <td>{report.state}</td>
                     </tr>
                   ))
                 )}

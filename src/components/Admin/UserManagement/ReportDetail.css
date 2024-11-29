@@ -20,6 +20,11 @@
     margin-bottom: 1rem;
   }
 
+  .report-navigate-button {
+    border: 0;
+    background-color: transparent;
+  }
+
   .report-detail-header h1 {
     font-size: 2rem;
     font-weight: bold;

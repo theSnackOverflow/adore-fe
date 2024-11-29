@@ -6,11 +6,11 @@ import './NoteItem.css'; // Add appropriate styling for NoteItem
 const NoteItem = ({ note, onClick }) => {
   return (
     <div className="note-item" onClick={() => onClick(note)}>
-      <img 
+      {/* <img 
         src={note.imageUrl || 'default_image_path'} 
         alt={note.name} 
         className="note-item-image" 
-      />
+      /> */}
       <div className="note-item-content">
         <h3 className="note-item-name">{note.name}</h3>
         <p className="note-item-description">{note.description}</p>

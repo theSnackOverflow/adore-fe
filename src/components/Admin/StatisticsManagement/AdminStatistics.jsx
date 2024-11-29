@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../../lib/axiosInstance';
+import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
 import './AdminStatistics.css';
@@ -57,7 +57,7 @@ const AdminStatistics = () => {
       };
   
       // 접속 사용자 데이터
-      const connectedResponse = await axiosInstance.get('/api/admin/statics/activeUser', {
+      const connectedResponse = await axios.get('https://gachon-adore.duckdns.org/api/admin/statics/activeUser', {
         params: { startDate, endDate },
       });
       console.log('Connected Users Response:', connectedResponse.data);
@@ -65,7 +65,7 @@ const AdminStatistics = () => {
       setConnectedUsersData(fillMissingDates(connectedData));
   
       // 신규 사용자 데이터
-      const newUsersResponse = await axiosInstance.get('/api/admin/statics/newUser', {
+      const newUsersResponse = await axios.get('https://gachon-adore.duckdns.org/api/admin/statics/newUser', {
         params: { startDate, endDate },
       });
       console.log('New Users Response:', newUsersResponse.data);
@@ -73,7 +73,7 @@ const AdminStatistics = () => {
       setNewUsersData(fillMissingDates(newUsersData));
   
       // 미접속 사용자 데이터
-      const inactiveUsersResponse = await axiosInstance.get('/api/admin/statics/inactiveMembers', {
+      const inactiveUsersResponse = await axios.get('https://gachon-adore.duckdns.org/api/admin/statics/inactiveMembers', {
         params: { startDate, endDate },
       });
       console.log('Inactive Users Response:', inactiveUsersResponse.data);
@@ -81,7 +81,7 @@ const AdminStatistics = () => {
       setInactiveUsersData(fillMissingDates(inactiveUsersData));
   
       // 추천 기능 이용자 데이터
-      const recommendUsersResponse = await axiosInstance.get('/api/admin/statics/recommendUser', {
+      const recommendUsersResponse = await axios.get('https://gachon-adore.duckdns.org/api/admin/statics/recommendUser', {
         params: { startDate, endDate },
       });
       console.log('Recommend Users Response:', recommendUsersResponse.data);
@@ -170,6 +170,18 @@ const AdminStatistics = () => {
       </div>
 
       <div className="statistics-section">
+
+                {/* 신규 사용자 통계 */}
+                <div className="statistics-card">
+          <h2>신규 사용자 통계</h2>
+          <div className="chart-container">
+            <Line
+              data={createChartData(newUsersData, '신규 사용자')}
+              options={chartOptions}
+            />
+          </div>
+        </div>
+
         {/* 접속 사용자 통계 */}
         <div className="statistics-card">
           <h2>접속 사용자 통계</h2>
@@ -181,12 +193,12 @@ const AdminStatistics = () => {
           </div>
         </div>
 
-        {/* 신규 사용자 통계 */}
+        {/* 추천 기능 이용자 통계 */}
         <div className="statistics-card">
-          <h2>신규 사용자 통계</h2>
+          <h2>추천 기능 이용자 통계</h2>
           <div className="chart-container">
             <Line
-              data={createChartData(newUsersData, '신규 사용자')}
+              data={createChartData(recommendUsersData, '추천 기능 이용자')}
               options={chartOptions}
             />
           </div>
@@ -203,16 +215,6 @@ const AdminStatistics = () => {
           </div>
         </div>
 
-        {/* 추천 기능 이용자 통계 */}
-        <div className="statistics-card">
-          <h2>추천 기능 이용자 통계</h2>
-          <div className="chart-container">
-            <Line
-              data={createChartData(recommendUsersData, '추천 기능 이용자')}
-              options={chartOptions}
-            />
-          </div>
-        </div>
       </div>
     </div>
   );

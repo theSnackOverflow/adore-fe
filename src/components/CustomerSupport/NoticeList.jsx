@@ -63,7 +63,7 @@ const NoticeList = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button onClick={handleSearch}>검색</button>
+            <button className="notice-search-btn" onClick={handleSearch}>검색</button>
           </div>
         </div>
         {loading ? (

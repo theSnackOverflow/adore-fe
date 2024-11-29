@@ -17,7 +17,7 @@ const CustomerSupportSidebar = () => {
         <h3>고객지원</h3>
         <ul>
           <li><NavLink to="/customersupport/inquirylist" activeClassName="active-link">
-            내 문의 목록
+            문의 목록
           </NavLink></li>
           <li><NavLink to="/customersupport/inquiryform" activeClassName="active-link">
             문의하기

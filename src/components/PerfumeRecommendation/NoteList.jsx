@@ -132,10 +132,10 @@ const NoteList = () => {
           <h2>
             {selectedCategory} <span className="note-list-category-description"></span>
           </h2>
-          <p>
-            {categoryDescription} {/* 선택된 대분류 설명 */}
+          {/* <p>
+            {categoryDescription}
             <img src={categoryImg} alt="category.noteNm" />
-          </p>
+          </p> */}
         </div>
         <div className="note-list-grid">
           {notes.map((note, index) => (
@@ -145,7 +145,7 @@ const NoteList = () => {
                 id: note.id,
                 name: note.noteNm,
                 description: note.noteContent,
-                imageUrl: note.noteImg
+                // imageUrl: note.noteImg
               }}
               onClick={() => openModal(note)}
             />
