@@ -32,9 +32,9 @@ const Home = () => {
     navigate('/perfumeRecommendation/surveyIntro'); // 버튼 클릭 시 페이지 이동
   };
 
-  // if(!perfumes){
-  //   return <p>Loading</p>;
-  // }
+  const handlePerfumeClick = () => {
+    navigate(`/perfumerecommendation/perfumelist`); // 향수 모달을 띄우기 위해서는 향수 정보를 제공하는 코드로 바꿔야 함
+  }
 
   return (
     <div className="home-container">
@@ -51,9 +51,9 @@ const Home = () => {
         <h2>이 달의 신규 향수</h2>
         <div className="home-perfume-card-container">
           {perfumes !== undefined ? perfumes.map((perfume) => (
-            <div key={perfume.id} className="home-perfume-card">
-              <p>NAME: {perfume.name}</p>
-              <p>BRAND: {perfume.brand}</p>
+            <div key={perfume.id} className="home-perfume-card" onClick={handlePerfumeClick}>
+              <p className='home-perfume-text'><strong>NAME: </strong>{perfume.name}</p>
+              <p className='home-perfume-text'><strong>BRAND: </strong>{perfume.brand}</p>
               <div className='home-perfume-image-placeholder'>
                 <img
                   src={perfume.perfumeImg}
