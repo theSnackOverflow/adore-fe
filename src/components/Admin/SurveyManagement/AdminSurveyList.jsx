@@ -60,11 +60,11 @@ const AdminSurveyList = () => {
   };
 
   const handleEditClick = (surveyId) => {
-    navigate(`/Admin/SurveyManagement/AdminSurveyDetail/${surveyId}`); // 이 방식이 된다고?
+    navigate(`/Admin/SurveyManagement/AdminSurveyDetail/${surveyId}?doUpdate=true`);
   };
 
   const handleDetailPageRequestClick = (id) => {
-    navigate(`/Admin/SurveyManagement/AdminSurveyDetail/${id}`);
+    navigate(`/Admin/SurveyManagement/AdminSurveyDetail/${id}?doUpdate=false`);
   }
 
   const handleDeleteClick = async (surveyId) => {

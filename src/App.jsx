@@ -136,8 +136,9 @@ function App() {
           <Route path="/perfumerecommendation/reviewdetail/:reviewId" element={<PrivateRoute element={<ReviewDetail />} />} />
 
           {/* Friend Recommendation 관련 라우트 */}
-          <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendResultList />} />} />
+          <Route path="/friendrecommendation/friendinfoinput" element={<PrivateRoute element={<FriendInfoInput />} />} />
           <Route path="/friendrecommendation/friendresult/:friendId" element={<PrivateRoute element={<FriendResult />} />} />
+          <Route path="/friendrecommendation/friendresult" element={<PrivateRoute element={<FriendResultList />} />} />
 
           {/* Admin Routes */}
           <Route path="/Admin/UserManagement/UserList" element={<AdminRoute element={<UserList />} />} />

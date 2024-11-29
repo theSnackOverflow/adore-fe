@@ -41,7 +41,8 @@ const FriendResultList = () => {
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('친구 설문 결과 리스트를 조회하는데 실패했습니다 : ', error);
-      throw new Error('친구 설문 결과 리스트 조회 실패');
+      // throw new Error('친구 설문 결과 리스트 조회 실패');
+      alert("설문이 존재하지 않습니다.");
     }
   };
 

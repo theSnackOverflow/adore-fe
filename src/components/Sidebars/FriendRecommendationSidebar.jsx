@@ -8,8 +8,8 @@ const FriendRecommendationSidebar = () => {
     <div className="sidebar">
       <h3>친구 선물 추천</h3>
       <ul>
-        <li><Link to="/FriendRecommendation/FriendInfoInput">친구 정보 입력</Link></li>
-        <li><Link to="/FriendRecommendation/FriendResult">결과 확인</Link></li>
+        <li><Link to="/friendrecommendation/friendinfoinput">친구 정보 입력</Link></li>
+        <li><Link to="/friendrecommendation/friendresult">결과 확인</Link></li>
       </ul>
     </div>
   );

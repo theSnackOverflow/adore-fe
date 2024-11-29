@@ -112,3 +112,10 @@
     color: #555;
     line-height: 1.6;
   }
+
+  .admin-survey-detail-save-button {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
